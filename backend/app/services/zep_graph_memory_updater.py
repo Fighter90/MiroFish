@@ -1,6 +1,6 @@
 """
-Zep图谱记忆更新服务
-将模拟中的Agent活动动态更新到Zep图谱中
+Сервис обновления графовой памяти Zep
+Динамическое обновление графа Zep на основе активности Agent-ов в симуляции
 """
 
 import os
@@ -22,7 +22,7 @@ logger = get_logger('mirofish.zep_graph_memory_updater')
 
 @dataclass
 class AgentActivity:
-    """Agent活动记录"""
+    """Запись активности Agent-а"""
     platform: str           # twitter / reddit
     agent_id: int
     agent_name: str
@@ -30,15 +30,16 @@ class AgentActivity:
     action_args: Dict[str, Any]
     round_num: int
     timestamp: str
-    
+
     def to_episode_text(self) -> str:
         """
-        将活动转换为可以发送给Zep的文本描述
-        
-        采用自然语言描述格式，让Zep能够从中提取实体和关系
-        不添加模拟相关的前缀，避免误导图谱更新
+        Преобразование активности в текстовое описание для отправки в Zep
+
+        Используется формат описания на естественном языке, чтобы Zep мог
+        извлечь из него сущности и связи.
+        Без добавления префиксов симуляции во избежание искажения обновления графа.
         """
-        # 根据不同的动作类型生成不同的描述
+        # Генерация описания в зависимости от типа действия
         action_descriptions = {
             "CREATE_POST": self._describe_create_post,
             "LIKE_POST": self._describe_like_post,
@@ -53,229 +54,230 @@ class AgentActivity:
             "SEARCH_USER": self._describe_search_user,
             "MUTE": self._describe_mute,
         }
-        
+
         describe_func = action_descriptions.get(self.action_type, self._describe_generic)
         description = describe_func()
-        
-        # 直接返回 "agent名称: 活动描述" 格式，不添加模拟前缀
+
+        # Возвращаем формат "имя_агента: описание_активности" без префикса симуляции
         return f"{self.agent_name}: {description}"
-    
+
     def _describe_create_post(self) -> str:
         content = self.action_args.get("content", "")
         if content:
-            return f"发布了一条帖子：「{content}」"
-        return "发布了一条帖子"
-    
+            return f"опубликовал пост: \u00ab{content}\u00bb"
+        return "опубликовал пост"
+
     def _describe_like_post(self) -> str:
-        """点赞帖子 - 包含帖子原文和作者信息"""
+        """Лайк поста - включает текст поста и информацию об авторе"""
         post_content = self.action_args.get("post_content", "")
         post_author = self.action_args.get("post_author_name", "")
-        
+
         if post_content and post_author:
-            return f"点赞了{post_author}的帖子：「{post_content}」"
+            return f"поставил лайк посту {post_author}: \u00ab{post_content}\u00bb"
         elif post_content:
-            return f"点赞了一条帖子：「{post_content}」"
+            return f"поставил лайк посту: \u00ab{post_content}\u00bb"
         elif post_author:
-            return f"点赞了{post_author}的一条帖子"
-        return "点赞了一条帖子"
-    
+            return f"поставил лайк посту пользователя {post_author}"
+        return "поставил лайк посту"
+
     def _describe_dislike_post(self) -> str:
-        """踩帖子 - 包含帖子原文和作者信息"""
+        """Дизлайк поста - включает текст поста и информацию об авторе"""
         post_content = self.action_args.get("post_content", "")
         post_author = self.action_args.get("post_author_name", "")
-        
+
         if post_content and post_author:
-            return f"踩了{post_author}的帖子：「{post_content}」"
+            return f"поставил дизлайк посту {post_author}: \u00ab{post_content}\u00bb"
         elif post_content:
-            return f"踩了一条帖子：「{post_content}」"
+            return f"поставил дизлайк посту: \u00ab{post_content}\u00bb"
         elif post_author:
-            return f"踩了{post_author}的一条帖子"
-        return "踩了一条帖子"
-    
+            return f"поставил дизлайк посту пользователя {post_author}"
+        return "поставил дизлайк посту"
+
     def _describe_repost(self) -> str:
-        """转发帖子 - 包含原帖内容和作者信息"""
+        """Репост - включает содержимое оригинального поста и информацию об авторе"""
         original_content = self.action_args.get("original_content", "")
         original_author = self.action_args.get("original_author_name", "")
-        
+
         if original_content and original_author:
-            return f"转发了{original_author}的帖子：「{original_content}」"
+            return f"сделал репост поста {original_author}: \u00ab{original_content}\u00bb"
         elif original_content:
-            return f"转发了一条帖子：「{original_content}」"
+            return f"сделал репост поста: \u00ab{original_content}\u00bb"
         elif original_author:
-            return f"转发了{original_author}的一条帖子"
-        return "转发了一条帖子"
-    
+            return f"сделал репост поста пользователя {original_author}"
+        return "сделал репост поста"
+
     def _describe_quote_post(self) -> str:
-        """引用帖子 - 包含原帖内容、作者信息和引用评论"""
+        """Цитирование поста - включает содержимое оригинала, автора и комментарий"""
         original_content = self.action_args.get("original_content", "")
         original_author = self.action_args.get("original_author_name", "")
         quote_content = self.action_args.get("quote_content", "") or self.action_args.get("content", "")
-        
+
         base = ""
         if original_content and original_author:
-            base = f"引用了{original_author}的帖子「{original_content}」"
+            base = f"процитировал пост {original_author} \u00ab{original_content}\u00bb"
         elif original_content:
-            base = f"引用了一条帖子「{original_content}」"
+            base = f"процитировал пост \u00ab{original_content}\u00bb"
         elif original_author:
-            base = f"引用了{original_author}的一条帖子"
+            base = f"процитировал пост пользователя {original_author}"
         else:
-            base = "引用了一条帖子"
-        
+            base = "процитировал пост"
+
         if quote_content:
-            base += f"，并评论道：「{quote_content}」"
+            base += f" и прокомментировал: \u00ab{quote_content}\u00bb"
         return base
-    
+
     def _describe_follow(self) -> str:
-        """关注用户 - 包含被关注用户的名称"""
+        """Подписка на пользователя - включает имя пользователя"""
         target_user_name = self.action_args.get("target_user_name", "")
-        
+
         if target_user_name:
-            return f"关注了用户「{target_user_name}」"
-        return "关注了一个用户"
-    
+            return f"подписался на пользователя \u00ab{target_user_name}\u00bb"
+        return "подписался на пользователя"
+
     def _describe_create_comment(self) -> str:
-        """发表评论 - 包含评论内容和所评论的帖子信息"""
+        """Создание комментария - включает текст комментария и информацию о посте"""
         content = self.action_args.get("content", "")
         post_content = self.action_args.get("post_content", "")
         post_author = self.action_args.get("post_author_name", "")
-        
+
         if content:
             if post_content and post_author:
-                return f"在{post_author}的帖子「{post_content}」下评论道：「{content}」"
+                return f"прокомментировал пост {post_author} \u00ab{post_content}\u00bb: \u00ab{content}\u00bb"
             elif post_content:
-                return f"在帖子「{post_content}」下评论道：「{content}」"
+                return f"прокомментировал пост \u00ab{post_content}\u00bb: \u00ab{content}\u00bb"
             elif post_author:
-                return f"在{post_author}的帖子下评论道：「{content}」"
-            return f"评论道：「{content}」"
-        return "发表了评论"
-    
+                return f"прокомментировал пост {post_author}: \u00ab{content}\u00bb"
+            return f"прокомментировал: \u00ab{content}\u00bb"
+        return "оставил комментарий"
+
     def _describe_like_comment(self) -> str:
-        """点赞评论 - 包含评论内容和作者信息"""
+        """Лайк комментария - включает текст комментария и информацию об авторе"""
         comment_content = self.action_args.get("comment_content", "")
         comment_author = self.action_args.get("comment_author_name", "")
-        
+
         if comment_content and comment_author:
-            return f"点赞了{comment_author}的评论：「{comment_content}」"
+            return f"поставил лайк комментарию {comment_author}: \u00ab{comment_content}\u00bb"
         elif comment_content:
-            return f"点赞了一条评论：「{comment_content}」"
+            return f"поставил лайк комментарию: \u00ab{comment_content}\u00bb"
         elif comment_author:
-            return f"点赞了{comment_author}的一条评论"
-        return "点赞了一条评论"
-    
+            return f"поставил лайк комментарию пользователя {comment_author}"
+        return "поставил лайк комментарию"
+
     def _describe_dislike_comment(self) -> str:
-        """踩评论 - 包含评论内容和作者信息"""
+        """Дизлайк комментария - включает текст комментария и информацию об авторе"""
         comment_content = self.action_args.get("comment_content", "")
         comment_author = self.action_args.get("comment_author_name", "")
-        
+
         if comment_content and comment_author:
-            return f"踩了{comment_author}的评论：「{comment_content}」"
+            return f"поставил дизлайк комментарию {comment_author}: \u00ab{comment_content}\u00bb"
         elif comment_content:
-            return f"踩了一条评论：「{comment_content}」"
+            return f"поставил дизлайк комментарию: \u00ab{comment_content}\u00bb"
         elif comment_author:
-            return f"踩了{comment_author}的一条评论"
-        return "踩了一条评论"
-    
+            return f"поставил дизлайк комментарию пользователя {comment_author}"
+        return "поставил дизлайк комментарию"
+
     def _describe_search(self) -> str:
-        """搜索帖子 - 包含搜索关键词"""
+        """Поиск постов - включает поисковый запрос"""
         query = self.action_args.get("query", "") or self.action_args.get("keyword", "")
-        return f"搜索了「{query}」" if query else "进行了搜索"
-    
+        return f"искал \u00ab{query}\u00bb" if query else "выполнил поиск"
+
     def _describe_search_user(self) -> str:
-        """搜索用户 - 包含搜索关键词"""
+        """Поиск пользователя - включает поисковый запрос"""
         query = self.action_args.get("query", "") or self.action_args.get("username", "")
-        return f"搜索了用户「{query}」" if query else "搜索了用户"
-    
+        return f"искал пользователя \u00ab{query}\u00bb" if query else "искал пользователя"
+
     def _describe_mute(self) -> str:
-        """屏蔽用户 - 包含被屏蔽用户的名称"""
+        """Блокировка пользователя - включает имя заблокированного пользователя"""
         target_user_name = self.action_args.get("target_user_name", "")
-        
+
         if target_user_name:
-            return f"屏蔽了用户「{target_user_name}」"
-        return "屏蔽了一个用户"
-    
+            return f"заблокировал пользователя \u00ab{target_user_name}\u00bb"
+        return "заблокировал пользователя"
+
     def _describe_generic(self) -> str:
-        # 对于未知的动作类型，生成通用描述
-        return f"执行了{self.action_type}操作"
+        # Для неизвестных типов действий генерируем общее описание
+        return f"выполнил операцию {self.action_type}"
 
 
 class ZepGraphMemoryUpdater:
     """
-    Zep图谱记忆更新器
-    
-    监控模拟的actions日志文件，将新的agent活动实时更新到Zep图谱中。
-    按平台分组，每累积BATCH_SIZE条活动后批量发送到Zep。
-    
-    所有有意义的行为都会被更新到Zep，action_args中会包含完整的上下文信息：
-    - 点赞/踩的帖子原文
-    - 转发/引用的帖子原文
-    - 关注/屏蔽的用户名
-    - 点赞/踩的评论原文
+    Обновщик графовой памяти Zep
+
+    Отслеживает файл логов actions симуляции и в реальном времени обновляет граф Zep
+    новыми действиями агентов.
+    Группирует по платформам, отправляет пакетами по BATCH_SIZE действий.
+
+    Все значимые действия обновляются в Zep, action_args содержит полную контекстную информацию:
+    - Оригинальный текст поста при лайке/дизлайке
+    - Оригинальный текст поста при репосте/цитировании
+    - Имя пользователя при подписке/блокировке
+    - Оригинальный текст комментария при лайке/дизлайке
     """
-    
-    # 批量发送大小（每个平台累积多少条后发送）
+
+    # Размер пакета (сколько действий накапливается перед отправкой для каждой платформы)
     BATCH_SIZE = 5
-    
-    # 平台名称映射（用于控制台显示）
+
+    # Отображаемые названия платформ (для консольного вывода)
     PLATFORM_DISPLAY_NAMES = {
-        'twitter': '世界1',
-        'reddit': '世界2',
+        'twitter': 'Мир 1',
+        'reddit': 'Мир 2',
     }
-    
-    # 发送间隔（秒），避免请求过快
+
+    # Интервал отправки (секунды), чтобы избежать слишком частых запросов
     SEND_INTERVAL = 0.5
-    
-    # 重试配置
+
+    # Настройки повторных попыток
     MAX_RETRIES = 3
-    RETRY_DELAY = 2  # 秒
-    
+    RETRY_DELAY = 2  # секунды
+
     def __init__(self, graph_id: str, api_key: Optional[str] = None):
         """
-        初始化更新器
-        
+        Инициализация обновщика
+
         Args:
-            graph_id: Zep图谱ID
-            api_key: Zep API Key（可选，默认从配置读取）
+            graph_id: ID графа Zep
+            api_key: Zep API Key (необязательно, по умолчанию берётся из конфигурации)
         """
         self.graph_id = graph_id
         self.api_key = api_key or Config.ZEP_API_KEY
-        
+
         if not self.api_key:
-            raise ValueError("ZEP_API_KEY未配置")
-        
+            raise ValueError("ZEP_API_KEY не настроен")
+
         self.client = Zep(api_key=self.api_key)
-        
-        # 活动队列
+
+        # Очередь активностей
         self._activity_queue: Queue = Queue()
-        
-        # 按平台分组的活动缓冲区（每个平台各自累积到BATCH_SIZE后批量发送）
+
+        # Буфер активностей по платформам (каждая платформа накапливает до BATCH_SIZE перед пакетной отправкой)
         self._platform_buffers: Dict[str, List[AgentActivity]] = {
             'twitter': [],
             'reddit': [],
         }
         self._buffer_lock = threading.Lock()
-        
-        # 控制标志
+
+        # Управляющие флаги
         self._running = False
         self._worker_thread: Optional[threading.Thread] = None
-        
-        # 统计
-        self._total_activities = 0  # 实际添加到队列的活动数
-        self._total_sent = 0        # 成功发送到Zep的批次数
-        self._total_items_sent = 0  # 成功发送到Zep的活动条数
-        self._failed_count = 0      # 发送失败的批次数
-        self._skipped_count = 0     # 被过滤跳过的活动数（DO_NOTHING）
-        
-        logger.info(f"ZepGraphMemoryUpdater 初始化完成: graph_id={graph_id}, batch_size={self.BATCH_SIZE}")
-    
+
+        # Статистика
+        self._total_activities = 0  # Фактическое количество добавленных в очередь активностей
+        self._total_sent = 0        # Количество успешно отправленных пакетов
+        self._total_items_sent = 0  # Количество успешно отправленных активностей
+        self._failed_count = 0      # Количество неудачных отправок пакетов
+        self._skipped_count = 0     # Количество пропущенных активностей (DO_NOTHING)
+
+        logger.info(f"ZepGraphMemoryUpdater инициализирован: graph_id={graph_id}, batch_size={self.BATCH_SIZE}")
+
     def _get_platform_display_name(self, platform: str) -> str:
-        """获取平台的显示名称"""
+        """Получить отображаемое название платформы"""
         return self.PLATFORM_DISPLAY_NAMES.get(platform.lower(), platform)
-    
+
     def start(self):
-        """启动后台工作线程"""
+        """Запустить фоновый рабочий поток"""
         if self._running:
             return
-        
+
         self._running = True
         self._worker_thread = threading.Thread(
             target=self._worker_loop,
@@ -283,67 +285,67 @@ class ZepGraphMemoryUpdater:
             name=f"ZepMemoryUpdater-{self.graph_id[:8]}"
         )
         self._worker_thread.start()
-        logger.info(f"ZepGraphMemoryUpdater 已启动: graph_id={self.graph_id}")
-    
+        logger.info(f"ZepGraphMemoryUpdater запущен: graph_id={self.graph_id}")
+
     def stop(self):
-        """停止后台工作线程"""
+        """Остановить фоновый рабочий поток"""
         self._running = False
-        
-        # 发送剩余的活动
+
+        # Отправить оставшиеся активности
         self._flush_remaining()
-        
+
         if self._worker_thread and self._worker_thread.is_alive():
             self._worker_thread.join(timeout=10)
-        
-        logger.info(f"ZepGraphMemoryUpdater 已停止: graph_id={self.graph_id}, "
+
+        logger.info(f"ZepGraphMemoryUpdater остановлен: graph_id={self.graph_id}, "
                    f"total_activities={self._total_activities}, "
                    f"batches_sent={self._total_sent}, "
                    f"items_sent={self._total_items_sent}, "
                    f"failed={self._failed_count}, "
                    f"skipped={self._skipped_count}")
-    
+
     def add_activity(self, activity: AgentActivity):
         """
-        添加一个agent活动到队列
-        
-        所有有意义的行为都会被添加到队列，包括：
-        - CREATE_POST（发帖）
-        - CREATE_COMMENT（评论）
-        - QUOTE_POST（引用帖子）
-        - SEARCH_POSTS（搜索帖子）
-        - SEARCH_USER（搜索用户）
-        - LIKE_POST/DISLIKE_POST（点赞/踩帖子）
-        - REPOST（转发）
-        - FOLLOW（关注）
-        - MUTE（屏蔽）
-        - LIKE_COMMENT/DISLIKE_COMMENT（点赞/踩评论）
-        
-        action_args中会包含完整的上下文信息（如帖子原文、用户名等）。
-        
+        Добавить активность агента в очередь
+
+        Все значимые действия добавляются в очередь, включая:
+        - CREATE_POST (публикация)
+        - CREATE_COMMENT (комментарий)
+        - QUOTE_POST (цитирование поста)
+        - SEARCH_POSTS (поиск постов)
+        - SEARCH_USER (поиск пользователя)
+        - LIKE_POST/DISLIKE_POST (лайк/дизлайк поста)
+        - REPOST (репост)
+        - FOLLOW (подписка)
+        - MUTE (блокировка)
+        - LIKE_COMMENT/DISLIKE_COMMENT (лайк/дизлайк комментария)
+
+        action_args содержит полную контекстную информацию (текст поста, имя пользователя и т.д.).
+
         Args:
-            activity: Agent活动记录
+            activity: Запись активности агента
         """
-        # 跳过DO_NOTHING类型的活动
+        # Пропуск действий типа DO_NOTHING
         if activity.action_type == "DO_NOTHING":
             self._skipped_count += 1
             return
-        
+
         self._activity_queue.put(activity)
         self._total_activities += 1
-        logger.debug(f"添加活动到Zep队列: {activity.agent_name} - {activity.action_type}")
-    
+        logger.debug(f"Активность добавлена в очередь Zep: {activity.agent_name} - {activity.action_type}")
+
     def add_activity_from_dict(self, data: Dict[str, Any], platform: str):
         """
-        从字典数据添加活动
-        
+        Добавить активность из словаря
+
         Args:
-            data: 从actions.jsonl解析的字典数据
-            platform: 平台名称 (twitter/reddit)
+            data: Словарь, полученный из actions.jsonl
+            platform: Название платформы (twitter/reddit)
         """
-        # 跳过事件类型的条目
+        # Пропуск записей типа event
         if "event_type" in data:
             return
-        
+
         activity = AgentActivity(
             platform=platform,
             agent_id=data.get("agent_id", 0),
@@ -353,56 +355,56 @@ class ZepGraphMemoryUpdater:
             round_num=data.get("round", 0),
             timestamp=data.get("timestamp", datetime.now().isoformat()),
         )
-        
+
         self.add_activity(activity)
-    
+
     def _worker_loop(self):
-        """后台工作循环 - 按平台批量发送活动到Zep"""
+        """Фоновый рабочий цикл - пакетная отправка активностей в Zep по платформам"""
         while self._running or not self._activity_queue.empty():
             try:
-                # 尝试从队列获取活动（超时1秒）
+                # Попытка получить активность из очереди (таймаут 1 секунда)
                 try:
                     activity = self._activity_queue.get(timeout=1)
-                    
-                    # 将活动添加到对应平台的缓冲区
+
+                    # Добавление активности в буфер соответствующей платформы
                     platform = activity.platform.lower()
                     with self._buffer_lock:
                         if platform not in self._platform_buffers:
                             self._platform_buffers[platform] = []
                         self._platform_buffers[platform].append(activity)
-                        
-                        # 检查该平台是否达到批量大小
+
+                        # Проверка, достигнут ли размер пакета для данной платформы
                         if len(self._platform_buffers[platform]) >= self.BATCH_SIZE:
                             batch = self._platform_buffers[platform][:self.BATCH_SIZE]
                             self._platform_buffers[platform] = self._platform_buffers[platform][self.BATCH_SIZE:]
-                            # 释放锁后再发送
+                            # Отправка после снятия блокировки
                             self._send_batch_activities(batch, platform)
-                            # 发送间隔，避免请求过快
+                            # Интервал отправки, чтобы избежать слишком частых запросов
                             time.sleep(self.SEND_INTERVAL)
-                    
+
                 except Empty:
                     pass
-                    
+
             except Exception as e:
-                logger.error(f"工作循环异常: {e}")
+                logger.error(f"Исключение в рабочем цикле: {e}")
                 time.sleep(1)
-    
+
     def _send_batch_activities(self, activities: List[AgentActivity], platform: str):
         """
-        批量发送活动到Zep图谱（合并为一条文本）
-        
+        Пакетная отправка активностей в граф Zep (объединение в один текст)
+
         Args:
-            activities: Agent活动列表
-            platform: 平台名称
+            activities: Список активностей агентов
+            platform: Название платформы
         """
         if not activities:
             return
-        
-        # 将多条活动合并为一条文本，用换行分隔
+
+        # Объединение нескольких активностей в один текст, разделённый переводами строк
         episode_texts = [activity.to_episode_text() for activity in activities]
         combined_text = "\n".join(episode_texts)
-        
-        # 带重试的发送
+
+        # Отправка с повторными попытками
         for attempt in range(self.MAX_RETRIES):
             try:
                 self.client.graph.add(
@@ -410,25 +412,25 @@ class ZepGraphMemoryUpdater:
                     type="text",
                     data=combined_text
                 )
-                
+
                 self._total_sent += 1
                 self._total_items_sent += len(activities)
                 display_name = self._get_platform_display_name(platform)
-                logger.info(f"成功批量发送 {len(activities)} 条{display_name}活动到图谱 {self.graph_id}")
-                logger.debug(f"批量内容预览: {combined_text[:200]}...")
+                logger.info(f"Успешно отправлен пакет из {len(activities)} активностей {display_name} в граф {self.graph_id}")
+                logger.debug(f"Предпросмотр пакета: {combined_text[:200]}...")
                 return
-                
+
             except Exception as e:
                 if attempt < self.MAX_RETRIES - 1:
-                    logger.warning(f"批量发送到Zep失败 (尝试 {attempt + 1}/{self.MAX_RETRIES}): {e}")
+                    logger.warning(f"Ошибка пакетной отправки в Zep (попытка {attempt + 1}/{self.MAX_RETRIES}): {e}")
                     time.sleep(self.RETRY_DELAY * (attempt + 1))
                 else:
-                    logger.error(f"批量发送到Zep失败，已重试{self.MAX_RETRIES}次: {e}")
+                    logger.error(f"Ошибка пакетной отправки в Zep после {self.MAX_RETRIES} попыток: {e}")
                     self._failed_count += 1
-    
+
     def _flush_remaining(self):
-        """发送队列和缓冲区中剩余的活动"""
-        # 首先处理队列中剩余的活动，添加到缓冲区
+        """Отправка оставшихся активностей из очереди и буфера"""
+        # Сначала обработать оставшиеся активности из очереди, добавив их в буфер
         while not self._activity_queue.empty():
             try:
                 activity = self._activity_queue.get_nowait()
@@ -439,110 +441,110 @@ class ZepGraphMemoryUpdater:
                     self._platform_buffers[platform].append(activity)
             except Empty:
                 break
-        
-        # 然后发送各平台缓冲区中剩余的活动（即使不足BATCH_SIZE条）
+
+        # Затем отправить оставшиеся активности из буферов платформ (даже если их меньше BATCH_SIZE)
         with self._buffer_lock:
             for platform, buffer in self._platform_buffers.items():
                 if buffer:
                     display_name = self._get_platform_display_name(platform)
-                    logger.info(f"发送{display_name}平台剩余的 {len(buffer)} 条活动")
+                    logger.info(f"Отправка оставшихся {len(buffer)} активностей платформы {display_name}")
                     self._send_batch_activities(buffer, platform)
-            # 清空所有缓冲区
+            # Очистка всех буферов
             for platform in self._platform_buffers:
                 self._platform_buffers[platform] = []
-    
+
     def get_stats(self) -> Dict[str, Any]:
-        """获取统计信息"""
+        """Получить статистику"""
         with self._buffer_lock:
             buffer_sizes = {p: len(b) for p, b in self._platform_buffers.items()}
-        
+
         return {
             "graph_id": self.graph_id,
             "batch_size": self.BATCH_SIZE,
-            "total_activities": self._total_activities,  # 添加到队列的活动总数
-            "batches_sent": self._total_sent,            # 成功发送的批次数
-            "items_sent": self._total_items_sent,        # 成功发送的活动条数
-            "failed_count": self._failed_count,          # 发送失败的批次数
-            "skipped_count": self._skipped_count,        # 被过滤跳过的活动数（DO_NOTHING）
+            "total_activities": self._total_activities,  # Общее количество добавленных в очередь активностей
+            "batches_sent": self._total_sent,            # Количество успешно отправленных пакетов
+            "items_sent": self._total_items_sent,        # Количество успешно отправленных активностей
+            "failed_count": self._failed_count,          # Количество неудачных отправок
+            "skipped_count": self._skipped_count,        # Количество пропущенных активностей (DO_NOTHING)
             "queue_size": self._activity_queue.qsize(),
-            "buffer_sizes": buffer_sizes,                # 各平台缓冲区大小
+            "buffer_sizes": buffer_sizes,                # Размер буферов по платформам
             "running": self._running,
         }
 
 
 class ZepGraphMemoryManager:
     """
-    管理多个模拟的Zep图谱记忆更新器
-    
-    每个模拟可以有自己的更新器实例
+    Менеджер обновщиков графовой памяти Zep для нескольких симуляций
+
+    Каждая симуляция может иметь свой экземпляр обновщика
     """
-    
+
     _updaters: Dict[str, ZepGraphMemoryUpdater] = {}
     _lock = threading.Lock()
-    
+
     @classmethod
     def create_updater(cls, simulation_id: str, graph_id: str) -> ZepGraphMemoryUpdater:
         """
-        为模拟创建图谱记忆更新器
-        
+        Создать обновщик графовой памяти для симуляции
+
         Args:
-            simulation_id: 模拟ID
-            graph_id: Zep图谱ID
-            
+            simulation_id: ID симуляции
+            graph_id: ID графа Zep
+
         Returns:
-            ZepGraphMemoryUpdater实例
+            Экземпляр ZepGraphMemoryUpdater
         """
         with cls._lock:
-            # 如果已存在，先停止旧的
+            # Если уже существует, сначала остановить старый
             if simulation_id in cls._updaters:
                 cls._updaters[simulation_id].stop()
-            
+
             updater = ZepGraphMemoryUpdater(graph_id)
             updater.start()
             cls._updaters[simulation_id] = updater
-            
-            logger.info(f"创建图谱记忆更新器: simulation_id={simulation_id}, graph_id={graph_id}")
+
+            logger.info(f"Создан обновщик графовой памяти: simulation_id={simulation_id}, graph_id={graph_id}")
             return updater
-    
+
     @classmethod
     def get_updater(cls, simulation_id: str) -> Optional[ZepGraphMemoryUpdater]:
-        """获取模拟的更新器"""
+        """Получить обновщик симуляции"""
         return cls._updaters.get(simulation_id)
-    
+
     @classmethod
     def stop_updater(cls, simulation_id: str):
-        """停止并移除模拟的更新器"""
+        """Остановить и удалить обновщик симуляции"""
         with cls._lock:
             if simulation_id in cls._updaters:
                 cls._updaters[simulation_id].stop()
                 del cls._updaters[simulation_id]
-                logger.info(f"已停止图谱记忆更新器: simulation_id={simulation_id}")
-    
-    # 防止 stop_all 重复调用的标志
+                logger.info(f"Обновщик графовой памяти остановлен: simulation_id={simulation_id}")
+
+    # Флаг предотвращения повторного вызова stop_all
     _stop_all_done = False
-    
+
     @classmethod
     def stop_all(cls):
-        """停止所有更新器"""
-        # 防止重复调用
+        """Остановить все обновщики"""
+        # Предотвращение повторного вызова
         if cls._stop_all_done:
             return
         cls._stop_all_done = True
-        
+
         with cls._lock:
             if cls._updaters:
                 for simulation_id, updater in list(cls._updaters.items()):
                     try:
                         updater.stop()
                     except Exception as e:
-                        logger.error(f"停止更新器失败: simulation_id={simulation_id}, error={e}")
+                        logger.error(f"Ошибка остановки обновщика: simulation_id={simulation_id}, error={e}")
                 cls._updaters.clear()
-            logger.info("已停止所有图谱记忆更新器")
-    
+            logger.info("Все обновщики графовой памяти остановлены")
+
     @classmethod
     def get_all_stats(cls) -> Dict[str, Dict[str, Any]]:
-        """获取所有更新器的统计信息"""
+        """Получить статистику всех обновщиков"""
         return {
-            sim_id: updater.get_stats() 
+            sim_id: updater.get_stats()
             for sim_id, updater in cls._updaters.items()
         }
