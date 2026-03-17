@@ -1,11 +1,11 @@
 """
-模拟IPC通信模块
-用于Flask后端和模拟脚本之间的进程间通信
+Модуль IPC для симуляции
+Межпроцессное взаимодействие между бэкендом Flask и скриптом симуляции
 
-通过文件系统实现简单的命令/响应模式：
-1. Flask写入命令到 commands/ 目录
-2. 模拟脚本轮询命令目录，执行命令并写入响应到 responses/ 目录
-3. Flask轮询响应目录获取结果
+Реализация простого паттерна команда/ответ через файловую систему:
+1. Flask записывает команду в каталог commands/
+2. Скрипт симуляции опрашивает каталог команд, выполняет команду и записывает ответ в каталог responses/
+3. Flask опрашивает каталог ответов для получения результатов
 """
 
 import os
@@ -23,14 +23,14 @@ logger = get_logger('mirofish.simulation_ipc')
 
 
 class CommandType(str, Enum):
-    """命令类型"""
-    INTERVIEW = "interview"           # 单个Agent采访
-    BATCH_INTERVIEW = "batch_interview"  # 批量采访
-    CLOSE_ENV = "close_env"           # 关闭环境
+    """Тип команды"""
+    INTERVIEW = "interview"           # Интервью с одним агентом
+    BATCH_INTERVIEW = "batch_interview"  # Пакетное интервью
+    CLOSE_ENV = "close_env"           # Закрытие среды
 
 
 class CommandStatus(str, Enum):
-    """命令状态"""
+    """Статус команды"""
     PENDING = "pending"
     PROCESSING = "processing"
     COMPLETED = "completed"
@@ -39,12 +39,12 @@ class CommandStatus(str, Enum):
 
 @dataclass
 class IPCCommand:
-    """IPC命令"""
+    """IPC-команда"""
     command_id: str
     command_type: CommandType
     args: Dict[str, Any]
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "command_id": self.command_id,
@@ -52,7 +52,7 @@ class IPCCommand:
             "args": self.args,
             "timestamp": self.timestamp
         }
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'IPCCommand':
         return cls(
@@ -65,13 +65,13 @@ class IPCCommand:
 
 @dataclass
 class IPCResponse:
-    """IPC响应"""
+    """IPC-ответ"""
     command_id: str
     status: CommandStatus
     result: Optional[Dict[str, Any]] = None
     error: Optional[str] = None
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "command_id": self.command_id,
@@ -80,7 +80,7 @@ class IPCResponse:
             "error": self.error,
             "timestamp": self.timestamp
         }
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'IPCResponse':
         return cls(
@@ -94,26 +94,26 @@ class IPCResponse:
 
 class SimulationIPCClient:
     """
-    模拟IPC客户端（Flask端使用）
-    
-    用于向模拟进程发送命令并等待响应
+    IPC-клиент симуляции (используется на стороне Flask)
+
+    Отправляет команды процессу симуляции и ожидает ответы
     """
-    
+
     def __init__(self, simulation_dir: str):
         """
-        初始化IPC客户端
-        
+        Инициализация IPC-клиента
+
         Args:
-            simulation_dir: 模拟数据目录
+            simulation_dir: Каталог данных симуляции
         """
         self.simulation_dir = simulation_dir
         self.commands_dir = os.path.join(simulation_dir, "ipc_commands")
         self.responses_dir = os.path.join(simulation_dir, "ipc_responses")
-        
-        # 确保目录存在
+
+        # Создание каталогов, если они не существуют
         os.makedirs(self.commands_dir, exist_ok=True)
         os.makedirs(self.responses_dir, exist_ok=True)
-    
+
     def send_command(
         self,
         command_type: CommandType,
@@ -122,19 +122,19 @@ class SimulationIPCClient:
         poll_interval: float = 0.5
     ) -> IPCResponse:
         """
-        发送命令并等待响应
-        
+        Отправка команды и ожидание ответа
+
         Args:
-            command_type: 命令类型
-            args: 命令参数
-            timeout: 超时时间（秒）
-            poll_interval: 轮询间隔（秒）
-            
+            command_type: Тип команды
+            args: Параметры команды
+            timeout: Тайм-аут (секунды)
+            poll_interval: Интервал опроса (секунды)
+
         Returns:
             IPCResponse
-            
+
         Raises:
-            TimeoutError: 等待响应超时
+            TimeoutError: Тайм-аут ожидания ответа
         """
         command_id = str(uuid.uuid4())
         command = IPCCommand(
@@ -142,50 +142,50 @@ class SimulationIPCClient:
             command_type=command_type,
             args=args
         )
-        
-        # 写入命令文件
+
+        # Запись файла команды
         command_file = os.path.join(self.commands_dir, f"{command_id}.json")
         with open(command_file, 'w', encoding='utf-8') as f:
             json.dump(command.to_dict(), f, ensure_ascii=False, indent=2)
-        
-        logger.info(f"发送IPC命令: {command_type.value}, command_id={command_id}")
-        
-        # 等待响应
+
+        logger.info(f"Отправлена IPC-команда: {command_type.value}, command_id={command_id}")
+
+        # Ожидание ответа
         response_file = os.path.join(self.responses_dir, f"{command_id}.json")
         start_time = time.time()
-        
+
         while time.time() - start_time < timeout:
             if os.path.exists(response_file):
                 try:
                     with open(response_file, 'r', encoding='utf-8') as f:
                         response_data = json.load(f)
                     response = IPCResponse.from_dict(response_data)
-                    
-                    # 清理命令和响应文件
+
+                    # Очистка файлов команды и ответа
                     try:
                         os.remove(command_file)
                         os.remove(response_file)
                     except OSError:
                         pass
-                    
-                    logger.info(f"收到IPC响应: command_id={command_id}, status={response.status.value}")
+
+                    logger.info(f"Получен IPC-ответ: command_id={command_id}, status={response.status.value}")
                     return response
                 except (json.JSONDecodeError, KeyError) as e:
-                    logger.warning(f"解析响应失败: {e}")
-            
+                    logger.warning(f"Ошибка разбора ответа: {e}")
+
             time.sleep(poll_interval)
-        
-        # 超时
-        logger.error(f"等待IPC响应超时: command_id={command_id}")
-        
-        # 清理命令文件
+
+        # Тайм-аут
+        logger.error(f"Тайм-аут ожидания IPC-ответа: command_id={command_id}")
+
+        # Очистка файла команды
         try:
             os.remove(command_file)
         except OSError:
             pass
-        
-        raise TimeoutError(f"等待命令响应超时 ({timeout}秒)")
-    
+
+        raise TimeoutError(f"Тайм-аут ожидания ответа на команду ({timeout} сек)")
+
     def send_interview(
         self,
         agent_id: int,
@@ -194,19 +194,19 @@ class SimulationIPCClient:
         timeout: float = 60.0
     ) -> IPCResponse:
         """
-        发送单个Agent采访命令
-        
+        Отправка команды интервью с одним агентом
+
         Args:
-            agent_id: Agent ID
-            prompt: 采访问题
-            platform: 指定平台（可选）
-                - "twitter": 只采访Twitter平台
-                - "reddit": 只采访Reddit平台  
-                - None: 双平台模拟时同时采访两个平台，单平台模拟时采访该平台
-            timeout: 超时时间
-            
+            agent_id: ID агента
+            prompt: Вопрос интервью
+            platform: Указание платформы (необязательно)
+                - "twitter": Интервью только на платформе Twitter
+                - "reddit": Интервью только на платформе Reddit
+                - None: При двухплатформенной симуляции — интервью на обеих платформах, при одноплатформенной — на данной платформе
+            timeout: Тайм-аут
+
         Returns:
-            IPCResponse，result字段包含采访结果
+            IPCResponse, поле result содержит результаты интервью
         """
         args = {
             "agent_id": agent_id,
@@ -214,13 +214,13 @@ class SimulationIPCClient:
         }
         if platform:
             args["platform"] = platform
-            
+
         return self.send_command(
             command_type=CommandType.INTERVIEW,
             args=args,
             timeout=timeout
         )
-    
+
     def send_batch_interview(
         self,
         interviews: List[Dict[str, Any]],
@@ -228,36 +228,36 @@ class SimulationIPCClient:
         timeout: float = 120.0
     ) -> IPCResponse:
         """
-        发送批量采访命令
-        
+        Отправка команды пакетного интервью
+
         Args:
-            interviews: 采访列表，每个元素包含 {"agent_id": int, "prompt": str, "platform": str(可选)}
-            platform: 默认平台（可选，会被每个采访项的platform覆盖）
-                - "twitter": 默认只采访Twitter平台
-                - "reddit": 默认只采访Reddit平台
-                - None: 双平台模拟时每个Agent同时采访两个平台
-            timeout: 超时时间
-            
+            interviews: Список интервью, каждый элемент содержит {"agent_id": int, "prompt": str, "platform": str (необязательно)}
+            platform: Платформа по умолчанию (необязательно, перекрывается значением platform в каждом элементе интервью)
+                - "twitter": По умолчанию интервью только на платформе Twitter
+                - "reddit": По умолчанию интервью только на платформе Reddit
+                - None: При двухплатформенной симуляции каждый агент интервьюируется на обеих платформах
+            timeout: Тайм-аут
+
         Returns:
-            IPCResponse，result字段包含所有采访结果
+            IPCResponse, поле result содержит все результаты интервью
         """
         args = {"interviews": interviews}
         if platform:
             args["platform"] = platform
-            
+
         return self.send_command(
             command_type=CommandType.BATCH_INTERVIEW,
             args=args,
             timeout=timeout
         )
-    
+
     def send_close_env(self, timeout: float = 30.0) -> IPCResponse:
         """
-        发送关闭环境命令
-        
+        Отправка команды закрытия среды
+
         Args:
-            timeout: 超时时间
-            
+            timeout: Тайм-аут
+
         Returns:
             IPCResponse
         """
@@ -266,17 +266,17 @@ class SimulationIPCClient:
             args={},
             timeout=timeout
         )
-    
+
     def check_env_alive(self) -> bool:
         """
-        检查模拟环境是否存活
-        
-        通过检查 env_status.json 文件来判断
+        Проверка активности среды симуляции
+
+        Определяется по файлу env_status.json
         """
         status_file = os.path.join(self.simulation_dir, "env_status.json")
         if not os.path.exists(status_file):
             return False
-        
+
         try:
             with open(status_file, 'r', encoding='utf-8') as f:
                 status = json.load(f)
@@ -287,106 +287,106 @@ class SimulationIPCClient:
 
 class SimulationIPCServer:
     """
-    模拟IPC服务器（模拟脚本端使用）
-    
-    轮询命令目录，执行命令并返回响应
+    IPC-сервер симуляции (используется на стороне скрипта симуляции)
+
+    Опрашивает каталог команд, выполняет команды и возвращает ответы
     """
-    
+
     def __init__(self, simulation_dir: str):
         """
-        初始化IPC服务器
-        
+        Инициализация IPC-сервера
+
         Args:
-            simulation_dir: 模拟数据目录
+            simulation_dir: Каталог данных симуляции
         """
         self.simulation_dir = simulation_dir
         self.commands_dir = os.path.join(simulation_dir, "ipc_commands")
         self.responses_dir = os.path.join(simulation_dir, "ipc_responses")
-        
-        # 确保目录存在
+
+        # Создание каталогов, если они не существуют
         os.makedirs(self.commands_dir, exist_ok=True)
         os.makedirs(self.responses_dir, exist_ok=True)
-        
-        # 环境状态
+
+        # Статус среды
         self._running = False
-    
+
     def start(self):
-        """标记服务器为运行状态"""
+        """Отметить сервер как работающий"""
         self._running = True
         self._update_env_status("alive")
-    
+
     def stop(self):
-        """标记服务器为停止状态"""
+        """Отметить сервер как остановленный"""
         self._running = False
         self._update_env_status("stopped")
-    
+
     def _update_env_status(self, status: str):
-        """更新环境状态文件"""
+        """Обновление файла статуса среды"""
         status_file = os.path.join(self.simulation_dir, "env_status.json")
         with open(status_file, 'w', encoding='utf-8') as f:
             json.dump({
                 "status": status,
                 "timestamp": datetime.now().isoformat()
             }, f, ensure_ascii=False, indent=2)
-    
+
     def poll_commands(self) -> Optional[IPCCommand]:
         """
-        轮询命令目录，返回第一个待处理的命令
-        
+        Опрос каталога команд, возврат первой ожидающей обработки команды
+
         Returns:
-            IPCCommand 或 None
+            IPCCommand или None
         """
         if not os.path.exists(self.commands_dir):
             return None
-        
-        # 按时间排序获取命令文件
+
+        # Получение файлов команд, отсортированных по времени
         command_files = []
         for filename in os.listdir(self.commands_dir):
             if filename.endswith('.json'):
                 filepath = os.path.join(self.commands_dir, filename)
                 command_files.append((filepath, os.path.getmtime(filepath)))
-        
+
         command_files.sort(key=lambda x: x[1])
-        
+
         for filepath, _ in command_files:
             try:
                 with open(filepath, 'r', encoding='utf-8') as f:
                     data = json.load(f)
                 return IPCCommand.from_dict(data)
             except (json.JSONDecodeError, KeyError, OSError) as e:
-                logger.warning(f"读取命令文件失败: {filepath}, {e}")
+                logger.warning(f"Ошибка чтения файла команды: {filepath}, {e}")
                 continue
-        
+
         return None
-    
+
     def send_response(self, response: IPCResponse):
         """
-        发送响应
-        
+        Отправка ответа
+
         Args:
-            response: IPC响应
+            response: IPC-ответ
         """
         response_file = os.path.join(self.responses_dir, f"{response.command_id}.json")
         with open(response_file, 'w', encoding='utf-8') as f:
             json.dump(response.to_dict(), f, ensure_ascii=False, indent=2)
-        
-        # 删除命令文件
+
+        # Удаление файла команды
         command_file = os.path.join(self.commands_dir, f"{response.command_id}.json")
         try:
             os.remove(command_file)
         except OSError:
             pass
-    
+
     def send_success(self, command_id: str, result: Dict[str, Any]):
-        """发送成功响应"""
+        """Отправка успешного ответа"""
         self.send_response(IPCResponse(
             command_id=command_id,
             status=CommandStatus.COMPLETED,
             result=result
         ))
-    
+
     def send_error(self, command_id: str, error: str):
-        """发送错误响应"""
+        """Отправка ответа с ошибкой"""
         self.send_response(IPCResponse(
             command_id=command_id,
             status=CommandStatus.FAILED,

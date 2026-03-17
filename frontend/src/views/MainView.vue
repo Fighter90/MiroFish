@@ -5,17 +5,17 @@
       <div class="header-left">
         <div class="brand" @click="router.push('/')">MIROFISH</div>
       </div>
-      
+
       <div class="header-center">
         <div class="view-switcher">
-          <button 
-            v-for="mode in ['graph', 'split', 'workbench']" 
+          <button
+            v-for="mode in ['graph', 'split', 'workbench']"
             :key="mode"
             class="switch-btn"
             :class="{ active: viewMode === mode }"
             @click="viewMode = mode"
           >
-            {{ { graph: '图谱', split: '双栏', workbench: '工作台' }[mode] }}
+            {{ { graph: 'Граф', split: 'Две колонки', workbench: 'Рабочая область' }[mode] }}
           </button>
         </div>
       </div>
@@ -37,7 +37,7 @@
     <main class="content-area">
       <!-- Left Panel: Graph -->
       <div class="panel-wrapper left" :style="leftPanelStyle">
-        <GraphPanel 
+        <GraphPanel
           :graphData="graphData"
           :loading="graphLoading"
           :currentPhase="currentPhase"
@@ -48,8 +48,8 @@
 
       <!-- Right Panel: Step Components -->
       <div class="panel-wrapper right" :style="rightPanelStyle">
-        <!-- Step 1: 图谱构建 -->
-        <Step1GraphBuild 
+        <!-- Шаг 1: Построение графа -->
+        <Step1GraphBuild
           v-if="currentStep === 1"
           :currentPhase="currentPhase"
           :projectData="projectData"
@@ -59,7 +59,7 @@
           :systemLogs="systemLogs"
           @next-step="handleNextStep"
         />
-        <!-- Step 2: 环境搭建 -->
+        <!-- Шаг 2: Настройка среды -->
         <Step2EnvSetup
           v-else-if="currentStep === 2"
           :projectData="projectData"
@@ -90,8 +90,8 @@ const router = useRouter()
 const viewMode = ref('split') // graph | split | workbench
 
 // Step State
-const currentStep = ref(1) // 1: 图谱构建, 2: 环境搭建, 3: 开始模拟, 4: 报告生成, 5: 深度互动
-const stepNames = ['图谱构建', '环境搭建', '开始模拟', '报告生成', '深度互动']
+const currentStep = ref(1) // 1: Построение графа, 2: Настройка среды, 3: Запуск моделирования, 4: Генерация отчёта, 5: Глубокое взаимодействие
+const stepNames = ['Построение графа', 'Настройка среды', 'Запуск моделирования', 'Генерация отчёта', 'Глубокое взаимодействие']
 
 // Data State
 const currentProjectId = ref(route.params.projectId)
@@ -159,11 +159,11 @@ const toggleMaximize = (target) => {
 const handleNextStep = (params = {}) => {
   if (currentStep.value < 5) {
     currentStep.value++
-    addLog(`进入 Step ${currentStep.value}: ${stepNames[currentStep.value - 1]}`)
-    
-    // 如果是从 Step 2 进入 Step 3，记录模拟轮数配置
+    addLog(`Переход к шагу ${currentStep.value}: ${stepNames[currentStep.value - 1]}`)
+
+    // Если переход от шага 2 к шагу 3, записываем настройку количества раундов моделирования
     if (currentStep.value === 3 && params.maxRounds) {
-      addLog(`自定义模拟轮数: ${params.maxRounds} 轮`)
+      addLog(`Пользовательское количество раундов моделирования: ${params.maxRounds}`)
     }
   }
 }
@@ -171,7 +171,7 @@ const handleNextStep = (params = {}) => {
 const handleGoBack = () => {
   if (currentStep.value > 1) {
     currentStep.value--
-    addLog(`返回 Step ${currentStep.value}: ${stepNames[currentStep.value - 1]}`)
+    addLog(`Возврат к шагу ${currentStep.value}: ${stepNames[currentStep.value - 1]}`)
   }
 }
 
@@ -193,23 +193,23 @@ const handleNewProject = async () => {
     addLog('Error: No pending files found for new project.')
     return
   }
-  
+
   try {
     loading.value = true
     currentPhase.value = 0
     ontologyProgress.value = { message: 'Uploading and analyzing docs...' }
     addLog('Starting ontology generation: Uploading files...')
-    
+
     const formData = new FormData()
     pending.files.forEach(f => formData.append('files', f))
     formData.append('simulation_requirement', pending.simulationRequirement)
-    
+
     const res = await generateOntology(formData)
     if (res.success) {
       clearPendingUpload()
       currentProjectId.value = res.data.project_id
       projectData.value = res.data
-      
+
       router.replace({ name: 'Process', params: { projectId: res.data.project_id } })
       ontologyProgress.value = null
       addLog(`Ontology generated successfully for project ${res.data.project_id}`)
@@ -235,7 +235,7 @@ const loadProject = async () => {
       projectData.value = res.data
       updatePhaseByStatus(res.data.status)
       addLog(`Project loaded. Status: ${res.data.status}`)
-      
+
       if (res.data.status === 'ontology_generated' && !res.data.graph_id) {
         await startBuildGraph()
       } else if (res.data.status === 'graph_building' && res.data.graph_build_task_id) {
@@ -273,7 +273,7 @@ const startBuildGraph = async () => {
     currentPhase.value = 1
     buildProgress.value = { progress: 0, message: 'Starting build...' }
     addLog('Initiating graph build...')
-    
+
     const res = await buildGraph({ project_id: currentProjectId.value })
     if (res.success) {
       addLog(`Graph build task started. Task ID: ${res.data.task_id}`)
@@ -323,20 +323,20 @@ const pollTaskStatus = async (taskId) => {
     const res = await getTaskStatus(taskId)
     if (res.success) {
       const task = res.data
-      
+
       // Log progress message if it changed
       if (task.message && task.message !== buildProgress.value?.message) {
         addLog(task.message)
       }
-      
+
       buildProgress.value = { progress: task.progress || 0, message: task.message }
-      
+
       if (task.status === 'completed') {
         addLog('Graph build task completed.')
         stopPolling()
         stopGraphPolling() // Stop polling, do final load
         currentPhase.value = 2
-        
+
         // Final load
         const projRes = await getProject(currentProjectId.value)
         if (projRes.success && projRes.data.graph_id) {
