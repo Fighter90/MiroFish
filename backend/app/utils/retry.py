@@ -52,7 +52,7 @@ def retry_with_backoff(
                     last_exception = e
 
                     if attempt == max_retries:
-                        logger.error(f"Функция {func.__name__} не удалась после {max_retries} повторов: {str(e)}")
+                        logger.error(f"{func.__name__}: ошибка после {max_retries} попыток: {str(e)}")
                         raise
 
                     # Расчёт задержки
@@ -61,7 +61,7 @@ def retry_with_backoff(
                         current_delay = current_delay * (0.5 + random.random())
 
                     logger.warning(
-                        f"Функция {func.__name__} попытка {attempt + 1} не удалась: {str(e)}, "
+                        f"{func.__name__}: попытка {attempt + 1} не удалась: {str(e)}, "
                         f"повтор через {current_delay:.1f} сек..."
                     )
 
@@ -105,7 +105,7 @@ def retry_with_backoff_async(
                     last_exception = e
 
                     if attempt == max_retries:
-                        logger.error(f"Асинхронная функция {func.__name__} не удалась после {max_retries} повторов: {str(e)}")
+                        logger.error(f"{func.__name__} (async): ошибка после {max_retries} попыток: {str(e)}")
                         raise
 
                     current_delay = min(delay, max_delay)
@@ -113,7 +113,7 @@ def retry_with_backoff_async(
                         current_delay = current_delay * (0.5 + random.random())
 
                     logger.warning(
-                        f"Асинхронная функция {func.__name__} попытка {attempt + 1} не удалась: {str(e)}, "
+                        f"{func.__name__} (async): попытка {attempt + 1} не удалась: {str(e)}, "
                         f"повтор через {current_delay:.1f} сек..."
                     )
 
@@ -176,14 +176,14 @@ class RetryableAPIClient:
                 last_exception = e
 
                 if attempt == self.max_retries:
-                    logger.error(f"Вызов API не удался после {self.max_retries} повторов: {str(e)}")
+                    logger.error(f"Вызов API: ошибка после {self.max_retries} попыток: {str(e)}")
                     raise
 
                 current_delay = min(delay, self.max_delay)
                 current_delay = current_delay * (0.5 + random.random())
 
                 logger.warning(
-                    f"Вызов API попытка {attempt + 1} не удалась: {str(e)}, "
+                    f"Вызов API: попытка {attempt + 1} не удалась: {str(e)}, "
                     f"повтор через {current_delay:.1f} сек..."
                 )
 
@@ -224,7 +224,7 @@ class RetryableAPIClient:
                 results.append(result)
 
             except Exception as e:
-                logger.error(f"Обработка элемента {idx + 1} не удалась: {str(e)}")
+                logger.error(f"Ошибка обработки элемента {idx + 1}: {str(e)}")
                 failures.append({
                     "index": idx,
                     "item": item,

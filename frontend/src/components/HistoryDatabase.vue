@@ -13,7 +13,7 @@
     <!-- Область заголовка -->
     <div class="section-header">
       <div class="section-line"></div>
-      <span class="section-title">История моделирования</span>
+      <span class="section-title">История симуляций</span>
       <div class="section-line"></div>
     </div>
 
@@ -126,27 +126,27 @@
             <div class="modal-body">
               <!-- Требование моделирования -->
               <div class="modal-section">
-                <div class="modal-label">Требование моделирования</div>
+                <div class="modal-label">Задача симуляции</div>
                 <div class="modal-requirement">{{ selectedProject.simulation_requirement || 'Нет' }}</div>
               </div>
 
               <!-- Список файлов -->
               <div class="modal-section">
-                <div class="modal-label">Связанные файлы</div>
+                <div class="modal-label">Файлы</div>
                 <div class="modal-files" v-if="selectedProject.files && selectedProject.files.length > 0">
                   <div v-for="(file, index) in selectedProject.files" :key="index" class="modal-file-item">
                     <span class="file-tag" :class="getFileType(file.filename)">{{ getFileTypeLabel(file.filename) }}</span>
                     <span class="modal-file-name">{{ file.filename }}</span>
                   </div>
                 </div>
-                <div class="modal-empty" v-else>Нет связанных файлов</div>
+                <div class="modal-empty" v-else>Файлов нет</div>
               </div>
             </div>
 
             <!-- Разделитель воспроизведения моделирования -->
             <div class="modal-divider">
               <span class="divider-line"></span>
-              <span class="divider-text">Воспроизведение моделирования</span>
+              <span class="divider-text">Просмотр</span>
               <span class="divider-line"></span>
             </div>
 
@@ -176,12 +176,12 @@
               >
                 <span class="btn-step">Step4</span>
                 <span class="btn-icon">◆</span>
-                <span class="btn-text">Аналитический отчёт</span>
+                <span class="btn-text">Отчёт</span>
               </button>
             </div>
             <!-- Подсказка о недоступности воспроизведения -->
             <div class="modal-playback-hint">
-              <span class="hint-text">Step3 «Начать моделирование» и Step5 «Глубокое взаимодействие» запускаются только в процессе работы, воспроизведение из истории не поддерживается</span>
+              <span class="hint-text">Step3 и Step5 доступны только во время активной симуляции</span>
             </div>
           </div>
         </div>
@@ -337,7 +337,7 @@ const truncateText = (text, maxLength) => {
 
 // Генерация заголовка из требования моделирования (первые 20 символов)
 const getSimulationTitle = (requirement) => {
-  if (!requirement) return 'Без названия'
+  if (!requirement) return 'Без имени'
   const title = requirement.slice(0, 20)
   return requirement.length > 20 ? title + '...' : title
 }
@@ -353,8 +353,8 @@ const formatSimulationId = (simulationId) => {
 const formatRounds = (simulation) => {
   const current = simulation.current_round || 0
   const total = simulation.total_rounds || 0
-  if (total === 0) return 'Не начато'
-  return `${current}/${total} раунд(ов)`
+  if (total === 0) return 'Не начата'
+  return `${current}/${total} р.`
 }
 
 // Получение типа файла (для стилей)
@@ -382,7 +382,7 @@ const getFileTypeLabel = (filename) => {
 
 // Усечение имени файла (с сохранением расширения)
 const truncateFilename = (filename, maxLength) => {
-  if (!filename) return 'Неизвестный файл'
+  if (!filename) return 'Файл'
   if (filename.length <= maxLength) return filename
 
   const ext = filename.includes('.') ? '.' + filename.split('.').pop() : ''

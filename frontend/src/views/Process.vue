@@ -23,7 +23,7 @@
         <div class="panel-header">
           <div class="header-left">
             <span class="header-deco">◆</span>
-            <span class="header-title">Граф знаний в реальном времени</span>
+            <span class="header-title">Граф знаний</span>
           </div>
           <div class="header-right">
             <template v-if="graphData">
@@ -50,7 +50,7 @@
             <!-- Подсказка о построении -->
             <div v-if="currentPhase === 1" class="graph-building-hint">
               <span class="building-dot"></span>
-              Обновление в реальном времени...
+              Обновление...
             </div>
 
             <!-- Панель деталей узла/связи -->
@@ -171,7 +171,7 @@
               <div class="loading-ring"></div>
               <div class="loading-ring"></div>
             </div>
-            <p class="loading-text">Загрузка данных графа...</p>
+            <p class="loading-text">Загрузка графа...</p>
           </div>
 
           <!-- Ожидание построения -->
@@ -189,8 +189,8 @@
                 <line x1="50" y1="72" x2="74" y2="66" stroke="#000" stroke-width="1"/>
               </svg>
             </div>
-            <p class="waiting-text">Ожидание генерации онтологии</p>
-            <p class="waiting-hint">После завершения автоматически начнётся построение графа</p>
+            <p class="waiting-text">Ожидание онтологии</p>
+            <p class="waiting-hint">Построение графа начнётся автоматически</p>
           </div>
 
           <!-- Построение, но данных пока нет -->
@@ -225,7 +225,7 @@
       <div class="right-panel" :class="{ 'hidden': isFullScreen }">
         <div class="panel-header dark-header">
           <span class="header-icon">▣</span>
-          <span class="header-title">Процесс построения</span>
+          <span class="header-title">Процесс</span>
         </div>
 
         <div class="process-content">
@@ -234,7 +234,7 @@
             <div class="phase-header">
               <span class="phase-num">01</span>
               <div class="phase-info">
-                <div class="phase-title">Генерация онтологии</div>
+                <div class="phase-title">Онтология</div>
                 <div class="phase-api">/api/graph/ontology/generate</div>
               </div>
               <span class="phase-status" :class="getPhaseStatusClass(0)">
@@ -244,15 +244,15 @@
 
             <div class="phase-detail">
               <div class="detail-section">
-                <div class="detail-label">Описание интерфейса</div>
+                <div class="detail-label">Описание</div>
                 <div class="detail-content">
-                  После загрузки документа LLM анализирует содержимое и автоматически генерирует структуру онтологии, подходящую для моделирования общественного мнения (типы сущностей + типы связей)
+                  LLM анализирует документ и генерирует онтологию (типы сущностей + связей)
                 </div>
               </div>
 
               <!-- Прогресс генерации онтологии -->
               <div class="detail-section" v-if="ontologyProgress && currentPhase === 0">
-                <div class="detail-label">Прогресс генерации</div>
+                <div class="detail-label">Прогресс</div>
                 <div class="ontology-progress">
                   <div class="progress-spinner"></div>
                   <span class="progress-text">{{ ontologyProgress.message }}</span>
@@ -261,7 +261,7 @@
 
               <!-- Сгенерированная информация об онтологии -->
               <div class="detail-section" v-if="projectData?.ontology">
-                <div class="detail-label">Сгенерированные типы сущностей ({{ projectData.ontology.entity_types?.length || 0 }})</div>
+                <div class="detail-label">Типы сущностей ({{ projectData.ontology.entity_types?.length || 0 }})</div>
                 <div class="entity-tags">
                   <span
                     v-for="entity in projectData.ontology.entity_types"
@@ -274,7 +274,7 @@
               </div>
 
               <div class="detail-section" v-if="projectData?.ontology">
-                <div class="detail-label">Сгенерированные типы связей ({{ projectData.ontology.relation_types?.length || 0 }})</div>
+                <div class="detail-label">Типы связей ({{ projectData.ontology.relation_types?.length || 0 }})</div>
                 <div class="relation-list">
                   <div
                     v-for="(rel, idx) in projectData.ontology.relation_types?.slice(0, 5) || []"
@@ -288,14 +288,14 @@
                     <span class="rel-target">{{ rel.target_type }}</span>
                   </div>
                   <div v-if="(projectData.ontology.relation_types?.length || 0) > 5" class="relation-more">
-                    +{{ projectData.ontology.relation_types.length - 5 }} ещё связей...
+                    +{{ projectData.ontology.relation_types.length - 5 }} ещё...
                   </div>
                 </div>
               </div>
 
               <!-- Состояние ожидания -->
               <div class="detail-section waiting-state" v-if="!projectData?.ontology && currentPhase === 0 && !ontologyProgress">
-                <div class="waiting-hint">Ожидание генерации онтологии...</div>
+                <div class="waiting-hint">Ожидание...</div>
               </div>
             </div>
           </div>

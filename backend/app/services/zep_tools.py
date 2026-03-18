@@ -451,13 +451,13 @@ class ZepToolsService:
                 last_exception = e
                 if attempt < max_retries - 1:
                     logger.warning(
-                        f"Zep {operation_name} попытка {attempt + 1} не удалась: {str(e)[:100]}, "
+                        f"Ошибка Zep {operation_name} (попытка {attempt + 1}): {str(e)[:100]}, "
                         f"повтор через {delay:.1f} сек..."
                     )
                     time.sleep(delay)
                     delay *= 2
                 else:
-                    logger.error(f"Zep {operation_name} не удалось после {max_retries} попыток: {str(e)}")
+                    logger.error(f"Ошибка Zep {operation_name} после {max_retries} попыток: {str(e)}")
 
         raise last_exception
 
@@ -539,7 +539,7 @@ class ZepToolsService:
             )
 
         except Exception as e:
-            logger.warning(f"Zep Search API не удался, переход на локальный поиск: {str(e)}")
+            logger.warning(f"Ошибка Zep Search API, переход на локальный поиск: {str(e)}")
             # Резервный вариант: локальный поиск по ключевым словам
             return self._local_search(graph_id, query, limit, scope)
 
@@ -953,8 +953,8 @@ class ZepToolsService:
         """
         [InsightForge - Глубокий аналитический поиск]
 
-        Самая мощная гибридная функция поиска, автоматическое разложение вопроса и многомерный поиск:
-        1. Разложение вопроса на несколько подвопросов с помощью LLM
+        Самая мощная гибридная функция поиска, автоматическое разбиение вопроса и многомерный поиск:
+        1. Разбиение вопроса на несколько подвопросов с помощью LLM
         2. Семантический поиск по каждому подвопросу
         3. Извлечение связанных сущностей и получение их подробной информации
         4. Отслеживание цепочек связей
@@ -1099,9 +1099,9 @@ class ZepToolsService:
         """
         Генерация подвопросов с помощью LLM
 
-        Разложение сложного вопроса на несколько подвопросов для независимого поиска
+        Разбиение сложного вопроса на несколько подвопросов для независимого поиска
         """
-        system_prompt = """Вы - профессиональный аналитик вопросов. Ваша задача - разложить сложный вопрос на несколько подвопросов, которые можно независимо наблюдать в симулированном мире.
+        system_prompt = """Вы — профессиональный аналитик вопросов. Ваша задача — разбить сложный вопрос на несколько подвопросов, которые можно независимо наблюдать в симулированном мире.
 
 Требования:
 1. Каждый подвопрос должен быть достаточно конкретным для поиска связанных действий Agent-ов или событий в симулированном мире
@@ -1114,7 +1114,7 @@ class ZepToolsService:
 
 {f"Контекст отчёта: {report_context[:500]}" if report_context else ""}
 
-Разложите следующий вопрос на {max_queries} подвопросов:
+Разбейте следующий вопрос на {max_queries} подвопросов:
 {query}
 
 Верните список подвопросов в формате JSON."""
@@ -1133,7 +1133,7 @@ class ZepToolsService:
             return [str(sq) for sq in sub_queries[:max_queries]]
 
         except Exception as e:
-            logger.warning(f"Ошибка генерации подвопросов: {str(e)}, используются подвопросы по умолчанию")
+            logger.warning(f"Ошибка генерации подвопросов: {str(e)}, переход на подвопросы по умолчанию")
             # Резервный вариант: вариации исходного вопроса
             return [
                 query,
@@ -1318,7 +1318,7 @@ class ZepToolsService:
 
         if not profiles:
             logger.warning(f"Файл профилей для симуляции {simulation_id} не найден")
-            result.summary = "Файл профилей Agent-ов для интервью не найден"
+            result.summary = "Не найден файл профилей Agent-ов для интервью"
             return result
 
         result.total_agents = len(profiles)
@@ -1350,7 +1350,7 @@ class ZepToolsService:
 
         # Добавление оптимизированного префикса для ограничения формата ответа Agent-а
         INTERVIEW_PROMPT_PREFIX = (
-            "Вы даёте интервью. Пожалуйста, ответьте на следующие вопросы, "
+            "Вы даёте интервью. Ответьте на следующие вопросы, "
             "основываясь на своём персонаже, всех прошлых воспоминаниях и действиях, "
             "в формате простого текста.\n"
             "Требования к ответу:\n"
@@ -1596,7 +1596,7 @@ class ZepToolsService:
 {interview_requirement}
 
 Контекст симуляции:
-{simulation_requirement if simulation_requirement else "не предоставлен"}
+{simulation_requirement if simulation_requirement else "не указан"}
 
 Доступные Agent-ы (всего {len(agent_summaries)}):
 {json.dumps(agent_summaries, ensure_ascii=False, indent=2)}
@@ -1626,7 +1626,7 @@ class ZepToolsService:
             return selected_agents, valid_indices, reasoning
 
         except Exception as e:
-            logger.warning(f"Ошибка LLM при выборе Agent-ов, используется выбор по умолчанию: {e}")
+            logger.warning(f"Ошибка LLM при выборе Agent-ов, переход на выбор по умолчанию: {e}")
             # Резервный вариант: выбор первых N
             selected = profiles[:max_agents]
             indices = list(range(min(max_agents, len(profiles))))
@@ -1656,7 +1656,7 @@ class ZepToolsService:
 
         user_prompt = f"""Требования к интервью: {interview_requirement}
 
-Контекст симуляции: {simulation_requirement if simulation_requirement else "не предоставлен"}
+Контекст симуляции: {simulation_requirement if simulation_requirement else "не указан"}
 
 Роли респондентов: {', '.join(agent_roles)}
 
@@ -1733,4 +1733,4 @@ class ZepToolsService:
         except Exception as e:
             logger.warning(f"Ошибка генерации сводки интервью: {e}")
             # Резервный вариант: простое объединение
-            return f"Всего проинтервьюировано {len(interviews)} респондентов, включая: " + ", ".join([i.agent_name for i in interviews])
+            return f"Проинтервьюировано {len(interviews)} респондентов: " + ", ".join([i.agent_name for i in interviews])

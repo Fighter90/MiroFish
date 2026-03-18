@@ -42,7 +42,7 @@ def get_project(project_id: str):
     if not project:
         return jsonify({
             "success": False,
-            "error": f"Проект не существует: {project_id}"
+            "error": f"Проект не найден: {project_id}"
         }), 404
 
     return jsonify({
@@ -76,7 +76,7 @@ def delete_project(project_id: str):
     if not success:
         return jsonify({
             "success": False,
-            "error": f"Проект не существует или не удалось удалить: {project_id}"
+            "error": f"Проект не найден или не удалось удалить: {project_id}"
         }), 404
 
     return jsonify({
@@ -95,7 +95,7 @@ def reset_project(project_id: str):
     if not project:
         return jsonify({
             "success": False,
-            "error": f"Проект не существует: {project_id}"
+            "error": f"Проект не найден: {project_id}"
         }), 404
 
     # Сброс до состояния «онтология сгенерирована»
@@ -160,7 +160,7 @@ def generate_ontology():
         if not simulation_requirement:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите описание требований к моделированию (simulation_requirement)"
+                "error": "Укажите описание требований к моделированию (simulation_requirement)"
             }), 400
 
         # Получение загруженных файлов
@@ -168,7 +168,7 @@ def generate_ontology():
         if not uploaded_files or all(not f.filename for f in uploaded_files):
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, загрузите хотя бы один файл документа"
+                "error": "Загрузите хотя бы один файл документа"
             }), 400
 
         # Создание проекта
@@ -203,7 +203,7 @@ def generate_ontology():
             ProjectManager.delete_project(project.project_id)
             return jsonify({
                 "success": False,
-                "error": "Не удалось обработать ни один документ, проверьте формат файлов"
+                "error": "Ни один документ не удалось обработать — проверьте формат файлов"
             }), 400
 
         # Сохранение извлечённого текста
@@ -301,7 +301,7 @@ def build_graph():
         if not project_id:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите project_id"
+                "error": "Укажите project_id"
             }), 400
 
         # Получение проекта
@@ -309,7 +309,7 @@ def build_graph():
         if not project:
             return jsonify({
                 "success": False,
-                "error": f"Проект не существует: {project_id}"
+                "error": f"Проект не найден: {project_id}"
             }), 404
 
         # Проверка состояния проекта
@@ -536,7 +536,7 @@ def get_task(task_id: str):
     if not task:
         return jsonify({
             "success": False,
-            "error": f"Задача не существует: {task_id}"
+            "error": f"Задача не найдена: {task_id}"
         }), 404
 
     return jsonify({

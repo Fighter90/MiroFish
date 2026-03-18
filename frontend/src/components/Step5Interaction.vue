@@ -98,7 +98,7 @@
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
               </svg>
-              <span>Диалог с Report Agent</span>
+              <span>Report Agent</span>
             </button>
             <div class="agent-dropdown" v-if="profiles.length > 0">
               <button 
@@ -110,13 +110,13 @@
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                   <circle cx="12" cy="7" r="4"></circle>
                 </svg>
-                <span>{{ selectedAgent ? selectedAgent.username : 'Диалог с любым индивидом в мире' }}</span>
+                <span>{{ selectedAgent ? selectedAgent.username : 'Выберите собеседника' }}</span>
                 <svg class="dropdown-arrow" :class="{ open: showAgentDropdown }" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2">
                   <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
               </button>
               <div v-if="showAgentDropdown" class="dropdown-menu">
-                <div class="dropdown-header">Выбрать собеседника</div>
+                <div class="dropdown-header">Собеседник</div>
                 <div 
                   v-for="(agent, idx) in profiles" 
                   :key="idx"
@@ -126,7 +126,7 @@
                   <div class="agent-avatar">{{ (agent.username || 'A')[0] }}</div>
                   <div class="agent-info">
                     <span class="agent-name">{{ agent.username }}</span>
-                    <span class="agent-role">{{ agent.profession || 'Профессия неизвестна' }}</span>
+                    <span class="agent-role">{{ agent.profession || 'Не указана' }}</span>
                   </div>
                 </div>
               </div>
@@ -141,7 +141,7 @@
                 <path d="M9 11l3 3L22 4"></path>
                 <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
               </svg>
-              <span>Отправить опрос в мир</span>
+              <span>Опрос</span>
             </button>
           </div>
         </div>
@@ -155,7 +155,7 @@
               <div class="tools-card-avatar">R</div>
               <div class="tools-card-info">
                 <div class="tools-card-name">Report Agent - Chat</div>
-                <div class="tools-card-subtitle">Быстрая диалоговая версия агента генерации отчётов, с доступом к 4 профессиональным инструментам и полной памятью MiroFish</div>
+                <div class="tools-card-subtitle">Диалоговый агент с доступом к 4 инструментам и полной памятью MiroFish</div>
               </div>
               <button class="tools-card-toggle" @click="showToolsDetail = !showToolsDetail">
                 <svg :class="{ 'is-expanded': showToolsDetail }" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
@@ -172,8 +172,8 @@
                     </svg>
                   </div>
                   <div class="tool-content">
-                    <div class="tool-name">InsightForge Глубокая атрибуция</div>
-                    <div class="tool-desc">Совмещение исходных данных реального мира с состоянием симуляции, с механизмом Global/Local Memory для глубокого кросс-темпорального анализа причин</div>
+                    <div class="tool-name">InsightForge</div>
+                    <div class="tool-desc">Глубокий анализ причин с кросс-темпоральной памятью и данными реального мира</div>
                   </div>
                 </div>
                 <div class="tool-item tool-blue">
@@ -184,8 +184,8 @@
                     </svg>
                   </div>
                   <div class="tool-content">
-                    <div class="tool-name">PanoramaSearch Панорамное отслеживание</div>
-                    <div class="tool-desc">Алгоритм обхода в ширину на основе графовой структуры, реконструкция путей распространения событий и захват топологии информационных потоков</div>
+                    <div class="tool-name">PanoramaSearch</div>
+                    <div class="tool-desc">Обход графа для отслеживания распространения событий и информационных потоков</div>
                   </div>
                 </div>
                 <div class="tool-item tool-orange">
@@ -195,8 +195,8 @@
                     </svg>
                   </div>
                   <div class="tool-content">
-                    <div class="tool-name">QuickSearch Быстрый поиск</div>
-                    <div class="tool-desc">Интерфейс мгновенных запросов на основе GraphRAG, оптимизированная индексация для быстрого извлечения атрибутов узлов и дискретных фактов</div>
+                    <div class="tool-name">QuickSearch</div>
+                    <div class="tool-desc">Быстрый поиск по GraphRAG: атрибуты узлов и факты</div>
                   </div>
                 </div>
                 <div class="tool-item tool-green">
@@ -208,8 +208,8 @@
                     </svg>
                   </div>
                   <div class="tool-content">
-                    <div class="tool-name">InterviewSubAgent Виртуальное интервью</div>
-                    <div class="tool-desc">Автономное интервьюирование, параллельные многораундовые диалоги с индивидами симуляции, сбор неструктурированных данных о мнениях и психологическом состоянии</div>
+                    <div class="tool-name">InterviewSubAgent</div>
+                    <div class="tool-desc">Параллельные интервью с участниками симуляции, сбор мнений</div>
                   </div>
                 </div>
               </div>
@@ -224,7 +224,7 @@
                 <div class="profile-card-name">{{ selectedAgent.username }}</div>
                 <div class="profile-card-meta">
                   <span v-if="selectedAgent.name" class="profile-card-handle">@{{ selectedAgent.name }}</span>
-                  <span class="profile-card-profession">{{ selectedAgent.profession || 'Профессия неизвестна' }}</span>
+                  <span class="profile-card-profession">{{ selectedAgent.profession || 'Не указана' }}</span>
                 </div>
               </div>
               <button class="profile-card-toggle" @click="showFullProfile = !showFullProfile">
@@ -250,7 +250,7 @@
                 </svg>
               </div>
               <p class="empty-text">
-                {{ chatTarget === 'report_agent' ? 'Диалог с Report Agent для углублённого изучения отчёта' : 'Диалог с симулированными индивидами для изучения их мнений' }}
+                {{ chatTarget === 'report_agent' ? 'Изучите отчёт через диалог с Report Agent' : 'Узнайте мнения участников симуляции' }}
               </p>
             </div>
             <div 
@@ -292,7 +292,7 @@
             <textarea 
               v-model="chatInput"
               class="chat-input"
-              placeholder="Введите ваш вопрос..."
+              placeholder="Введите вопрос..."
               @keydown.enter.exact.prevent="sendMessage"
               :disabled="isSending || (!selectedAgent && chatTarget === 'agent')"
               rows="1"
@@ -317,8 +317,8 @@
           <div class="survey-setup">
             <div class="setup-section">
               <div class="section-header">
-                <span class="section-title">Выбрать объекты опроса</span>
-                <span class="selection-count">Выбрано {{ selectedAgents.size }} / {{ profiles.length }}</span>
+                <span class="section-title">Респонденты</span>
+                <span class="selection-count">{{ selectedAgents.size }} / {{ profiles.length }}</span>
               </div>
               <div class="agents-grid">
                 <label 
@@ -335,7 +335,7 @@
                   <div class="checkbox-avatar">{{ (agent.username || 'A')[0] }}</div>
                   <div class="checkbox-info">
                     <span class="checkbox-name">{{ agent.username }}</span>
-                    <span class="checkbox-role">{{ agent.profession || 'Профессия неизвестна' }}</span>
+                    <span class="checkbox-role">{{ agent.profession || 'Не указана' }}</span>
                   </div>
                   <div class="checkbox-indicator">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3">
@@ -345,20 +345,20 @@
                 </label>
               </div>
               <div class="selection-actions">
-                <button class="action-link" @click="selectAllAgents">Выбрать все</button>
+                <button class="action-link" @click="selectAllAgents">Все</button>
                 <span class="action-divider">|</span>
-                <button class="action-link" @click="clearAgentSelection">Очистить</button>
+                <button class="action-link" @click="clearAgentSelection">Сбросить</button>
               </div>
             </div>
 
             <div class="setup-section">
               <div class="section-header">
-                <span class="section-title">Вопросы анкеты</span>
+                <span class="section-title">Вопрос</span>
               </div>
               <textarea 
                 v-model="surveyQuestion"
                 class="survey-input"
-                placeholder="Введите вопрос для всех выбранных объектов..."
+                placeholder="Введите вопрос для респондентов..."
                 rows="3"
               ></textarea>
             </div>
@@ -369,14 +369,14 @@
               @click="submitSurvey"
             >
               <span v-if="isSurveying" class="loading-spinner"></span>
-              <span v-else>Отправить анкету</span>
+              <span v-else>Отправить</span>
             </button>
           </div>
 
           <!-- Survey Results -->
           <div v-if="surveyResults.length > 0" class="survey-results">
             <div class="results-header">
-              <span class="results-title">Результаты опроса</span>
+              <span class="results-title">Результаты</span>
               <span class="results-count">{{ surveyResults.length }} ответов</span>
             </div>
             <div class="results-list">
@@ -389,7 +389,7 @@
                   <div class="result-avatar">{{ (result.agent_name || 'A')[0] }}</div>
                   <div class="result-info">
                     <span class="result-name">{{ result.agent_name }}</span>
-                    <span class="result-role">{{ result.profession || 'Профессия неизвестна' }}</span>
+                    <span class="result-role">{{ result.profession || 'Не указана' }}</span>
                   </div>
                 </div>
                 <div class="result-question">
@@ -665,7 +665,7 @@ const sendMessage = async () => {
     addLog(`Ошибка отправки: ${err.message}`)
     chatHistory.value.push({
       role: 'assistant',
-      content: `Извините, произошла ошибка: ${err.message}`,
+      content: `Ошибка: ${err.message}`,
       timestamp: new Date().toISOString()
     })
   } finally {
@@ -697,18 +697,18 @@ const sendToReportAgent = async (message) => {
   if (res.success && res.data) {
     chatHistory.value.push({
       role: 'assistant',
-      content: res.data.response || res.data.answer || 'Нет ответа',
+      content: res.data.response || res.data.answer || 'Ответ не получен',
       timestamp: new Date().toISOString()
     })
     addLog('Report Agent ответил')
   } else {
-    throw new Error(res.error || 'Ошибка запроса')
+    throw new Error(res.error || 'Ошибка')
   }
 }
 
 const sendToAgent = async (message) => {
   if (!selectedAgent.value || selectedAgentIndex.value === null) {
-    throw new Error('Сначала выберите симулированного индивида')
+    throw new Error('Выберите собеседника')
   }
   
   addLog(`Отправка ${selectedAgent.value.username}: ${message.substring(0, 50)}...`)
@@ -766,7 +766,7 @@ const sendToAgent = async (message) => {
       throw new Error('Нет данных ответа')
     }
   } else {
-    throw new Error(res.error || 'Ошибка запроса')
+    throw new Error(res.error || 'Ошибка')
   }
 }
 
@@ -830,20 +830,20 @@ const submitSurvey = async () => {
         const agent = profiles.value[agentIdx]
         
         // Приоритет ответов reddit, затем twitter
-        let responseContent = 'Нет ответа'
+        let responseContent = 'Ответ не получен'
         
         if (typeof resultsDict === 'object' && !Array.isArray(resultsDict)) {
           const redditKey = `reddit_${agentIdx}`
           const twitterKey = `twitter_${agentIdx}`
           const agentResult = resultsDict[redditKey] || resultsDict[twitterKey]
           if (agentResult) {
-            responseContent = agentResult.response || agentResult.answer || 'Нет ответа'
+            responseContent = agentResult.response || agentResult.answer || 'Ответ не получен'
           }
         } else if (Array.isArray(resultsDict)) {
           // Совместимость с форматом массива
           const matchedResult = resultsDict.find(r => r.agent_id === agentIdx)
           if (matchedResult) {
-            responseContent = matchedResult.response || matchedResult.answer || 'Нет ответа'
+            responseContent = matchedResult.response || matchedResult.answer || 'Ответ не получен'
           }
         }
         
@@ -859,7 +859,7 @@ const submitSurvey = async () => {
       surveyResults.value = surveyResultsList
       addLog(`Получено ${surveyResults.value.length} ответов`)
     } else {
-      throw new Error(res.error || 'Ошибка запроса')
+      throw new Error(res.error || 'Ошибка')
     }
   } catch (err) {
     addLog(`Ошибка отправки анкеты: ${err.message}`)

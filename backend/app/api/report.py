@@ -53,7 +53,7 @@ def generate_report():
         if not simulation_id:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите simulation_id"
+                "error": "Укажите simulation_id"
             }), 400
 
         force_regenerate = data.get('force_regenerate', False)
@@ -65,7 +65,7 @@ def generate_report():
         if not state:
             return jsonify({
                 "success": False,
-                "error": f"Моделирование не существует: {simulation_id}"
+                "error": f"Моделирование не найдено: {simulation_id}"
             }), 404
 
         # Проверка наличия существующего отчёта
@@ -88,21 +88,21 @@ def generate_report():
         if not project:
             return jsonify({
                 "success": False,
-                "error": f"Проект не существует: {state.project_id}"
+                "error": f"Проект не найден: {state.project_id}"
             }), 404
 
         graph_id = state.graph_id or project.graph_id
         if not graph_id:
             return jsonify({
                 "success": False,
-                "error": "Отсутствует ID графа, убедитесь, что граф построен"
+                "error": "Нет ID графа — убедитесь, что граф построен"
             }), 400
 
         simulation_requirement = project.simulation_requirement
         if not simulation_requirement:
             return jsonify({
                 "success": False,
-                "error": "Отсутствует описание требований к моделированию"
+                "error": "Не указано описание требований к моделированию"
             }), 400
 
         # Предварительная генерация report_id для немедленного возврата фронтенду
@@ -242,7 +242,7 @@ def get_generate_status():
         if not task_id:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите task_id или simulation_id"
+                "error": "Укажите task_id или simulation_id"
             }), 400
 
         task_manager = TaskManager()
@@ -251,7 +251,7 @@ def get_generate_status():
         if not task:
             return jsonify({
                 "success": False,
-                "error": f"Задача не существует: {task_id}"
+                "error": f"Задача не найдена: {task_id}"
             }), 404
 
         return jsonify({
@@ -294,7 +294,7 @@ def get_report(report_id: str):
         if not report:
             return jsonify({
                 "success": False,
-                "error": f"Отчёт не существует: {report_id}"
+                "error": f"Отчёт не найден: {report_id}"
             }), 404
 
         return jsonify({
@@ -331,7 +331,7 @@ def get_report_by_simulation(simulation_id: str):
         if not report:
             return jsonify({
                 "success": False,
-                "error": f"Для данного моделирования отчёт отсутствует: {simulation_id}",
+                "error": f"Для этого моделирования отчёт не найден: {simulation_id}",
                 "has_report": False
             }), 404
 
@@ -403,13 +403,13 @@ def download_report(report_id: str):
         if not report:
             return jsonify({
                 "success": False,
-                "error": f"Отчёт не существует: {report_id}"
+                "error": f"Отчёт не найден: {report_id}"
             }), 404
 
         md_path = ReportManager._get_report_markdown_path(report_id)
 
         if not os.path.exists(md_path):
-            # Если MD-файл не существует, генерируем временный файл
+            # Если MD-файл не найден, генерируем временный файл
             import tempfile
             with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False) as f:
                 f.write(report.markdown_content)
@@ -445,7 +445,7 @@ def delete_report(report_id: str):
         if not success:
             return jsonify({
                 "success": False,
-                "error": f"Отчёт не существует: {report_id}"
+                "error": f"Отчёт не найден: {report_id}"
             }), 404
 
         return jsonify({
@@ -501,13 +501,13 @@ def chat_with_report_agent():
         if not simulation_id:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите simulation_id"
+                "error": "Укажите simulation_id"
             }), 400
 
         if not message:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите message"
+                "error": "Укажите message"
             }), 400
 
         # Получение информации о моделировании и проекте
@@ -517,21 +517,21 @@ def chat_with_report_agent():
         if not state:
             return jsonify({
                 "success": False,
-                "error": f"Моделирование не существует: {simulation_id}"
+                "error": f"Моделирование не найдено: {simulation_id}"
             }), 404
 
         project = ProjectManager.get_project(state.project_id)
         if not project:
             return jsonify({
                 "success": False,
-                "error": f"Проект не существует: {state.project_id}"
+                "error": f"Проект не найден: {state.project_id}"
             }), 404
 
         graph_id = state.graph_id or project.graph_id
         if not graph_id:
             return jsonify({
                 "success": False,
-                "error": "Отсутствует ID графа"
+                "error": "Нет ID графа"
             }), 400
 
         simulation_requirement = project.simulation_requirement or ""
@@ -585,7 +585,7 @@ def get_report_progress(report_id: str):
         if not progress:
             return jsonify({
                 "success": False,
-                "error": f"Отчёт не существует или информация о прогрессе недоступна: {report_id}"
+                "error": f"Отчёт не найден или нет данных о прогрессе: {report_id}"
             }), 404
 
         return jsonify({
@@ -674,7 +674,7 @@ def get_single_section(report_id: str, section_index: int):
         if not os.path.exists(section_path):
             return jsonify({
                 "success": False,
-                "error": f"Раздел не существует: section_{section_index:02d}.md"
+                "error": f"Раздел не найден: section_{section_index:02d}.md"
             }), 404
 
         with open(section_path, 'r', encoding='utf-8') as f:
@@ -950,7 +950,7 @@ def search_graph_tool():
         if not graph_id or not query:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите graph_id и query"
+                "error": "Укажите graph_id и query"
             }), 400
 
         from ..services.zep_tools import ZepToolsService
@@ -994,7 +994,7 @@ def get_graph_statistics_tool():
         if not graph_id:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите graph_id"
+                "error": "Укажите graph_id"
             }), 400
 
         from ..services.zep_tools import ZepToolsService

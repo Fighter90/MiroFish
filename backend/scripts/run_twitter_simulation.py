@@ -126,8 +126,8 @@ try:
         generate_twitter_agent_graph
     )
 except ImportError as e:
-    print(f"Ошибка: отсутствует зависимость {e}")
-    print("Сначала установите: pip install oasis-ai camel-ai")
+    print(f"Ошибка: не найдена зависимость {e}")
+    print("Установите: pip install oasis-ai camel-ai")
     sys.exit(1)
 
 
@@ -216,7 +216,7 @@ class IPCHandler:
         Обработка команды интервью отдельного Agent
 
         Returns:
-            True означает успех, False означает неудачу
+            True -- успех, False -- ошибка
         """
         try:
             # Получение Agent
@@ -241,7 +241,7 @@ class IPCHandler:
 
         except Exception as e:
             error_msg = str(e)
-            print(f"  Interview не удался: agent_id={agent_id}, error={error_msg}")
+            print(f"  Ошибка Interview: agent_id={agent_id}, error={error_msg}")
             self.send_response(command_id, "failed", error=error_msg)
             return False
 
@@ -269,10 +269,10 @@ class IPCHandler:
                     )
                     agent_prompts[agent_id] = prompt
                 except Exception as e:
-                    print(f"  Предупреждение: невозможно получить Agent {agent_id}: {e}")
+                    print(f"  Предупреждение: не удалось получить Agent {agent_id}: {e}")
 
             if not actions:
-                self.send_response(command_id, "failed", error="Нет действительных Agent")
+                self.send_response(command_id, "failed", error="Нет доступных Agent")
                 return False
 
             # Выполнение пакетного Interview
@@ -293,7 +293,7 @@ class IPCHandler:
 
         except Exception as e:
             error_msg = str(e)
-            print(f"  Пакетный Interview не удался: {error_msg}")
+            print(f"  Ошибка пакетного Interview: {error_msg}")
             self.send_response(command_id, "failed", error=error_msg)
             return False
 
@@ -336,7 +336,7 @@ class IPCHandler:
             conn.close()
 
         except Exception as e:
-            print(f"  Не удалось прочитать результат Interview: {e}")
+            print(f"  Ошибка чтения результата Interview: {e}")
 
         return result
 
@@ -345,7 +345,7 @@ class IPCHandler:
         Обработка всех ожидающих команд
 
         Returns:
-            True означает продолжение работы, False означает необходимость выхода
+            True -- продолжить работу, False -- завершить
         """
         command = self.poll_command()
         if not command:
@@ -447,7 +447,7 @@ class TwitterSimulationRunner:
             os.environ["OPENAI_API_KEY"] = llm_api_key
 
         if not os.environ.get("OPENAI_API_KEY"):
-            raise ValueError("Отсутствует конфигурация API Key, установите LLM_API_KEY в файле .env в корневом каталоге проекта")
+            raise ValueError("API Key не указан. Задайте LLM_API_KEY в файле .env в корне проекта")
 
         if llm_base_url:
             os.environ["OPENAI_API_BASE_URL"] = llm_base_url
@@ -554,14 +554,14 @@ class TwitterSimulationRunner:
             original_rounds = total_rounds
             total_rounds = min(total_rounds, max_rounds)
             if total_rounds < original_rounds:
-                print(f"\nКоличество раундов обрезано: {original_rounds} -> {total_rounds} (max_rounds={max_rounds})")
+                print(f"\nРаунды ограничены: {original_rounds} -> {total_rounds} (max_rounds={max_rounds})")
 
         print(f"\nПараметры симуляции:")
         print(f"  - Общая длительность симуляции: {total_hours} часов")
         print(f"  - Время на раунд: {minutes_per_round} минут")
         print(f"  - Всего раундов: {total_rounds}")
         if max_rounds:
-            print(f"  - Ограничение максимального количества раундов: {max_rounds}")
+            print(f"  - Макс. число раундов: {max_rounds}")
         print(f"  - Количество Agent: {len(self.config.get('agent_configs', []))}")
 
         # Создание модели
@@ -572,7 +572,7 @@ class TwitterSimulationRunner:
         print("Загрузка Agent Profile...")
         profile_path = self._get_profile_path()
         if not os.path.exists(profile_path):
-            print(f"Ошибка: файл Profile не существует: {profile_path}")
+            print(f"Ошибка: файл Profile не найден: {profile_path}")
             return
 
         self.agent_graph = await generate_twitter_agent_graph(
@@ -620,7 +620,7 @@ class TwitterSimulationRunner:
                         action_args={"content": content}
                     )
                 except Exception as e:
-                    print(f"  Предупреждение: невозможно создать начальный пост для Agent {agent_id}: {e}")
+                    print(f"  Предупреждение: не удалось создать начальный пост для Agent {agent_id}: {e}")
 
             if initial_actions:
                 await self.env.step(initial_actions)
@@ -716,13 +716,13 @@ async def main():
         '--max-rounds',
         type=int,
         default=None,
-        help='Максимальное количество раундов симуляции (необязательно, для ограничения слишком длинной симуляции)'
+        help='Макс. число раундов (ограничить длительность симуляции)'
     )
     parser.add_argument(
         '--no-wait',
         action='store_true',
         default=False,
-        help='Закрыть среду сразу после завершения симуляции, не переходить в режим ожидания команд'
+        help='Закрыть среду сразу после симуляции, без ожидания команд'
     )
 
     args = parser.parse_args()
@@ -732,7 +732,7 @@ async def main():
     _shutdown_event = asyncio.Event()
 
     if not os.path.exists(args.config):
-        print(f"Ошибка: файл конфигурации не существует: {args.config}")
+        print(f"Ошибка: файл конфигурации не найден: {args.config}")
         sys.exit(1)
 
     # Инициализация конфигурации логирования (с фиксированными именами файлов, очистка старых логов)
@@ -754,7 +754,7 @@ def setup_signal_handlers():
     def signal_handler(signum, frame):
         global _cleanup_done
         sig_name = "SIGTERM" if signum == signal.SIGTERM else "SIGINT"
-        print(f"\nПолучен сигнал {sig_name}, выполняется выход...")
+        print(f"\nПолучен сигнал {sig_name}, завершение работы...")
         if not _cleanup_done:
             _cleanup_done = True
             if _shutdown_event:

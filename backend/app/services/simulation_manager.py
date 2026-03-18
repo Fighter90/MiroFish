@@ -260,7 +260,7 @@ class SimulationManager:
         """
         state = self._load_simulation_state(simulation_id)
         if not state:
-            raise ValueError(f"Симуляция не существует: {simulation_id}")
+            raise ValueError(f"Симуляция не найдена: {simulation_id}")
 
         try:
             state.status = SimulationStatus.PREPARING
@@ -481,7 +481,7 @@ class SimulationManager:
         """Получить Agent Profile симуляции"""
         state = self._load_simulation_state(simulation_id)
         if not state:
-            raise ValueError(f"Симуляция не существует: {simulation_id}")
+            raise ValueError(f"Симуляция не найдена: {simulation_id}")
 
         sim_dir = self._get_simulation_dir(simulation_id)
         profile_path = os.path.join(sim_dir, f"{platform}_profiles.json")

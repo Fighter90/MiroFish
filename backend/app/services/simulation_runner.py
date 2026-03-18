@@ -340,7 +340,7 @@ class SimulationRunner:
         config_path = os.path.join(sim_dir, "simulation_config.json")
 
         if not os.path.exists(config_path):
-            raise ValueError(f"Конфигурация симуляции не существует, сначала вызовите интерфейс /prepare")
+            raise ValueError(f"Конфигурация симуляции не найдена, сначала вызовите интерфейс /prepare")
 
         with open(config_path, 'r', encoding='utf-8') as f:
             config = json.load(f)
@@ -398,7 +398,7 @@ class SimulationRunner:
         script_path = os.path.join(cls.SCRIPTS_DIR, script_name)
 
         if not os.path.exists(script_path):
-            raise ValueError(f"Скрипт не существует: {script_path}")
+            raise ValueError(f"Скрипт не найден: {script_path}")
 
         # Создание очереди действий
         action_queue = Queue()
@@ -773,7 +773,7 @@ class SimulationRunner:
         """Остановить симуляцию"""
         state = cls.get_run_state(simulation_id)
         if not state:
-            raise ValueError(f"Симуляция не существует: {simulation_id}")
+            raise ValueError(f"Симуляция не найдена: {simulation_id}")
 
         if state.runner_status not in [RunnerStatus.RUNNING, RunnerStatus.PAUSED]:
             raise ValueError(f"Симуляция не запущена: {simulation_id}, status={state.runner_status}")
@@ -787,7 +787,7 @@ class SimulationRunner:
             try:
                 cls._terminate_process(process, simulation_id)
             except ProcessLookupError:
-                # Процесс уже не существует
+                # Процесс уже завершён
                 pass
             except Exception as e:
                 logger.error(f"Ошибка завершения группы процессов: {simulation_id}, error={e}")
@@ -1122,7 +1122,7 @@ class SimulationRunner:
         sim_dir = os.path.join(cls.RUN_STATE_DIR, simulation_id)
 
         if not os.path.exists(sim_dir):
-            return {"success": True, "message": "Каталог симуляции не существует, очистка не требуется"}
+            return {"success": True, "message": "Каталог симуляции не найден, очистка не требуется"}
 
         cleaned_files = []
         errors = []
@@ -1249,7 +1249,7 @@ class SimulationRunner:
                                 json.dump(state_data, f, indent=2, ensure_ascii=False)
                             logger.info(f"Статус state.json обновлён на stopped: {simulation_id}")
                         else:
-                            logger.warning(f"state.json не существует: {state_file}")
+                            logger.warning(f"state.json не найден: {state_file}")
                     except Exception as state_err:
                         logger.warning(f"Ошибка обновления state.json: {simulation_id}, error={state_err}")
 
@@ -1293,7 +1293,7 @@ class SimulationRunner:
 
         # В режиме отладки Flask регистрация очистки только в дочернем процессе reloader (процесс, в котором фактически работает приложение)
         # WERKZEUG_RUN_MAIN=true означает дочерний процесс reloader
-        # Если режим отладки не используется, эта переменная окружения отсутствует, и регистрация тоже необходима
+        # Если режим отладки не используется, эта переменная окружения не задана, и регистрация тоже необходима
         is_reloader_process = os.environ.get('WERKZEUG_RUN_MAIN') == 'true'
         is_debug_mode = os.environ.get('FLASK_DEBUG') == '1' or os.environ.get('WERKZEUG_RUN_MAIN') is not None
 
@@ -1305,7 +1305,7 @@ class SimulationRunner:
         # Сохранение исходных обработчиков сигналов
         original_sigint = signal.getsignal(signal.SIGINT)
         original_sigterm = signal.getsignal(signal.SIGTERM)
-        # SIGHUP существует только в Unix-системах (macOS/Linux), в Windows отсутствует
+        # SIGHUP есть только в Unix-системах (macOS/Linux), в Windows его нет
         original_sighup = None
         has_sighup = hasattr(signal, 'SIGHUP')
         if has_sighup:
@@ -1445,12 +1445,12 @@ class SimulationRunner:
             Словарь с результатом интервью
 
         Raises:
-            ValueError: Симуляция не существует или среда не запущена
+            ValueError: Симуляция не найдена или среда не запущена
             TimeoutError: Превышено время ожидания ответа
         """
         sim_dir = os.path.join(cls.RUN_STATE_DIR, simulation_id)
         if not os.path.exists(sim_dir):
-            raise ValueError(f"Симуляция не существует: {simulation_id}")
+            raise ValueError(f"Симуляция не найдена: {simulation_id}")
 
         ipc_client = SimulationIPCClient(sim_dir)
 
@@ -1507,12 +1507,12 @@ class SimulationRunner:
             Словарь с результатами пакетного интервью
 
         Raises:
-            ValueError: Симуляция не существует или среда не запущена
+            ValueError: Симуляция не найдена или среда не запущена
             TimeoutError: Превышено время ожидания ответа
         """
         sim_dir = os.path.join(cls.RUN_STATE_DIR, simulation_id)
         if not os.path.exists(sim_dir):
-            raise ValueError(f"Симуляция не существует: {simulation_id}")
+            raise ValueError(f"Симуляция не найдена: {simulation_id}")
 
         ipc_client = SimulationIPCClient(sim_dir)
 
@@ -1569,12 +1569,12 @@ class SimulationRunner:
         """
         sim_dir = os.path.join(cls.RUN_STATE_DIR, simulation_id)
         if not os.path.exists(sim_dir):
-            raise ValueError(f"Симуляция не существует: {simulation_id}")
+            raise ValueError(f"Симуляция не найдена: {simulation_id}")
 
         # Получение информации обо всех Agent из файла конфигурации
         config_path = os.path.join(sim_dir, "simulation_config.json")
         if not os.path.exists(config_path):
-            raise ValueError(f"Конфигурация симуляции не существует: {simulation_id}")
+            raise ValueError(f"Конфигурация симуляции не найдена: {simulation_id}")
 
         with open(config_path, 'r', encoding='utf-8') as f:
             config = json.load(f)
@@ -1622,7 +1622,7 @@ class SimulationRunner:
         """
         sim_dir = os.path.join(cls.RUN_STATE_DIR, simulation_id)
         if not os.path.exists(sim_dir):
-            raise ValueError(f"Симуляция не существует: {simulation_id}")
+            raise ValueError(f"Симуляция не найдена: {simulation_id}")
 
         ipc_client = SimulationIPCClient(sim_dir)
 
