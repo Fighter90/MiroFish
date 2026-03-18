@@ -169,8 +169,8 @@ try:
         generate_reddit_agent_graph
     )
 except ImportError as e:
-    print(f"Ошибка: отсутствует зависимость {e}")
-    print("Сначала установите: pip install oasis-ai camel-ai")
+    print(f"Ошибка: не найдена зависимость {e}")
+    print("Установите: pip install oasis-ai camel-ai")
     sys.exit(1)
 
 
@@ -356,7 +356,7 @@ class ParallelIPCHandler:
                 - None/не указано: Одновременное интервью на обеих платформах, возврат объединённого результата
 
         Returns:
-            True означает успех, False означает неудачу
+            True -- успех, False -- ошибка
         """
         # Если указана платформа, интервью только на этой платформе
         if platform in ("twitter", "reddit"):
@@ -364,7 +364,7 @@ class ParallelIPCHandler:
 
             if "error" in result:
                 self.send_response(command_id, "failed", error=result["error"])
-                print(f"  Interview не удался: agent_id={agent_id}, platform={platform}, error={result['error']}")
+                print(f"  Ошибка Interview: agent_id={agent_id}, platform={platform}, error={result['error']}")
                 return False
             else:
                 self.send_response(command_id, "completed", result=result)
@@ -410,7 +410,7 @@ class ParallelIPCHandler:
         else:
             errors = [f"{p}: {r.get('error', 'неизвестная ошибка')}" for p, r in results["platforms"].items()]
             self.send_response(command_id, "failed", error="; ".join(errors))
-            print(f"  Interview не удался: agent_id={agent_id}, все платформы завершились с ошибкой")
+            print(f"  Ошибка Interview: agent_id={agent_id}, все платформы вернули ошибку")
             return False
 
     async def handle_batch_interview(self, command_id: str, interviews: List[Dict], platform: str = None) -> bool:
@@ -463,7 +463,7 @@ class ParallelIPCHandler:
                             action_args={"prompt": prompt}
                         )
                     except Exception as e:
-                        print(f"  Предупреждение: невозможно получить Twitter Agent {agent_id}: {e}")
+                        print(f"  Предупреждение: не удалось получить Twitter Agent {agent_id}: {e}")
 
                 if twitter_actions:
                     await self.twitter_env.step(twitter_actions)
@@ -474,7 +474,7 @@ class ParallelIPCHandler:
                         result["platform"] = "twitter"
                         results[f"twitter_{agent_id}"] = result
             except Exception as e:
-                print(f"  Пакетный Interview Twitter не удался: {e}")
+                print(f"  Ошибка пакетного Interview Twitter: {e}")
 
         # Обработка интервью на платформе Reddit
         if reddit_interviews and self.reddit_env:
@@ -490,7 +490,7 @@ class ParallelIPCHandler:
                             action_args={"prompt": prompt}
                         )
                     except Exception as e:
-                        print(f"  Предупреждение: невозможно получить Reddit Agent {agent_id}: {e}")
+                        print(f"  Предупреждение: не удалось получить Reddit Agent {agent_id}: {e}")
 
                 if reddit_actions:
                     await self.reddit_env.step(reddit_actions)
@@ -501,7 +501,7 @@ class ParallelIPCHandler:
                         result["platform"] = "reddit"
                         results[f"reddit_{agent_id}"] = result
             except Exception as e:
-                print(f"  Пакетный Interview Reddit не удался: {e}")
+                print(f"  Ошибка пакетного Interview Reddit: {e}")
 
         if results:
             self.send_response(command_id, "completed", result={
@@ -553,7 +553,7 @@ class ParallelIPCHandler:
             conn.close()
 
         except Exception as e:
-            print(f"  Не удалось прочитать результат Interview: {e}")
+            print(f"  Ошибка чтения результата Interview: {e}")
 
         return result
 
@@ -562,7 +562,7 @@ class ParallelIPCHandler:
         Обработка всех ожидающих команд
 
         Returns:
-            True означает продолжение работы, False означает необходимость выхода
+            True -- продолжить работу, False -- завершить
         """
         command = self.poll_command()
         if not command:
@@ -741,7 +741,7 @@ def fetch_new_actions_from_db(
 
         conn.close()
     except Exception as e:
-        print(f"Не удалось прочитать действия из базы данных: {e}")
+        print(f"Ошибка чтения действий из базы данных: {e}")
 
     return actions, new_last_rowid
 
@@ -850,8 +850,8 @@ def _enrich_action_context(
                     action_args['post_author_name'] = post_info.get('author_name', '')
 
     except Exception as e:
-        # Неудача дополнения контекста не влияет на основной поток
-        print(f"Не удалось дополнить контекст действия: {e}")
+        # Ошибка дополнения контекста не влияет на основной поток
+        print(f"Ошибка при дополнении контекста действия: {e}")
 
 
 def _get_post_info(
@@ -1024,7 +1024,7 @@ def create_model(config: Dict[str, Any], use_boost: bool = False):
         os.environ["OPENAI_API_KEY"] = llm_api_key
 
     if not os.environ.get("OPENAI_API_KEY"):
-        raise ValueError("Отсутствует конфигурация API Key, установите LLM_API_KEY в файле .env в корневом каталоге проекта")
+        raise ValueError("API Key не указан. Задайте LLM_API_KEY в файле .env в корне проекта")
 
     if llm_base_url:
         os.environ["OPENAI_API_BASE_URL"] = llm_base_url
@@ -1132,7 +1132,7 @@ async def run_twitter_simulation(
     # OASIS Twitter использует формат CSV
     profile_path = os.path.join(simulation_dir, "twitter_profiles.csv")
     if not os.path.exists(profile_path):
-        log_info(f"Ошибка: файл Profile не существует: {profile_path}")
+        log_info(f"Ошибка: файл Profile не найден: {profile_path}")
         return result
 
     result.agent_graph = await generate_twitter_agent_graph(
@@ -1221,7 +1221,7 @@ async def run_twitter_simulation(
         original_rounds = total_rounds
         total_rounds = min(total_rounds, max_rounds)
         if total_rounds < original_rounds:
-            log_info(f"Количество раундов обрезано: {original_rounds} -> {total_rounds} (max_rounds={max_rounds})")
+            log_info(f"Раунды ограничены: {original_rounds} -> {total_rounds} (max_rounds={max_rounds})")
 
     start_time = datetime.now()
 
@@ -1323,7 +1323,7 @@ async def run_reddit_simulation(
 
     profile_path = os.path.join(simulation_dir, "reddit_profiles.json")
     if not os.path.exists(profile_path):
-        log_info(f"Ошибка: файл Profile не существует: {profile_path}")
+        log_info(f"Ошибка: файл Profile не найден: {profile_path}")
         return result
 
     result.agent_graph = await generate_reddit_agent_graph(
@@ -1420,7 +1420,7 @@ async def run_reddit_simulation(
         original_rounds = total_rounds
         total_rounds = min(total_rounds, max_rounds)
         if total_rounds < original_rounds:
-            log_info(f"Количество раундов обрезано: {original_rounds} -> {total_rounds} (max_rounds={max_rounds})")
+            log_info(f"Раунды ограничены: {original_rounds} -> {total_rounds} (max_rounds={max_rounds})")
 
     start_time = datetime.now()
 
@@ -1511,13 +1511,13 @@ async def main():
         '--max-rounds',
         type=int,
         default=None,
-        help='Максимальное количество раундов симуляции (необязательно, для ограничения слишком длинной симуляции)'
+        help='Макс. число раундов (ограничить длительность симуляции)'
     )
     parser.add_argument(
         '--no-wait',
         action='store_true',
         default=False,
-        help='Закрыть среду сразу после завершения симуляции, не переходить в режим ожидания команд'
+        help='Закрыть среду сразу после симуляции, без ожидания команд'
     )
 
     args = parser.parse_args()
@@ -1527,7 +1527,7 @@ async def main():
     _shutdown_event = asyncio.Event()
 
     if not os.path.exists(args.config):
-        print(f"Ошибка: файл конфигурации не существует: {args.config}")
+        print(f"Ошибка: файл конфигурации не найден: {args.config}")
         sys.exit(1)
 
     config = load_config(args.config)
@@ -1559,9 +1559,9 @@ async def main():
     log_manager.info(f"  - Время на раунд: {minutes_per_round} минут")
     log_manager.info(f"  - Общее количество раундов по конфигурации: {config_total_rounds}")
     if args.max_rounds:
-        log_manager.info(f"  - Ограничение максимального количества раундов: {args.max_rounds}")
+        log_manager.info(f"  - Макс. число раундов: {args.max_rounds}")
         if args.max_rounds < config_total_rounds:
-            log_manager.info(f"  - Фактическое количество раундов: {args.max_rounds} (обрезано)")
+            log_manager.info(f"  - Фактическое количество раундов: {args.max_rounds} (ограничено)")
     log_manager.info(f"  - Количество Agent: {len(config.get('agent_configs', []))}")
 
     log_manager.info("Структура логов:")
@@ -1663,7 +1663,7 @@ def setup_signal_handlers(loop=None):
     def signal_handler(signum, frame):
         global _cleanup_done
         sig_name = "SIGTERM" if signum == signal.SIGTERM else "SIGINT"
-        print(f"\nПолучен сигнал {sig_name}, выполняется выход...")
+        print(f"\nПолучен сигнал {sig_name}, завершение работы...")
 
         if not _cleanup_done:
             _cleanup_done = True

@@ -1,8 +1,7 @@
 """
-Тестирование генерации формата Profile на соответствие требованиям OASIS
-Проверка:
-1. Twitter Profile генерирует формат CSV
-2. Reddit Profile генерирует детальный формат JSON
+Проверка генерации формата Profile на соответствие требованиям OASIS:
+1. Twitter Profile -- формат CSV
+2. Reddit Profile -- детальный формат JSON
 """
 
 import os
@@ -18,9 +17,9 @@ from app.services.oasis_profile_generator import OasisProfileGenerator, OasisAge
 
 
 def test_profile_formats():
-    """Тестирование форматов Profile"""
+    """Проверка форматов Profile"""
     print("=" * 60)
-    print("Тестирование формата OASIS Profile")
+    print("Проверка формата OASIS Profile")
     print("=" * 60)
 
     # Создание тестовых данных Profile
@@ -69,7 +68,7 @@ def test_profile_formats():
         reddit_path = os.path.join(temp_dir, "reddit_profiles.json")
 
         # Тестирование формата Twitter CSV
-        print("\n1. Тестирование Twitter Profile (формат CSV)")
+        print("\n1. Проверка Twitter Profile (формат CSV)")
         print("-" * 40)
         generator._save_twitter_csv(test_profiles, twitter_path)
 
@@ -90,12 +89,12 @@ def test_profile_formats():
                                    'friend_count', 'follower_count', 'statuses_count', 'created_at']
         missing = set(required_twitter_fields) - set(rows[0].keys())
         if missing:
-            print(f"\n   [ОШИБКА] Отсутствуют поля: {missing}")
+            print(f"\n   [ОШИБКА] Не найдены поля: {missing}")
         else:
             print(f"\n   [УСПЕХ] Все обязательные поля присутствуют")
 
         # Тестирование формата Reddit JSON
-        print("\n2. Тестирование Reddit Profile (детальный формат JSON)")
+        print("\n2. Проверка Reddit Profile (детальный формат JSON)")
         print("-" * 40)
         generator._save_reddit_json(test_profiles, reddit_path)
 
@@ -115,7 +114,7 @@ def test_profile_formats():
 
         missing = set(required_reddit_fields) - set(reddit_data[0].keys())
         if missing:
-            print(f"\n   [ОШИБКА] Отсутствуют обязательные поля: {missing}")
+            print(f"\n   [ОШИБКА] Не найдены обязательные поля: {missing}")
         else:
             print(f"\n   [УСПЕХ] Все обязательные поля присутствуют")
 
@@ -123,7 +122,7 @@ def test_profile_formats():
         print(f"   [ИНФО] Необязательные поля: {present_optional}")
 
     print("\n" + "=" * 60)
-    print("Тестирование завершено!")
+    print("Проверка завершена!")
     print("=" * 60)
 
 

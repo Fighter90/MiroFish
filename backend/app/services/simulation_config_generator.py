@@ -479,7 +479,7 @@ class SimulationConfigGenerator:
                 import time
                 time.sleep(2 * (attempt + 1))
 
-        raise last_error or Exception("Ошибка вызова LLM")
+        raise last_error or Exception("Не удалось вызвать LLM")
 
     def _fix_truncated_json(self, content: str) -> str:
         """Восстановление усечённого JSON"""
@@ -546,7 +546,7 @@ class SimulationConfigGenerator:
 {context_truncated}
 
 ## Задача
-Сгенерируйте JSON конфигурации времени.
+Создайте конфигурацию времени в формате JSON.
 
 ### Основные принципы (только для справки, необходимо гибко адаптировать под конкретное событие и группу участников):
 - Целевая аудитория — русскоязычные пользователи, необходимо учитывать распорядок дня по московскому времени
@@ -591,7 +591,7 @@ class SimulationConfigGenerator:
         try:
             return self._call_llm_with_retry(prompt, system_prompt)
         except Exception as e:
-            logger.warning(f"Ошибка генерации конфигурации времени через LLM: {e}, используется конфигурация по умолчанию")
+            logger.warning(f"Ошибка генерации конфигурации времени через LLM: {e}, переход на конфигурацию по умолчанию")
             return self._get_default_time_config(num_entities)
 
     def _get_default_time_config(self, num_entities: int) -> Dict[str, Any]:
@@ -683,7 +683,7 @@ class SimulationConfigGenerator:
 {type_info}
 
 ## Задача
-Сгенерируйте JSON конфигурации событий:
+Создайте конфигурацию событий в формате JSON:
 - Извлеките ключевые слова горячих тем
 - Опишите направление развития общественного мнения
 - Составьте содержимое начальных постов, **для каждого поста необходимо указать poster_type (тип автора)**
@@ -707,7 +707,7 @@ class SimulationConfigGenerator:
         try:
             return self._call_llm_with_retry(prompt, system_prompt)
         except Exception as e:
-            logger.warning(f"Ошибка генерации конфигурации событий через LLM: {e}, используется конфигурация по умолчанию")
+            logger.warning(f"Ошибка генерации конфигурации событий через LLM: {e}, переход на конфигурацию по умолчанию")
             return {
                 "hot_topics": [],
                 "narrative_direction": "",
@@ -871,7 +871,7 @@ class SimulationConfigGenerator:
             result = self._call_llm_with_retry(prompt, system_prompt)
             llm_configs = {cfg["agent_id"]: cfg for cfg in result.get("agent_configs", [])}
         except Exception as e:
-            logger.warning(f"Ошибка генерации пакета конфигурации агентов через LLM: {e}, используется генерация по правилам")
+            logger.warning(f"Ошибка генерации пакета конфигурации агентов через LLM: {e}, переход на генерацию по правилам")
             llm_configs = {}
 
         # Построение объектов AgentActivityConfig

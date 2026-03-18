@@ -97,7 +97,7 @@
           @click="handleNextStep"
         >
           <span v-if="isGeneratingReport" class="loading-spinner-small"></span>
-          {{ isGeneratingReport ? 'Запуск...' : 'Начать генерацию отчёта' }}
+          {{ isGeneratingReport ? 'Запуск...' : 'Сгенерировать отчёт' }}
           <span v-if="!isGeneratingReport" class="arrow-icon">→</span>
         </button>
       </div>
@@ -379,7 +379,7 @@ const resetAllState = () => {
 // Запуск симуляции
 const doStartSimulation = async () => {
   if (!props.simulationId) {
-    addLog('Ошибка: отсутствует simulationId')
+    addLog('Ошибка: не указан simulationId')
     return
   }
 
@@ -639,12 +639,12 @@ const formatActionTime = (timestamp) => {
 
 const handleNextStep = async () => {
   if (!props.simulationId) {
-    addLog('Ошибка: отсутствует simulationId')
+    addLog('Ошибка: не указан simulationId')
     return
   }
 
   if (isGeneratingReport.value) {
-    addLog('Запрос на генерацию отчёта уже отправлен, пожалуйста подождите...')
+    addLog('Генерация отчёта уже запущена, подождите...')
     return
   }
 

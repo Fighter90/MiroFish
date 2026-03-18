@@ -6,19 +6,19 @@
         <div class="card-header">
           <div class="step-info">
             <span class="step-num">01</span>
-            <span class="step-title">Генерация онтологии</span>
+            <span class="step-title">Онтология</span>
           </div>
           <div class="step-status">
-            <span v-if="currentPhase > 0" class="badge success">Завершено</span>
+            <span v-if="currentPhase > 0" class="badge success">Готово</span>
             <span v-else-if="currentPhase === 0" class="badge processing">Генерация</span>
-            <span v-else class="badge pending">Ожидание</span>
+            <span v-else class="badge pending">Ожидает</span>
           </div>
         </div>
 
         <div class="card-content">
           <p class="api-note">POST /api/graph/ontology/generate</p>
           <p class="description">
-            LLM анализирует содержимое документов и требования к симуляции, извлекает реальные сущности и автоматически генерирует подходящую структуру онтологии
+            LLM анализирует документы и требования, извлекает сущности и генерирует структуру онтологии
           </p>
 
           <!-- Loading / Progress -->
@@ -110,30 +110,30 @@
         <div class="card-header">
           <div class="step-info">
             <span class="step-num">02</span>
-            <span class="step-title">Построение GraphRAG</span>
+            <span class="step-title">Создание GraphRAG</span>
           </div>
           <div class="step-status">
-            <span v-if="currentPhase > 1" class="badge success">Завершено</span>
+            <span v-if="currentPhase > 1" class="badge success">Готово</span>
             <span v-else-if="currentPhase === 1" class="badge processing">{{ buildProgress?.progress || 0 }}%</span>
-            <span v-else class="badge pending">Ожидание</span>
+            <span v-else class="badge pending">Ожидает</span>
           </div>
         </div>
 
         <div class="card-content">
           <p class="api-note">POST /api/graph/build</p>
           <p class="description">
-            На основе сгенерированной онтологии документы автоматически разбиваются на фрагменты, затем через Zep строится граф знаний, извлекаются сущности и связи, формируются временная память и сводки сообществ
+            На основе онтологии документы разбиваются на фрагменты, через Zep строится граф знаний, извлекаются сущности и связи
           </p>
 
           <!-- Stats Cards -->
           <div class="stats-grid">
             <div class="stat-card">
               <span class="stat-value">{{ graphStats.nodes }}</span>
-              <span class="stat-label">Узлы сущностей</span>
+              <span class="stat-label">Узлы</span>
             </div>
             <div class="stat-card">
               <span class="stat-value">{{ graphStats.edges }}</span>
-              <span class="stat-label">Рёбра связей</span>
+              <span class="stat-label">Связи</span>
             </div>
             <div class="stat-card">
               <span class="stat-value">{{ graphStats.types }}</span>
@@ -148,7 +148,7 @@
         <div class="card-header">
           <div class="step-info">
             <span class="step-num">03</span>
-            <span class="step-title">Построение завершено</span>
+            <span class="step-title">Готово</span>
           </div>
           <div class="step-status">
             <span v-if="currentPhase >= 2" class="badge accent">В процессе</span>
@@ -157,14 +157,14 @@
 
         <div class="card-content">
           <p class="api-note">POST /api/simulation/create</p>
-          <p class="description">Построение графа завершено, перейдите к следующему шагу для настройки среды симуляции</p>
+          <p class="description">Граф построен. Можно переходить к настройке среды симуляции</p>
           <button
             class="action-btn"
             :disabled="currentPhase < 2 || creatingSimulation"
             @click="handleEnterEnvSetup"
           >
             <span v-if="creatingSimulation" class="spinner-sm"></span>
-            {{ creatingSimulation ? 'Создание...' : 'Перейти к настройке среды ➝' }}
+            {{ creatingSimulation ? 'Создание...' : 'Настройка среды ➝' }}
           </button>
         </div>
       </div>
@@ -211,7 +211,7 @@ const creatingSimulation = ref(false)
 // Переход к настройке среды - создание simulation и переход
 const handleEnterEnvSetup = async () => {
   if (!props.projectData?.project_id || !props.projectData?.graph_id) {
-    console.error('Отсутствует информация о проекте или графе')
+    console.error('Не найдена информация о проекте или графе')
     return
   }
 
@@ -232,8 +232,8 @@ const handleEnterEnvSetup = async () => {
         params: { simulationId: res.data.simulation_id }
       })
     } else {
-      console.error('Не удалось создать симуляцию:', res.error)
-      alert('Не удалось создать симуляцию: ' + (res.error || 'Неизвестная ошибка'))
+      console.error('Ошибка создания симуляции:', res.error)
+      alert('Ошибка создания симуляции: ' + (res.error || 'Неизвестная ошибка'))
     }
   } catch (err) {
     console.error('Ошибка создания симуляции:', err)

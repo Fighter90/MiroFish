@@ -129,7 +129,7 @@
 
           <!-- Next Step Button - Показать после завершения -->
           <button v-if="isComplete" class="next-step-btn" @click="goToInteraction">
-            <span>Перейти к взаимодействию</span>
+            <span>Далее →</span>
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="5" y1="12" x2="19" y2="12"></line>
               <polyline points="12 5 19 12 12 19"></polyline>
@@ -1776,7 +1776,7 @@ const activeStep = computed(() => {
   if (doneSteps.length > 0) return doneSteps[doneSteps.length - 1]
   
   // Иначе вернуть первый шаг
-  return steps[0] || { noLabel: '--', title: 'Ожидание начала', status: 'todo', meta: '' }
+  return steps[0] || { noLabel: '--', title: 'Ожидание', status: 'todo', meta: '' }
 })
 
 const workflowSteps = computed(() => {

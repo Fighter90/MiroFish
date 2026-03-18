@@ -105,7 +105,7 @@ def get_entity_detail(graph_id: str, entity_uuid: str):
         if not entity:
             return jsonify({
                 "success": False,
-                "error": f"Сущность не существует: {entity_uuid}"
+                "error": f"Сущность не найдена: {entity_uuid}"
             }), 404
 
         return jsonify({
@@ -197,14 +197,14 @@ def create_simulation():
         if not project_id:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите project_id"
+                "error": "Укажите project_id"
             }), 400
 
         project = ProjectManager.get_project(project_id)
         if not project:
             return jsonify({
                 "success": False,
-                "error": f"Проект не существует: {project_id}"
+                "error": f"Проект не найден: {project_id}"
             }), 404
 
         graph_id = data.get('graph_id') or project.graph_id
@@ -259,7 +259,7 @@ def _check_simulation_prepared(simulation_id: str) -> tuple:
 
     # Проверка существования каталога
     if not os.path.exists(simulation_dir):
-        return False, {"reason": "Каталог симуляции не существует"}
+        return False, {"reason": "Каталог симуляции не найден"}
 
     # Список необходимых файлов (скрипты не включены, они находятся в backend/scripts/)
     required_files = [
@@ -281,7 +281,7 @@ def _check_simulation_prepared(simulation_id: str) -> tuple:
 
     if missing_files:
         return False, {
-            "reason": "Отсутствуют необходимые файлы",
+            "reason": "Не хватает необходимых файлов",
             "missing_files": missing_files,
             "existing_files": existing_files
         }
@@ -408,7 +408,7 @@ def prepare_simulation():
         if not simulation_id:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите simulation_id"
+                "error": "Укажите simulation_id"
             }), 400
 
         manager = SimulationManager()
@@ -417,7 +417,7 @@ def prepare_simulation():
         if not state:
             return jsonify({
                 "success": False,
-                "error": f"Симуляция не существует: {simulation_id}"
+                "error": f"Симуляция не найдена: {simulation_id}"
             }), 404
 
         # Проверка принудительной повторной генерации
@@ -449,7 +449,7 @@ def prepare_simulation():
         if not project:
             return jsonify({
                 "success": False,
-                "error": f"Проект не существует: {state.project_id}"
+                "error": f"Проект не найден: {state.project_id}"
             }), 404
 
         # Получение требований к симуляции
@@ -457,7 +457,7 @@ def prepare_simulation():
         if not simulation_requirement:
             return jsonify({
                 "success": False,
-                "error": "В проекте отсутствует описание требований к симуляции (simulation_requirement)"
+                "error": "В проекте не указано описание требований к симуляции (simulation_requirement)"
             }), 400
 
         # Получение текста документа
@@ -702,14 +702,14 @@ def get_prepare_status():
                 })
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите task_id или simulation_id"
+                "error": "Укажите task_id или simulation_id"
             }), 400
 
         task_manager = TaskManager()
         task = task_manager.get_task(task_id)
 
         if not task:
-            # Задача не существует, но если есть simulation_id, проверяем завершённость подготовки
+            # Задача не найдена, но если есть simulation_id, проверяем завершённость подготовки
             if simulation_id:
                 is_prepared, prepare_info = _check_simulation_prepared(simulation_id)
                 if is_prepared:
@@ -720,7 +720,7 @@ def get_prepare_status():
                             "task_id": task_id,
                             "status": "ready",
                             "progress": 100,
-                            "message": "Задача завершена (подготовка уже существует)",
+                            "message": "Готово (подготовка уже выполнена)",
                             "already_prepared": True,
                             "prepare_info": prepare_info
                         }
@@ -728,7 +728,7 @@ def get_prepare_status():
 
             return jsonify({
                 "success": False,
-                "error": f"Задача не существует: {task_id}"
+                "error": f"Задача не найдена: {task_id}"
             }), 404
 
         task_dict = task.to_dict()
@@ -757,7 +757,7 @@ def get_simulation(simulation_id: str):
         if not state:
             return jsonify({
                 "success": False,
-                "error": f"Симуляция не существует: {simulation_id}"
+                "error": f"Симуляция не найдена: {simulation_id}"
             }), 404
 
         result = state.to_dict()
@@ -1062,7 +1062,7 @@ def get_simulation_profiles_realtime(simulation_id: str):
         if not os.path.exists(sim_dir):
             return jsonify({
                 "success": False,
-                "error": f"Симуляция не существует: {simulation_id}"
+                "error": f"Симуляция не найдена: {simulation_id}"
             }), 404
 
         # Определение пути к файлу
@@ -1165,7 +1165,7 @@ def get_simulation_config_realtime(simulation_id: str):
         if not os.path.exists(sim_dir):
             return jsonify({
                 "success": False,
-                "error": f"Симуляция не существует: {simulation_id}"
+                "error": f"Симуляция не найдена: {simulation_id}"
             }), 404
 
         # Путь к файлу конфигурации
@@ -1270,7 +1270,7 @@ def get_simulation_config(simulation_id: str):
         if not config:
             return jsonify({
                 "success": False,
-                "error": f"Конфигурация симуляции не существует, сначала вызовите интерфейс /prepare"
+                "error": f"Конфигурация симуляции не найдена — сначала вызовите /prepare"
             }), 404
 
         return jsonify({
@@ -1298,7 +1298,7 @@ def download_simulation_config(simulation_id: str):
         if not os.path.exists(config_path):
             return jsonify({
                 "success": False,
-                "error": "Файл конфигурации не существует, сначала вызовите интерфейс /prepare"
+                "error": "Файл конфигурации не найден — сначала вызовите /prepare"
             }), 404
 
         return send_file(
@@ -1350,7 +1350,7 @@ def download_simulation_script(script_name: str):
         if not os.path.exists(script_path):
             return jsonify({
                 "success": False,
-                "error": f"Файл скрипта не существует: {script_name}"
+                "error": f"Файл скрипта не найден: {script_name}"
             }), 404
 
         return send_file(
@@ -1390,7 +1390,7 @@ def generate_profiles():
         if not graph_id:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите graph_id"
+                "error": "Укажите graph_id"
             }), 400
 
         entity_types = data.get('entity_types')
@@ -1492,7 +1492,7 @@ def start_simulation():
         if not simulation_id:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите simulation_id"
+                "error": "Укажите simulation_id"
             }), 400
 
         platform = data.get('platform', 'parallel')
@@ -1528,7 +1528,7 @@ def start_simulation():
         if not state:
             return jsonify({
                 "success": False,
-                "error": f"Симуляция не существует: {simulation_id}"
+                "error": f"Симуляция не найдена: {simulation_id}"
             }), 404
 
         force_restarted = False
@@ -1566,7 +1566,7 @@ def start_simulation():
                         logger.warning(f"Предупреждение при очистке логов: {cleanup_result.get('errors')}")
                     force_restarted = True
 
-                # Процесс не существует или завершён, сброс статуса на ready
+                # Процесс завершён или отсутствует, сброс статуса на ready
                 logger.info(f"Подготовка симуляции {simulation_id} завершена, сброс статуса на ready (прежний статус: {state.status.value})")
                 state.status = SimulationStatus.READY
                 manager._save_simulation_state(state)
@@ -1664,7 +1664,7 @@ def stop_simulation():
         if not simulation_id:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите simulation_id"
+                "error": "Укажите simulation_id"
             }), 400
 
         run_state = SimulationRunner.stop_simulation(simulation_id)
@@ -2012,7 +2012,7 @@ def get_simulation_posts(simulation_id: str):
                     "platform": platform,
                     "count": 0,
                     "posts": [],
-                    "message": "База данных не существует, возможно, симуляция ещё не запускалась"
+                    "message": "База данных не найдена — возможно, симуляция ещё не запускалась"
                 }
             })
 
@@ -2198,19 +2198,19 @@ def interview_agent():
         if not simulation_id:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите simulation_id"
+                "error": "Укажите simulation_id"
             }), 400
 
         if agent_id is None:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите agent_id"
+                "error": "Укажите agent_id"
             }), 400
 
         if not prompt:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите prompt (вопрос интервью)"
+                "error": "Укажите prompt (вопрос интервью)"
             }), 400
 
         # Валидация параметра platform
@@ -2319,13 +2319,13 @@ def interview_agents_batch():
         if not simulation_id:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите simulation_id"
+                "error": "Укажите simulation_id"
             }), 400
 
         if not interviews or not isinstance(interviews, list):
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите interviews (список интервью)"
+                "error": "Укажите interviews (список интервью)"
             }), 400
 
         # Валидация параметра platform
@@ -2340,12 +2340,12 @@ def interview_agents_batch():
             if 'agent_id' not in interview:
                 return jsonify({
                     "success": False,
-                    "error": f"В элементе {i+1} списка интервью отсутствует agent_id"
+                    "error": f"В элементе {i+1} списка интервью не указан agent_id"
                 }), 400
             if 'prompt' not in interview:
                 return jsonify({
                     "success": False,
-                    "error": f"В элементе {i+1} списка интервью отсутствует prompt"
+                    "error": f"В элементе {i+1} списка интервью не указан prompt"
                 }), 400
             # Валидация platform каждого элемента (если указан)
             item_platform = interview.get('platform')
@@ -2446,13 +2446,13 @@ def interview_all_agents():
         if not simulation_id:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите simulation_id"
+                "error": "Укажите simulation_id"
             }), 400
 
         if not prompt:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите prompt (вопрос интервью)"
+                "error": "Укажите prompt (вопрос интервью)"
             }), 400
 
         # Валидация параметра platform
@@ -2550,7 +2550,7 @@ def get_interview_history():
         if not simulation_id:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите simulation_id"
+                "error": "Укажите simulation_id"
             }), 400
 
         history = SimulationRunner.get_interview_history(
@@ -2609,7 +2609,7 @@ def get_env_status():
         if not simulation_id:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите simulation_id"
+                "error": "Укажите simulation_id"
             }), 400
 
         env_alive = SimulationRunner.check_env_alive(simulation_id)
@@ -2677,7 +2677,7 @@ def close_simulation_env():
         if not simulation_id:
             return jsonify({
                 "success": False,
-                "error": "Пожалуйста, укажите simulation_id"
+                "error": "Укажите simulation_id"
             }), 400
 
         result = SimulationRunner.close_simulation_env(

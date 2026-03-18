@@ -36,11 +36,11 @@ class Project:
     files: List[Dict[str, str]] = field(default_factory=list)  # [{filename, path, size}]
     total_text_length: int = 0
 
-    # Информация об онтологии (заполняется после генерации в интерфейсе 1)
+    # Онтология (заполняется после шага 1 — генерация)
     ontology: Optional[Dict[str, Any]] = None
     analysis_summary: Optional[str] = None
 
-    # Информация о графе (заполняется после завершения интерфейса 2)
+    # Граф (заполняется после шага 2 — построение)
     graph_id: Optional[str] = None
     graph_build_task_id: Optional[str] = None
 

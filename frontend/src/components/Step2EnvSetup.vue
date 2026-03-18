@@ -6,10 +6,10 @@
         <div class="card-header">
           <div class="step-info">
             <span class="step-num">01</span>
-            <span class="step-title">Инициализация экземпляра симуляции</span>
+            <span class="step-title">Инициализация симуляции</span>
           </div>
           <div class="step-status">
-            <span v-if="phase > 0" class="badge success">Завершено</span>
+            <span v-if="phase > 0" class="badge success">Готово</span>
             <span v-else class="badge processing">Инициализация</span>
           </div>
         </div>
@@ -17,7 +17,7 @@
         <div class="card-content">
           <p class="api-note">POST /api/simulation/create</p>
           <p class="description">
-            Создание нового экземпляра simulation, загрузка шаблона параметров мира симуляции
+            Создание экземпляра симуляции, загрузка шаблона параметров мира
           </p>
 
           <div v-if="simulationId" class="info-card">
@@ -35,7 +35,7 @@
             </div>
             <div class="info-row">
               <span class="info-label">Task ID</span>
-              <span class="info-value mono">{{ taskId || 'Асинхронная задача завершена' }}</span>
+              <span class="info-value mono">{{ taskId || 'Задача выполнена' }}</span>
             </div>
           </div>
         </div>
@@ -46,41 +46,41 @@
         <div class="card-header">
           <div class="step-info">
             <span class="step-num">02</span>
-            <span class="step-title">Генерация персонажей Agent</span>
+            <span class="step-title">Генерация Agent-ов</span>
           </div>
           <div class="step-status">
-            <span v-if="phase > 1" class="badge success">Завершено</span>
+            <span v-if="phase > 1" class="badge success">Готово</span>
             <span v-else-if="phase === 1" class="badge processing">{{ prepareProgress }}%</span>
-            <span v-else class="badge pending">Ожидание</span>
+            <span v-else class="badge pending">Ожидает</span>
           </div>
         </div>
 
         <div class="card-content">
           <p class="api-note">POST /api/simulation/prepare</p>
           <p class="description">
-            На основе контекста автоматически вызываются инструменты для анализа сущностей и связей из графа знаний, инициализации участников симуляции и наделения их уникальным поведением и памятью на основе реальных данных
+            Автоматический анализ сущностей и связей из графа знаний, создание участников симуляции с уникальным поведением и памятью
           </p>
 
           <!-- Profiles Stats -->
           <div v-if="profiles.length > 0" class="stats-grid">
             <div class="stat-card">
               <span class="stat-value">{{ profiles.length }}</span>
-              <span class="stat-label">Текущее кол-во Agent</span>
+              <span class="stat-label">Создано Agent</span>
             </div>
             <div class="stat-card">
               <span class="stat-value">{{ expectedTotal || '-' }}</span>
-              <span class="stat-label">Ожидаемое кол-во Agent</span>
+              <span class="stat-label">Всего Agent</span>
             </div>
             <div class="stat-card">
               <span class="stat-value">{{ totalTopicsCount }}</span>
-              <span class="stat-label">Связанных тем</span>
+              <span class="stat-label">Тем</span>
             </div>
           </div>
 
           <!-- Profiles List Preview -->
           <div v-if="profiles.length > 0" class="profiles-preview">
             <div class="preview-header">
-              <span class="preview-title">Сгенерированные персонажи Agent</span>
+              <span class="preview-title">Созданные Agent-ы</span>
             </div>
             <div class="profiles-list">
               <div
@@ -94,9 +94,9 @@
                   <span class="profile-username">@{{ profile.name || `agent_${idx}` }}</span>
                 </div>
                 <div class="profile-meta">
-                  <span class="profile-profession">{{ profile.profession || 'Профессия неизвестна' }}</span>
+                  <span class="profile-profession">{{ profile.profession || 'Не указана' }}</span>
                 </div>
-                <p class="profile-bio">{{ profile.bio || 'Описание отсутствует' }}</p>
+                <p class="profile-bio">{{ profile.bio || 'Нет описания' }}</p>
                 <div v-if="profile.interested_topics?.length" class="profile-topics">
                   <span
                     v-for="topic in profile.interested_topics.slice(0, 3)"
@@ -118,19 +118,19 @@
         <div class="card-header">
           <div class="step-info">
             <span class="step-num">03</span>
-            <span class="step-title">Генерация конфигурации двухплатформенной симуляции</span>
+            <span class="step-title">Конфигурация двух платформ</span>
           </div>
           <div class="step-status">
-            <span v-if="phase > 2" class="badge success">Завершено</span>
+            <span v-if="phase > 2" class="badge success">Готово</span>
             <span v-else-if="phase === 2" class="badge processing">Генерация</span>
-            <span v-else class="badge pending">Ожидание</span>
+            <span v-else class="badge pending">Ожидает</span>
           </div>
         </div>
 
         <div class="card-content">
           <p class="api-note">POST /api/simulation/prepare</p>
           <p class="description">
-            LLM на основе требований симуляции и реальных данных интеллектуально настраивает скорость течения времени, алгоритмы рекомендаций, периоды активности каждого участника, частоту публикаций, триггеры событий и другие параметры
+            LLM настраивает скорость времени, алгоритмы рекомендаций, периоды активности участников, частоту публикаций и триггеры событий
           </p>
 
           <!-- Config Preview -->
@@ -139,40 +139,40 @@
             <div class="config-block">
               <div class="config-grid">
                 <div class="config-item">
-                  <span class="config-item-label">Длительность симуляции</span>
+                  <span class="config-item-label">Длительность</span>
                   <span class="config-item-value">{{ simulationConfig.time_config?.total_simulation_hours || '-' }} часов</span>
                 </div>
                 <div class="config-item">
-                  <span class="config-item-label">Длительность раунда</span>
+                  <span class="config-item-label">Раунд</span>
                   <span class="config-item-value">{{ simulationConfig.time_config?.minutes_per_round || '-' }} минут</span>
                 </div>
                 <div class="config-item">
-                  <span class="config-item-label">Всего раундов</span>
+                  <span class="config-item-label">Раундов</span>
                   <span class="config-item-value">{{ Math.floor((simulationConfig.time_config?.total_simulation_hours * 60 / simulationConfig.time_config?.minutes_per_round)) || '-' }} раундов</span>
                 </div>
                 <div class="config-item">
-                  <span class="config-item-label">Активность в час</span>
+              <span class="config-item-label">Agent/час</span>
                   <span class="config-item-value">{{ simulationConfig.time_config?.agents_per_hour_min }}-{{ simulationConfig.time_config?.agents_per_hour_max }}</span>
                 </div>
               </div>
               <div class="time-periods">
                 <div class="period-item">
-                  <span class="period-label">Пиковое время</span>
+                  <span class="period-label">Пик</span>
                   <span class="period-hours">{{ simulationConfig.time_config?.peak_hours?.join(':00, ') }}:00</span>
                   <span class="period-multiplier">×{{ simulationConfig.time_config?.peak_activity_multiplier }}</span>
                 </div>
                 <div class="period-item">
-                  <span class="period-label">Рабочее время</span>
+                  <span class="period-label">Рабочие часы</span>
                   <span class="period-hours">{{ simulationConfig.time_config?.work_hours?.[0] }}:00-{{ simulationConfig.time_config?.work_hours?.slice(-1)[0] }}:00</span>
                   <span class="period-multiplier">×{{ simulationConfig.time_config?.work_activity_multiplier }}</span>
                 </div>
                 <div class="period-item">
-                  <span class="period-label">Утреннее время</span>
+                  <span class="period-label">Утро</span>
                   <span class="period-hours">{{ simulationConfig.time_config?.morning_hours?.[0] }}:00-{{ simulationConfig.time_config?.morning_hours?.slice(-1)[0] }}:00</span>
                   <span class="period-multiplier">×{{ simulationConfig.time_config?.morning_activity_multiplier }}</span>
                 </div>
                 <div class="period-item">
-                  <span class="period-label">Время спада</span>
+                  <span class="period-label">Спад</span>
                   <span class="period-hours">{{ simulationConfig.time_config?.off_peak_hours?.[0] }}:00-{{ simulationConfig.time_config?.off_peak_hours?.slice(-1)[0] }}:00</span>
                   <span class="period-multiplier">×{{ simulationConfig.time_config?.off_peak_activity_multiplier }}</span>
                 </div>
@@ -205,7 +205,7 @@
 
                   <!-- Временная шкала активности -->
                   <div class="agent-timeline">
-                    <span class="timeline-label">Периоды активности</span>
+                    <span class="timeline-label">Активность</span>
                     <div class="mini-timeline">
                       <div
                         v-for="hour in 24"
@@ -236,7 +236,7 @@
                         <span class="param-value">{{ agent.comments_per_hour }}</span>
                       </div>
                       <div class="param-item">
-                        <span class="param-label">Задержка ответа</span>
+                        <span class="param-label">Задержка</span>
                         <span class="param-value">{{ agent.response_delay_min }}-{{ agent.response_delay_max }}min</span>
                       </div>
                     </div>
@@ -249,7 +249,7 @@
                         </span>
                       </div>
                       <div class="param-item">
-                        <span class="param-label">Эмоц. склонность</span>
+                        <span class="param-label">Тональность</span>
                         <span class="param-value" :class="agent.sentiment_bias > 0 ? 'positive' : agent.sentiment_bias < 0 ? 'negative' : 'neutral'">
                           {{ agent.sentiment_bias > 0 ? '+' : '' }}{{ agent.sentiment_bias?.toFixed(1) }}
                         </span>
@@ -267,7 +267,7 @@
             <!-- Конфигурация платформ -->
             <div class="config-block">
               <div class="config-block-header">
-                <span class="config-block-title">Конфигурация алгоритмов рекомендаций</span>
+                <span class="config-block-title">Алгоритмы рекомендаций</span>
               </div>
               <div class="platforms-grid">
                 <div v-if="simulationConfig.twitter_config" class="platform-card">
@@ -330,7 +330,7 @@
             <!-- Обоснование конфигурации LLM -->
             <div v-if="simulationConfig.generation_reasoning" class="config-block">
               <div class="config-block-header">
-                <span class="config-block-title">Обоснование конфигурации LLM</span>
+                <span class="config-block-title">Обоснование от LLM</span>
               </div>
               <div class="reasoning-content">
                 <div
@@ -351,19 +351,19 @@
         <div class="card-header">
           <div class="step-info">
             <span class="step-num">04</span>
-            <span class="step-title">Начальная оркестровка активации</span>
+            <span class="step-title">Начальная активация</span>
           </div>
           <div class="step-status">
-            <span v-if="phase > 3" class="badge success">Завершено</span>
-            <span v-else-if="phase === 3" class="badge processing">Оркестровка</span>
-            <span v-else class="badge pending">Ожидание</span>
+            <span v-if="phase > 3" class="badge success">Готово</span>
+            <span v-else-if="phase === 3" class="badge processing">Активация</span>
+            <span v-else class="badge pending">Ожидает</span>
           </div>
         </div>
 
         <div class="card-content">
           <p class="api-note">POST /api/simulation/prepare</p>
           <p class="description">
-            На основе нарративного направления автоматически генерируются начальные события активации и горячие темы, задающие начальное состояние мира симуляции
+            Генерация начальных событий и горячих тем, формирующих начальное состояние мира
           </p>
 
           <div v-if="simulationConfig?.event_config" class="orchestration-content">
@@ -380,14 +380,14 @@
                     </linearGradient>
                   </defs>
                 </svg>
-                Направление нарратива
+                Нарратив
               </span>
               <p class="narrative-text">{{ simulationConfig.event_config.narrative_direction }}</p>
             </div>
 
             <!-- Горячие темы -->
             <div class="topics-section">
-              <span class="box-label">Начальные горячие темы</span>
+              <span class="box-label">Горячие темы</span>
               <div class="hot-topics-grid">
                 <span v-for="topic in simulationConfig.event_config.hot_topics" :key="topic" class="hot-topic-tag">
                   # {{ topic }}
@@ -397,7 +397,7 @@
 
             <!-- Начальный поток постов -->
             <div class="initial-posts-section">
-              <span class="box-label">Начальная последовательность активации ({{ simulationConfig.event_config.initial_posts.length }})</span>
+              <span class="box-label">Начальные посты ({{ simulationConfig.event_config.initial_posts.length }})</span>
               <div class="posts-timeline">
                 <div v-for="(post, idx) in simulationConfig.event_config.initial_posts" :key="idx" class="timeline-item">
                   <div class="timeline-marker"></div>
@@ -423,29 +423,29 @@
         <div class="card-header">
           <div class="step-info">
             <span class="step-num">05</span>
-            <span class="step-title">Подготовка завершена</span>
+            <span class="step-title">Готово к запуску</span>
           </div>
           <div class="step-status">
-            <span v-if="phase >= 4" class="badge processing">В процессе</span>
-            <span v-else class="badge pending">Ожидание</span>
+            <span v-if="phase >= 4" class="badge processing">Активно</span>
+            <span v-else class="badge pending">Ожидает</span>
           </div>
         </div>
 
         <div class="card-content">
           <p class="api-note">POST /api/simulation/start</p>
-          <p class="description">Среда симуляции подготовлена, можно запускать симуляцию</p>
+          <p class="description">Среда готова. Можно запускать симуляцию</p>
 
           <!-- Конфигурация раундов симуляции - отображается только после генерации конфигурации -->
           <div v-if="simulationConfig && autoGeneratedRounds" class="rounds-config-section">
             <div class="rounds-header">
               <div class="header-left">
-                <span class="section-title">Настройка количества раундов</span>
-                <span class="section-desc">MiroFish автоматически планирует моделирование реальности на <span class="desc-highlight">{{ simulationConfig?.time_config?.total_simulation_hours || '-' }}</span> часов, каждый раунд представляет <span class="desc-highlight">{{ simulationConfig?.time_config?.minutes_per_round || '-' }}</span> минут реального времени</span>
+                <span class="section-title">Количество раундов</span>
+                <span class="section-desc">MiroFish планирует симуляцию на <span class="desc-highlight">{{ simulationConfig?.time_config?.total_simulation_hours || '-' }}</span> ч, один раунд = <span class="desc-highlight">{{ simulationConfig?.time_config?.minutes_per_round || '-' }}</span> мин реального времени</span>
               </div>
               <label class="switch-control">
                 <input type="checkbox" v-model="useCustomRounds">
                 <span class="switch-track"></span>
-                <span class="switch-label">Пользовательская</span>
+                <span class="switch-label">Вручную</span>
               </label>
             </div>
 
@@ -457,7 +457,7 @@
                     <span class="val-unit">раундов</span>
                   </div>
                   <div class="slider-meta-info">
-                    <span>При 100 Agent: ожидаемое время около {{ Math.round(customMaxRounds * 0.6) }} минут</span>
+                    <span>~{{ Math.round(customMaxRounds * 0.6) }} мин при 100 Agent</span>
                   </div>
                 </div>
 
@@ -497,11 +497,11 @@
                           <circle cx="12" cy="12" r="10"></circle>
                           <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
-                        При 100 Agent: ожидаемое время {{ Math.round(autoGeneratedRounds * 0.6) }} минут
+                        ~{{ Math.round(autoGeneratedRounds * 0.6) }} мин при 100 Agent
                       </span>
                     </div>
                     <div class="auto-desc">
-                      <p class="highlight-tip" @click="useCustomRounds = true">При первом запуске настоятельно рекомендуется переключиться в 'пользовательский режим' и уменьшить количество раундов для быстрого предпросмотра и снижения риска ошибок ➝</p>
+                      <p class="highlight-tip" @click="useCustomRounds = true">Для первого запуска лучше уменьшить число раундов вручную -- быстрый предпросмотр и меньше ошибок ➝</p>
                     </div>
                   </div>
                 </div>
@@ -514,14 +514,14 @@
               class="action-btn secondary"
               @click="$emit('go-back')"
             >
-              ← Вернуться к построению графа
+              ← Назад
             </button>
             <button
               class="action-btn primary"
               :disabled="phase < 4"
               @click="handleStartSimulation"
             >
-              Запустить параллельную симуляцию двух миров ➝
+              Запустить симуляцию ➝
             </button>
           </div>
         </div>
@@ -547,11 +547,11 @@
           <!-- Основная информация -->
           <div class="modal-info-grid">
             <div class="info-item">
-              <span class="info-label">Внешний возраст</span>
+              <span class="info-label">Возраст</span>
               <span class="info-value">{{ selectedProfile.age || '-' }} лет</span>
             </div>
             <div class="info-item">
-              <span class="info-label">Внешний пол</span>
+              <span class="info-label">Пол</span>
               <span class="info-value">{{ { male: 'Мужской', female: 'Женский', other: 'Другой' }[selectedProfile.gender] || selectedProfile.gender }}</span>
             </div>
             <div class="info-item">
@@ -559,20 +559,20 @@
               <span class="info-value">{{ selectedProfile.country || '-' }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">Внешний MBTI</span>
+              <span class="info-label">MBTI</span>
               <span class="info-value mbti">{{ selectedProfile.mbti || '-' }}</span>
             </div>
           </div>
 
           <!-- Описание -->
           <div class="modal-section">
-            <span class="section-label">Описание персонажа</span>
-            <p class="section-bio">{{ selectedProfile.bio || 'Описание отсутствует' }}</p>
+            <span class="section-label">О персонаже</span>
+            <p class="section-bio">{{ selectedProfile.bio || 'Нет описания' }}</p>
           </div>
 
           <!-- Интересующие темы -->
           <div class="modal-section" v-if="selectedProfile.interested_topics?.length">
-            <span class="section-label">Связанные темы реальных данных</span>
+            <span class="section-label">Темы из реальных данных</span>
             <div class="topics-grid">
               <span
                 v-for="topic in selectedProfile.interested_topics"
@@ -584,25 +584,25 @@
 
           <!-- Детальный персонаж -->
           <div class="modal-section" v-if="selectedProfile.persona">
-            <span class="section-label">Детальная предыстория персонажа</span>
+            <span class="section-label">Предыстория</span>
 
             <!-- Обзор измерений персонажа -->
             <div class="persona-dimensions">
               <div class="dimension-card">
-                <span class="dim-title">Полный опыт события</span>
-                <span class="dim-desc">Полная траектория поведения в данном событии</span>
+                <span class="dim-title">Опыт события</span>
+                <span class="dim-desc">Траектория поведения в событии</span>
               </div>
               <div class="dimension-card">
-                <span class="dim-title">Профиль поведения</span>
-                <span class="dim-desc">Итоги опыта и предпочтения в стиле действий</span>
+                <span class="dim-title">Поведение</span>
+                <span class="dim-desc">Предпочтения и стиль действий</span>
               </div>
               <div class="dimension-card">
-                <span class="dim-title">Уникальный след памяти</span>
-                <span class="dim-desc">Память, сформированная на основе реальных данных</span>
+                <span class="dim-title">Память</span>
+                <span class="dim-desc">На основе реальных данных</span>
               </div>
               <div class="dimension-card">
-                <span class="dim-title">Сеть социальных связей</span>
-                <span class="dim-desc">Связи между индивидами и граф взаимодействий</span>
+                <span class="dim-title">Социальная сеть</span>
+                <span class="dim-desc">Связи и граф взаимодействий</span>
               </div>
             </div>
 
@@ -936,7 +936,7 @@ const fetchProfilesRealtime = async () => {
         if (currentCount === 1) {
           addLog(`Начало генерации персонажей Agent...`)
         }
-        addLog(`→ Персонаж Agent ${currentCount}/${total}: ${profileName} (${latestProfile?.profession || 'Профессия неизвестна'})`)
+        addLog(`→ Персонаж Agent ${currentCount}/${total}: ${profileName} (${latestProfile?.profession || 'Не указана'})`)
 
         // Если все сгенерированы
         if (expectedTotal.value && currentCount >= expectedTotal.value) {

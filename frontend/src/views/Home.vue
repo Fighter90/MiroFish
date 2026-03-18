@@ -15,7 +15,7 @@
       <section class="hero-section">
         <div class="hero-left">
           <div class="tag-row">
-            <span class="orange-tag">Простой и универсальный движок коллективного интеллекта</span>
+            <span class="orange-tag">Движок коллективного интеллекта</span>
             <span class="version-text">/ v0.1-превью</span>
           </div>
 
@@ -58,7 +58,7 @@
 
           <h2 class="section-title">Готово к работе</h2>
           <p class="section-desc">
-            Движок прогнозирования в режиме ожидания. Загрузите неструктурированные данные для инициализации последовательности моделирования.
+            Движок прогнозирования готов. Загрузите данные, чтобы начать симуляцию.
           </p>
 
           <!-- Карточки метрик -->
@@ -76,42 +76,42 @@
           <!-- Описание шагов моделирования проекта -->
           <div class="steps-container">
             <div class="steps-header">
-               <span class="diamond-icon">◇</span> Последовательность рабочего процесса
+               <span class="diamond-icon">◇</span> Рабочий процесс
             </div>
             <div class="workflow-list">
               <div class="workflow-item">
                 <span class="step-num">01</span>
                 <div class="step-info">
                   <div class="step-title">Построение графа</div>
-                  <div class="step-desc">Извлечение зёрен реальности & внедрение индивидуальной и групповой памяти & построение GraphRAG</div>
+                  <div class="step-desc">Извлечение данных, построение памяти и GraphRAG</div>
                 </div>
               </div>
               <div class="workflow-item">
                 <span class="step-num">02</span>
                 <div class="step-info">
                   <div class="step-title">Настройка среды</div>
-                  <div class="step-desc">Извлечение связей сущностей & генерация персонажей & внедрение параметров симуляции через Agent конфигурации среды</div>
+                  <div class="step-desc">Генерация Agent-ов, настройка параметров и алгоритмов</div>
                 </div>
               </div>
               <div class="workflow-item">
                 <span class="step-num">03</span>
                 <div class="step-info">
-                  <div class="step-title">Запуск моделирования</div>
-                  <div class="step-desc">Параллельное моделирование на двух платформах & автоматический разбор требований прогнозирования & динамическое обновление временной памяти</div>
+                  <div class="step-title">Симуляция</div>
+                  <div class="step-desc">Параллельный запуск на двух платформах с динамическим обновлением памяти</div>
                 </div>
               </div>
               <div class="workflow-item">
                 <span class="step-num">04</span>
                 <div class="step-info">
-                  <div class="step-title">Генерация отчёта</div>
-                  <div class="step-desc">ReportAgent обладает богатым набором инструментов для глубокого взаимодействия с пост-симуляционной средой</div>
+                  <div class="step-title">Отчёт</div>
+                  <div class="step-desc">ReportAgent анализирует результаты с набором специализированных инструментов</div>
                 </div>
               </div>
               <div class="workflow-item">
                 <span class="step-num">05</span>
                 <div class="step-info">
-                  <div class="step-title">Глубокое взаимодействие</div>
-                  <div class="step-desc">Диалог с любым участником смоделированного мира & диалог с ReportAgent</div>
+                  <div class="step-title">Взаимодействие</div>
+                  <div class="step-desc">Диалог с участниками мира и ReportAgent</div>
                 </div>
               </div>
             </div>
@@ -176,7 +176,7 @@
                 <textarea
                   v-model="formData.simulationRequirement"
                   class="code-input"
-                  placeholder="// Опишите на естественном языке требования к моделированию или прогнозированию (например: Какова будет реакция общественного мнения, если университет опубликует указ об отмене наказания студента?)"
+                  placeholder="// Опишите задачу симуляции (например: Как отреагирует общество, если университет отменит наказание студента?)"
                   rows="6"
                   :disabled="loading"
                 ></textarea>

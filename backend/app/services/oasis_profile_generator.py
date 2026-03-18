@@ -311,7 +311,7 @@ class OasisProfileGenerator:
 
         # Для поиска необходим graph_id
         if not self.graph_id:
-            logger.debug(f"Пропуск поиска Zep: graph_id не задан")
+            logger.debug(f"Пропуск поиска Zep: не указан graph_id")
             return results
 
         comprehensive_query = f"Вся информация, активности, события, связи и предыстория о {entity_name}"
@@ -334,11 +334,11 @@ class OasisProfileGenerator:
                 except Exception as e:
                     last_exception = e
                     if attempt < max_retries - 1:
-                        logger.debug(f"Поиск рёбер Zep, попытка {attempt + 1} не удалась: {str(e)[:80]}, повтор...")
+                        logger.debug(f"Ошибка поиска рёбер Zep (попытка {attempt + 1}): {str(e)[:80]}, повтор...")
                         time.sleep(delay)
                         delay *= 2
                     else:
-                        logger.debug(f"Поиск рёбер Zep не удался после {max_retries} попыток: {e}")
+                        logger.debug(f"Ошибка поиска рёбер Zep после {max_retries} попыток: {e}")
             return None
 
         def search_nodes():
@@ -359,11 +359,11 @@ class OasisProfileGenerator:
                 except Exception as e:
                     last_exception = e
                     if attempt < max_retries - 1:
-                        logger.debug(f"Поиск узлов Zep, попытка {attempt + 1} не удалась: {str(e)[:80]}, повтор...")
+                        logger.debug(f"Ошибка поиска узлов Zep (попытка {attempt + 1}): {str(e)[:80]}, повтор...")
                         time.sleep(delay)
                         delay *= 2
                     else:
-                        logger.debug(f"Поиск узлов Zep не удался после {max_retries} попыток: {e}")
+                        logger.debug(f"Ошибка поиска узлов Zep после {max_retries} попыток: {e}")
             return None
 
         try:
@@ -575,7 +575,7 @@ class OasisProfileGenerator:
                 import time
                 time.sleep(1 * (attempt + 1))  # Экспоненциальная задержка
 
-        logger.warning(f"Ошибка генерации персонажа через LLM ({max_attempts} попыток): {last_error}, используется генерация по правилам")
+        logger.warning(f"Не удалось сгенерировать персонаж через LLM ({max_attempts} попыток): {last_error}, переход на генерацию по правилам")
         return self._generate_profile_rule_based(
             entity_name, entity_type, entity_summary, entity_attributes
         )
@@ -663,7 +663,7 @@ class OasisProfileGenerator:
             }
 
         # 7. Полная неудача, возврат базовой структуры
-        logger.warning(f"Восстановление JSON не удалось, возврат базовой структуры")
+        logger.warning(f"Ошибка восстановления JSON, возврат базовой структуры")
         return {
             "bio": entity_summary[:200] if entity_summary else f"{entity_type}: {entity_name}",
             "persona": entity_summary or f"{entity_name} — это {entity_type}."
@@ -671,7 +671,7 @@ class OasisProfileGenerator:
 
     def _get_system_prompt(self, is_individual: bool) -> str:
         """Получение системного промпта"""
-        base_prompt = "Вы — эксперт по созданию портретов пользователей социальных сетей. Генерируйте детальные, реалистичные персонажи для симуляции общественного мнения, максимально воспроизводя реальную ситуацию. Необходимо возвращать валидный JSON-формат, все строковые значения не должны содержать неэкранированных переносов строк. Используйте русский язык."
+        base_prompt = "Вы — эксперт по созданию портретов пользователей социальных сетей. Генерируйте детальные, реалистичные персонажи для симуляции общественного мнения, максимально приближенно к реальности. Возвращайте валидный JSON, все строковые значения не должны содержать неэкранированных переносов строк. Используйте русский язык."
         return base_prompt
 
     def _build_individual_persona_prompt(
@@ -685,9 +685,9 @@ class OasisProfileGenerator:
         """Построение промпта для детального персонажа индивидуальной сущности"""
 
         attrs_str = json.dumps(entity_attributes, ensure_ascii=False) if entity_attributes else "Нет"
-        context_str = context[:3000] if context else "Дополнительный контекст отсутствует"
+        context_str = context[:3000] if context else "Дополнительного контекста нет"
 
-        return f"""Сгенерируйте детальный персонаж пользователя социальных сетей для сущности, максимально воспроизводя реальную ситуацию.
+        return f"""Сгенерируйте детальный персонаж пользователя социальных сетей для сущности, как можно реалистичнее.
 
 Имя сущности: {entity_name}
 Тип сущности: {entity_type}
@@ -734,9 +734,9 @@ class OasisProfileGenerator:
         """Построение промпта для детального персонажа групповой/институциональной сущности"""
 
         attrs_str = json.dumps(entity_attributes, ensure_ascii=False) if entity_attributes else "Нет"
-        context_str = context[:3000] if context else "Дополнительный контекст отсутствует"
+        context_str = context[:3000] if context else "Дополнительного контекста нет"
 
-        return f"""Сгенерируйте детальные настройки аккаунта социальной сети для институциональной/групповой сущности, максимально воспроизводя реальную ситуацию.
+        return f"""Сгенерируйте детальные настройки аккаунта социальной сети для институциональной/групповой сущности, как можно реалистичнее.
 
 Имя сущности: {entity_name}
 Тип сущности: {entity_type}
