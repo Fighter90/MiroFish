@@ -552,30 +552,30 @@ const parseInsightForge = (text) => {
   
   try {
     // Извлечь вопрос анализа
-    const queryMatch = text.match(/分析问题:\s*(.+?)(?:\n|$)/)
+    const queryMatch = text.match(/(?:Анализируемый вопрос|分析问题):\s*(.+?)(?:\n|$)/)
     if (queryMatch) result.query = queryMatch[1].trim()
 
     // Извлечь сценарий прогнозирования
-    const reqMatch = text.match(/预测场景:\s*(.+?)(?:\n|$)/)
+    const reqMatch = text.match(/(?:Сценарий прогноза|预测场景):\s*(.+?)(?:\n|$)/)
     if (reqMatch) result.simulationRequirement = reqMatch[1].trim()
 
-    // Извлечь статистику - формат "相关预测事实: X条"
-    const factMatch = text.match(/相关预测事实:\s*(\d+)/)
-    const entityMatch = text.match(/涉及实体:\s*(\d+)/)
-    const relMatch = text.match(/关系链:\s*(\d+)/)
+    // Извлечь статистику
+    const factMatch = text.match(/(?:Релевантные прогнозные факты|相关预测事实):\s*(\d+)/)
+    const entityMatch = text.match(/(?:Вовлечённые сущности|涉及实体):\s*(\d+)/)
+    const relMatch = text.match(/(?:Цепочки связей|关系链):\s*(\d+)/)
     if (factMatch) result.stats.facts = parseInt(factMatch[1])
     if (entityMatch) result.stats.entities = parseInt(entityMatch[1])
     if (relMatch) result.stats.relationships = parseInt(relMatch[1])
 
     // Извлечь подвопросы - полное извлечение без ограничения
-    const subQSection = text.match(/### 分析的子问题\n([\s\S]*?)(?=\n###|$)/)
+    const subQSection = text.match(/### (?:Анализируемые подвопросы|分析的子问题)\n([\s\S]*?)(?=\n###|$)/)
     if (subQSection) {
       const lines = subQSection[1].split('\n').filter(l => l.match(/^\d+\./))
       result.subQueries = lines.map(l => l.replace(/^\d+\.\s*/, '').trim()).filter(Boolean)
     }
     
     // Извлечь ключевые факты - полное извлечение без ограничения
-    const factsSection = text.match(/### 【关键事实】[\s\S]*?\n([\s\S]*?)(?=\n###|$)/)
+    const factsSection = text.match(/### (?:\[Ключевые факты\]|【关键事实】)[\s\S]*?\n([\s\S]*?)(?=\n###|$)/)
     if (factsSection) {
       const lines = factsSection[1].split('\n').filter(l => l.match(/^\d+\./))
       result.facts = lines.map(l => {
@@ -585,15 +585,15 @@ const parseInsightForge = (text) => {
     }
     
     // Извлечь основные сущности - полное извлечение, включая аннотации и число связанных фактов
-    const entitySection = text.match(/### 【核心实体】\n([\s\S]*?)(?=\n###|$)/)
+    const entitySection = text.match(/### (?:\[Ключевые сущности\]|【核心实体】)\n([\s\S]*?)(?=\n###|$)/)
     if (entitySection) {
       const entityText = entitySection[1]
       // Разделить блоки сущностей по "- **"
       const entityBlocks = entityText.split(/\n(?=- \*\*)/).filter(b => b.trim().startsWith('- **'))
       result.entities = entityBlocks.map(block => {
         const nameMatch = block.match(/^-\s*\*\*(.+?)\*\*\s*\((.+?)\)/)
-        const summaryMatch = block.match(/摘要:\s*"?(.+?)"?(?:\n|$)/)
-        const relatedMatch = block.match(/相关事实:\s*(\d+)/)
+        const summaryMatch = block.match(/(?:Описание|摘要):\s*"?(.+?)"?(?:\n|$)/)
+        const relatedMatch = block.match(/(?:Связанные факты|相关事实):\s*(\d+)/)
         return {
           name: nameMatch ? nameMatch[1].trim() : '',
           type: nameMatch ? nameMatch[2].trim() : '',
@@ -604,7 +604,7 @@ const parseInsightForge = (text) => {
     }
     
     // Извлечь цепочки связей - полное извлечение без ограничения
-    const relSection = text.match(/### 【关系链】\n([\s\S]*?)(?=\n###|$)/)
+    const relSection = text.match(/### (?:\[Цепочки связей\]|【关系链】)\n([\s\S]*?)(?=\n###|$)/)
     if (relSection) {
       const lines = relSection[1].split('\n').filter(l => l.trim().startsWith('-'))
       result.relations = lines.map(l => {
@@ -633,21 +633,21 @@ const parsePanorama = (text) => {
   
   try {
     // Извлечь запрос
-    const queryMatch = text.match(/查询:\s*(.+?)(?:\n|$)/)
+    const queryMatch = text.match(/(?:Запрос|查询):\s*(.+?)(?:\n|$)/)
     if (queryMatch) result.query = queryMatch[1].trim()
-    
+
     // Извлечь статистику
-    const nodesMatch = text.match(/总节点数:\s*(\d+)/)
-    const edgesMatch = text.match(/总边数:\s*(\d+)/)
-    const activeMatch = text.match(/当前有效事实:\s*(\d+)/)
-    const histMatch = text.match(/历史\/过期事实:\s*(\d+)/)
+    const nodesMatch = text.match(/(?:Всего узлов|总节点数):\s*(\d+)/)
+    const edgesMatch = text.match(/(?:Всего рёбер|总边数):\s*(\d+)/)
+    const activeMatch = text.match(/(?:Текущие актуальные факты|当前有效事实):\s*(\d+)/)
+    const histMatch = text.match(/(?:Исторические\/устаревшие факты|历史\/过期事实):\s*(\d+)/)
     if (nodesMatch) result.stats.nodes = parseInt(nodesMatch[1])
     if (edgesMatch) result.stats.edges = parseInt(edgesMatch[1])
     if (activeMatch) result.stats.activeFacts = parseInt(activeMatch[1])
     if (histMatch) result.stats.historicalFacts = parseInt(histMatch[1])
     
     // Извлечь текущие актуальные факты - полное извлечение без ограничения
-    const activeSection = text.match(/### 【当前有效事实】[\s\S]*?\n([\s\S]*?)(?=\n###|$)/)
+    const activeSection = text.match(/### (?:\[Текущие актуальные факты\]|【当前有效事实】)[\s\S]*?\n([\s\S]*?)(?=\n###|$)/)
     if (activeSection) {
       const lines = activeSection[1].split('\n').filter(l => l.match(/^\d+\./))
       result.activeFacts = lines.map(l => {
@@ -658,7 +658,7 @@ const parsePanorama = (text) => {
     }
     
     // Извлечь исторические/устаревшие факты - полное извлечение без ограничения
-    const histSection = text.match(/### 【历史\/过期事实】[\s\S]*?\n([\s\S]*?)(?=\n###|$)/)
+    const histSection = text.match(/### (?:\[Исторические\/устаревшие факты\]|【历史\/过期事实】)[\s\S]*?\n([\s\S]*?)(?=\n###|$)/)
     if (histSection) {
       const lines = histSection[1].split('\n').filter(l => l.match(/^\d+\./))
       result.historicalFacts = lines.map(l => {
@@ -668,7 +668,7 @@ const parsePanorama = (text) => {
     }
     
     // Извлечь связанные сущности - полное извлечение без ограничения
-    const entitySection = text.match(/### 【涉及实体】\n([\s\S]*?)(?=\n###|$)/)
+    const entitySection = text.match(/### (?:\[Задействованные сущности\]|【涉及实体】)\n([\s\S]*?)(?=\n###|$)/)
     if (entitySection) {
       const lines = entitySection[1].split('\n').filter(l => l.trim().startsWith('-'))
       result.entities = lines.map(l => {
@@ -697,11 +697,11 @@ const parseInterview = (text) => {
   
   try {
     // Извлечь тему интервью
-    const topicMatch = text.match(/\*\*采访主题:\*\*\s*(.+?)(?:\n|$)/)
+    const topicMatch = text.match(/\*\*(?:Тема интервью|采访主题):\*\*\s*(.+?)(?:\n|$)/)
     if (topicMatch) result.topic = topicMatch[1].trim()
-    
+
     // Извлечь число опрошенных (напр. "5 / 9 агентов симуляции")
-    const countMatch = text.match(/\*\*采访人数:\*\*\s*(\d+)\s*\/\s*(\d+)/)
+    const countMatch = text.match(/\*\*(?:Количество интервью|采访人数):\*\*\s*(\d+)\s*\/\s*(\d+)/)
     if (countMatch) {
       result.successCount = parseInt(countMatch[1])
       result.totalCount = parseInt(countMatch[2])
@@ -709,7 +709,7 @@ const parseInterview = (text) => {
     }
     
     // Извлечь обоснование выбора респондентов
-    const reasonMatch = text.match(/### 采访对象选择理由\n([\s\S]*?)(?=\n---\n|\n### 采访实录)/)
+    const reasonMatch = text.match(/### (?:Обоснование выбора респондентов|采访对象选择理由)\n([\s\S]*?)(?=\n---\n|\n### (?:Протокол интервью|采访实录))/)
     if (reasonMatch) {
       result.selectionReason = reasonMatch[1].trim()
     }
@@ -739,7 +739,7 @@ const parseInterview = (text) => {
         // Формат 2: - выбрать имя (index X): причина
         // Пример: - выбрать родитель_601 (index 0): как представитель родителей...
         if (!headerMatch) {
-          headerMatch = line.match(/^-\s*选择([^（(]+)(?:[（(]index\s*=?\s*\d+[)）])?[：:]\s*(.*)/)
+          headerMatch = line.match(/^-\s*(?:выбрать|选择)([^（(]+)(?:[（(]index\s*=?\s*\d+[)）])?[：:]\s*(.*)/)
           if (headerMatch) {
             name = headerMatch[1].trim()
             reasonStart = headerMatch[2]
@@ -764,7 +764,7 @@ const parseInterview = (text) => {
           // Начать нового респондента
           currentName = name
           currentReason = reasonStart ? [reasonStart.trim()] : []
-        } else if (currentName && line.trim() && !line.match(/^未选|^综上|^最终选择/)) {
+        } else if (currentName && line.trim() && !line.match(/^(?:не выбран|未选)|^(?:в итоге|综上)|^(?:итоговый выбор|最终选择)/)) {
           // Продолжение обоснования (исключая заключительные абзацы)
           currentReason.push(line.trim())
         }
@@ -781,7 +781,7 @@ const parseInterview = (text) => {
     const individualReasons = parseIndividualReasons(result.selectionReason)
     
     // Извлечь каждую запись интервью
-    const interviewBlocks = text.split(/#### 采访 #\d+:/).slice(1)
+    const interviewBlocks = text.split(/#### (?:Интервью|采访) #\d+:/).slice(1)
     
     interviewBlocks.forEach((block, index) => {
       const interview = {
@@ -811,7 +811,7 @@ const parseInterview = (text) => {
       }
       
       // Извлечь краткую биографию
-      const bioMatch = block.match(/_简介:\s*([\s\S]*?)_\n/)
+      const bioMatch = block.match(/_(?:Описание|简介):\s*([\s\S]*?)_\n/)
       if (bioMatch) {
         interview.bio = bioMatch[1].trim().replace(/\.\.\.$/, '...')
       }
@@ -834,13 +834,13 @@ const parseInterview = (text) => {
       }
       
       // Извлечь ответы - разделить по Twitter и Reddit
-      const answerMatch = block.match(/\*\*A:\*\*\s*([\s\S]*?)(?=\*\*关键引言|$)/)
+      const answerMatch = block.match(/\*\*A:\*\*\s*([\s\S]*?)(?=\*\*(?:Ключевые цитаты|关键引言)|$)/)
       if (answerMatch) {
         const answerText = answerMatch[1].trim()
         
         // Разделить ответы Twitter и Reddit
-        const twitterMatch = answerText.match(/【Twitter平台回答】\n?([\s\S]*?)(?=【Reddit平台回答】|$)/)
-        const redditMatch = answerText.match(/【Reddit平台回答】\n?([\s\S]*?)$/)
+        const twitterMatch = answerText.match(/(?:\[Ответ на платформе Twitter\]|【Twitter平台回答】)\n?([\s\S]*?)(?=(?:\[Ответ на платформе Reddit\]|【Reddit平台回答】)|$)/)
+        const redditMatch = answerText.match(/(?:\[Ответ на платформе Reddit\]|【Reddit平台回答】)\n?([\s\S]*?)$/)
         
         if (twitterMatch) {
           interview.twitterAnswer = twitterMatch[1].trim()
@@ -852,11 +852,11 @@ const parseInterview = (text) => {
         // Логика отката платформы (совместимость со старым форматом: только одна платформа)
         if (!twitterMatch && redditMatch) {
           // Только Reddit-ответ, копировать как дефолтный только если не заглушка
-          if (interview.redditAnswer && interview.redditAnswer !== '（该平台未获得回复）') {
+          if (interview.redditAnswer && interview.redditAnswer !== '(на этой платформе ответ не получен)' && interview.redditAnswer !== '（该平台未获得回复）') {
             interview.twitterAnswer = interview.redditAnswer
           }
         } else if (twitterMatch && !redditMatch) {
-          if (interview.twitterAnswer && interview.twitterAnswer !== '（该平台未获得回复）') {
+          if (interview.twitterAnswer && interview.twitterAnswer !== '(на этой платформе ответ не получен)' && interview.twitterAnswer !== '（该平台未获得回复）') {
             interview.redditAnswer = interview.twitterAnswer
           }
         } else if (!twitterMatch && !redditMatch) {
@@ -866,7 +866,7 @@ const parseInterview = (text) => {
       }
       
       // Извлечь ключевые цитаты (совместимость с разными форматами кавычек)
-      const quotesMatch = block.match(/\*\*关键引言:\*\*\n([\s\S]*?)(?=\n---|\n####|$)/)
+      const quotesMatch = block.match(/\*\*(?:Ключевые цитаты|关键引言):\*\*\n([\s\S]*?)(?=\n---|\n####|$)/)
       if (quotesMatch) {
         const quotesText = quotesMatch[1]
         // Приоритетное совпадение формата > "text"
@@ -888,7 +888,7 @@ const parseInterview = (text) => {
     })
     
     // Извлечь сводку интервью
-    const summaryMatch = text.match(/### 采访摘要与核心观点\n([\s\S]*?)$/)
+    const summaryMatch = text.match(/### (?:Сводка интервью и ключевые выводы|采访摘要与核心观点)\n([\s\S]*?)$/)
     if (summaryMatch) {
       result.summary = summaryMatch[1].trim()
     }
@@ -910,22 +910,22 @@ const parseQuickSearch = (text) => {
   
   try {
     // Извлечь поисковый запрос
-    const queryMatch = text.match(/搜索查询:\s*(.+?)(?:\n|$)/)
+    const queryMatch = text.match(/(?:Поисковый запрос|搜索查询):\s*(.+?)(?:\n|$)/)
     if (queryMatch) result.query = queryMatch[1].trim()
-    
+
     // Извлечь количество результатов
-    const countMatch = text.match(/找到\s*(\d+)\s*条/)
-    if (countMatch) result.count = parseInt(countMatch[1])
-    
+    const countMatch = text.match(/(?:Найдено\s*(\d+)\s*релевантных|找到\s*(\d+)\s*条)/)
+    if (countMatch) result.count = parseInt(countMatch[1] || countMatch[2])
+
     // Извлечь связанные факты - полное извлечение без ограничения
-    const factsSection = text.match(/### 相关事实:\n([\s\S]*)$/)
+    const factsSection = text.match(/### (?:Релевантные факты|相关事实):\n([\s\S]*)$/)
     if (factsSection) {
       const lines = factsSection[1].split('\n').filter(l => l.match(/^\d+\./))
       result.facts = lines.map(l => l.replace(/^\d+\.\s*/, '').trim()).filter(Boolean)
     }
     
     // Попытка извлечь информацию о рёбрах (при наличии)
-    const edgesSection = text.match(/### 相关边:\n([\s\S]*?)(?=\n###|$)/)
+    const edgesSection = text.match(/### (?:Релевантные рёбра|相关边):\n([\s\S]*?)(?=\n###|$)/)
     if (edgesSection) {
       const lines = edgesSection[1].split('\n').filter(l => l.trim().startsWith('-'))
       result.edges = lines.map(l => {
@@ -938,7 +938,7 @@ const parseQuickSearch = (text) => {
     }
     
     // Попытка извлечь информацию об узлах (при наличии)
-    const nodesSection = text.match(/### 相关节点:\n([\s\S]*?)(?=\n###|$)/)
+    const nodesSection = text.match(/### (?:Релевантные узлы|相关节点):\n([\s\S]*?)(?=\n###|$)/)
     if (nodesSection) {
       const lines = nodesSection[1].split('\n').filter(l => l.trim().startsWith('-'))
       result.nodes = lines.map(l => {
@@ -1327,7 +1327,7 @@ const InterviewDisplay = {
     const isPlaceholderText = (text) => {
       if (!text) return true
       const t = text.trim()
-      return t === '（该平台未获得回复）' || t === '(该平台未获得回复)' || t === '[无回复]'
+      return t === '(на этой платформе ответ не получен)' || t === '（该平台未获得回复）' || t === '(该平台未获得回复)' || t === '[无回复]'
     }
 
     // Попытка разделить ответ по номерам вопросов
@@ -1335,14 +1335,14 @@ const InterviewDisplay = {
       if (!answerText || questionCount <= 0) return [answerText]
       if (isPlaceholderText(answerText)) return ['']
 
-      // Поддержка двух форматов нумерации:
-      // 1. "问题X：" или "问题X:" (китайский формат, новый формат бэкенда)
+      // Поддержка форматов нумерации:
+      // 1. "Вопрос X:" (русский формат) или "问题X：" (китайский формат, совместимость)
       // 2. "1. " или "\n1. " (число+точка, совместимость со старым форматом)
       let matches = []
       let match
 
-      // Приоритетная попытка формата "问题X："
-      const cnPattern = /(?:^|[\r\n]+)问题(\d+)[：:]\s*/g
+      // Приоритетная попытка формата "Вопрос X:" или "问题X："
+      const cnPattern = /(?:^|[\r\n]+)(?:Вопрос|问题)[\s]*(\d+)[：:]\s*/g
       while ((match = cnPattern.exec(answerText)) !== null) {
         matches.push({
           num: parseInt(match[1]),
@@ -1366,7 +1366,7 @@ const InterviewDisplay = {
       // Если нумерация не найдена или найден только один номер, вернуть целиком
       if (matches.length <= 1) {
         const cleaned = answerText
-          .replace(/^问题\d+[：:]\s*/, '')
+          .replace(/^(?:Вопрос|问题)[\s]*\d+[：:]\s*/, '')
           .replace(/^\d+\.\s+/, '')
           .trim()
         return [cleaned || answerText]
@@ -2097,8 +2097,8 @@ const extractFinalContent = (response) => {
     return finalAnswerMatch[1].trim()
   }
   
-  // Попытка найти содержимое после 最终答案:
-  const chineseFinalMatch = response.match(/最终答案[:：]\s*\n*([\s\S]*)$/i)
+  // Попытка найти содержимое после Итоговый ответ: / 最终答案:
+  const chineseFinalMatch = response.match(/(?:Итоговый ответ|最终答案)[:：]\s*\n*([\s\S]*)$/i)
   if (chineseFinalMatch) {
     return chineseFinalMatch[1].trim()
   }

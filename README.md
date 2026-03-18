@@ -49,16 +49,16 @@ MiroFish стремится создать зеркало коллективно
 <div align="center">
 <table>
 <tr>
-<td><img src="./static/image/Screenshot/运行截图1.png" alt="Скриншот 1" width="100%"/></td>
-<td><img src="./static/image/Screenshot/运行截图2.png" alt="Скриншот 2" width="100%"/></td>
+<td><img src="./static/image/Screenshot/screenshot_1.png" alt="Скриншот 1" width="100%"/></td>
+<td><img src="./static/image/Screenshot/screenshot_2.png" alt="Скриншот 2" width="100%"/></td>
 </tr>
 <tr>
-<td><img src="./static/image/Screenshot/运行截图3.png" alt="Скриншот 3" width="100%"/></td>
-<td><img src="./static/image/Screenshot/运行截图4.png" alt="Скриншот 4" width="100%"/></td>
+<td><img src="./static/image/Screenshot/screenshot_3.png" alt="Скриншот 3" width="100%"/></td>
+<td><img src="./static/image/Screenshot/screenshot_4.png" alt="Скриншот 4" width="100%"/></td>
 </tr>
 <tr>
-<td><img src="./static/image/Screenshot/运行截图5.png" alt="Скриншот 5" width="100%"/></td>
-<td><img src="./static/image/Screenshot/运行截图6.png" alt="Скриншот 6" width="100%"/></td>
+<td><img src="./static/image/Screenshot/screenshot_5.png" alt="Скриншот 5" width="100%"/></td>
+<td><img src="./static/image/Screenshot/screenshot_6.png" alt="Скриншот 6" width="100%"/></td>
 </tr>
 </table>
 </div>
@@ -68,7 +68,7 @@ MiroFish стремится создать зеркало коллективно
 ### 1. Симуляция прогноза общественного мнения Уханьского университета + Презентация проекта MiroFish
 
 <div align="center">
-<a href="https://www.bilibili.com/video/BV1VYBsBHEMY/" target="_blank"><img src="./static/image/武大模拟演示封面.png" alt="Демо-видео MiroFish" width="75%"/></a>
+<a href="https://www.bilibili.com/video/BV1VYBsBHEMY/" target="_blank"><img src="./static/image/wuhan_demo_cover.png" alt="Демо-видео MiroFish" width="75%"/></a>
 
 Нажмите на изображение, чтобы посмотреть полное демо-видео прогнозирования на основе отчёта об общественном мнении Уханьского университета, сгенерированного BettaFish
 </div>
@@ -76,7 +76,7 @@ MiroFish стремится создать зеркало коллективно
 ### 2. Прогноз утраченного финала «Сна в красном тереме»
 
 <div align="center">
-<a href="https://www.bilibili.com/video/BV1cPk3BBExq" target="_blank"><img src="./static/image/红楼梦模拟推演封面.jpg" alt="Демо-видео MiroFish" width="75%"/></a>
+<a href="https://www.bilibili.com/video/BV1cPk3BBExq" target="_blank"><img src="./static/image/dream_red_chamber_cover.jpg" alt="Демо-видео MiroFish" width="75%"/></a>
 
 Нажмите на изображение, чтобы посмотреть глубокий прогноз MiroFish утраченного финала на основе сотен тысяч иероглифов из первых 80 глав «Сна в красном тереме»
 </div>
@@ -179,7 +179,7 @@ docker compose up -d
 ## 📬 Обратная связь
 
 <div align="center">
-<img src="./static/image/QQ群.png" alt="QQ-группа" width="60%"/>
+<img src="./static/image/qq_group.png" alt="QQ-группа" width="60%"/>
 </div>
 
 &nbsp;
