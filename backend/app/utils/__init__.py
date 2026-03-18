@@ -1,5 +1,5 @@
 """
-工具模块
+Модуль утилит
 """
 
 from .file_parser import FileParser
