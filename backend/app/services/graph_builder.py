@@ -15,8 +15,11 @@ from zep_cloud import EpisodeData, EntityEdgeSourceTarget
 
 from ..config import Config
 from ..models.task import TaskManager, TaskStatus
+from ..utils.logger import get_logger
 from ..utils.zep_paging import fetch_all_nodes, fetch_all_edges
 from .text_processor import TextProcessor
+
+logger = get_logger('mirofish.graph_builder')
 
 
 @dataclass
@@ -433,58 +436,70 @@ class GraphBuilderService:
         # Создание маппинга узлов для получения имён узлов
         node_map = {}
         for node in nodes:
-            node_map[node.uuid_] = node.name or ""
+            node_uuid = getattr(node, 'uuid_', None) or getattr(node, 'uuid', '')
+            if node_uuid:
+                node_map[node_uuid] = node.name or ""
 
         nodes_data = []
         for node in nodes:
-            # Получение времени создания
-            created_at = getattr(node, 'created_at', None)
-            if created_at:
-                created_at = str(created_at)
+            try:
+                # Получение времени создания
+                created_at = getattr(node, 'created_at', None)
+                if created_at:
+                    created_at = str(created_at)
 
-            nodes_data.append({
-                "uuid": node.uuid_,
-                "name": node.name,
-                "labels": node.labels or [],
-                "summary": node.summary or "",
-                "attributes": node.attributes or {},
-                "created_at": created_at,
-            })
+                node_uuid = getattr(node, 'uuid_', None) or getattr(node, 'uuid', '')
+                nodes_data.append({
+                    "uuid": node_uuid,
+                    "name": node.name or "",
+                    "labels": node.labels or [],
+                    "summary": node.summary or "",
+                    "attributes": node.attributes or {},
+                    "created_at": created_at,
+                })
+            except Exception as e:
+                logger.warning(f"Ошибка обработки узла: {e}")
+                continue
 
         edges_data = []
         for edge in edges:
-            # Получение временной информации
-            created_at = getattr(edge, 'created_at', None)
-            valid_at = getattr(edge, 'valid_at', None)
-            invalid_at = getattr(edge, 'invalid_at', None)
-            expired_at = getattr(edge, 'expired_at', None)
+            try:
+                # Получение временной информации
+                created_at = getattr(edge, 'created_at', None)
+                valid_at = getattr(edge, 'valid_at', None)
+                invalid_at = getattr(edge, 'invalid_at', None)
+                expired_at = getattr(edge, 'expired_at', None)
 
-            # Получение episodes
-            episodes = getattr(edge, 'episodes', None) or getattr(edge, 'episode_ids', None)
-            if episodes and not isinstance(episodes, list):
-                episodes = [str(episodes)]
-            elif episodes:
-                episodes = [str(e) for e in episodes]
+                # Получение episodes
+                episodes = getattr(edge, 'episodes', None) or getattr(edge, 'episode_ids', None)
+                if episodes and not isinstance(episodes, list):
+                    episodes = [str(episodes)]
+                elif episodes:
+                    episodes = [str(e) for e in episodes]
 
-            # Получение fact_type
-            fact_type = getattr(edge, 'fact_type', None) or edge.name or ""
+                # Получение fact_type
+                fact_type = getattr(edge, 'fact_type', None) or edge.name or ""
 
-            edges_data.append({
-                "uuid": edge.uuid_,
-                "name": edge.name or "",
-                "fact": edge.fact or "",
-                "fact_type": fact_type,
-                "source_node_uuid": edge.source_node_uuid,
-                "target_node_uuid": edge.target_node_uuid,
-                "source_node_name": node_map.get(edge.source_node_uuid, ""),
-                "target_node_name": node_map.get(edge.target_node_uuid, ""),
-                "attributes": edge.attributes or {},
-                "created_at": str(created_at) if created_at else None,
-                "valid_at": str(valid_at) if valid_at else None,
-                "invalid_at": str(invalid_at) if invalid_at else None,
-                "expired_at": str(expired_at) if expired_at else None,
-                "episodes": episodes or [],
-            })
+                edge_uuid = getattr(edge, 'uuid_', None) or getattr(edge, 'uuid', '')
+                edges_data.append({
+                    "uuid": edge_uuid,
+                    "name": edge.name or "",
+                    "fact": edge.fact or "",
+                    "fact_type": fact_type,
+                    "source_node_uuid": edge.source_node_uuid or "",
+                    "target_node_uuid": edge.target_node_uuid or "",
+                    "source_node_name": node_map.get(edge.source_node_uuid, ""),
+                    "target_node_name": node_map.get(edge.target_node_uuid, ""),
+                    "attributes": edge.attributes or {},
+                    "created_at": str(created_at) if created_at else None,
+                    "valid_at": str(valid_at) if valid_at else None,
+                    "invalid_at": str(invalid_at) if invalid_at else None,
+                    "expired_at": str(expired_at) if expired_at else None,
+                    "episodes": episodes or [],
+                })
+            except Exception as e:
+                logger.warning(f"Ошибка обработки ребра: {e}")
+                continue
 
         return {
             "graph_id": graph_id,
