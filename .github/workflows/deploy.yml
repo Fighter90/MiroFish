@@ -20,22 +20,28 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           command_timeout: 30m
           script: |
-            # Скачать свежий код тарболлом (обход проблем с git credentials)
             cd /root
-            rm -rf MiroFish
-            curl -sL https://github.com/Fighter90/MiroFish/archive/refs/heads/main.tar.gz | tar xz
-            mv MiroFish-main MiroFish
-            cd /root/MiroFish
 
-            # Восстановить локальные настройки
-            sed -i 's|image: ghcr.io/666ghj/mirofish:latest|image: mirofish-ru:latest|' docker-compose.yml
-
-            # Полная остановка и очистка
-            docker compose down --remove-orphans || true
+            # Остановить контейнеры до удаления кода
+            cd /root/MiroFish 2>/dev/null && docker compose down --remove-orphans || true
             docker rm -f $(docker ps -aq) 2>/dev/null || true
             docker rmi mirofish-ru:latest 2>/dev/null || true
             docker system prune -af 2>/dev/null || true
             docker builder prune -af 2>/dev/null || true
+
+            # Сохранить .env если есть
+            cd /root
+            cp /root/MiroFish/.env /tmp/.env.backup 2>/dev/null || true
+
+            # Скачать свежий код тарболлом
+            rm -rf MiroFish MiroFish-main
+            curl -sL https://github.com/Fighter90/MiroFish/archive/refs/heads/main.tar.gz | tar xz
+            mv MiroFish-main MiroFish
+
+            # Восстановить .env и локальные настройки
+            cp /tmp/.env.backup /root/MiroFish/.env 2>/dev/null || true
+            cd /root/MiroFish
+            sed -i 's|image: ghcr.io/666ghj/mirofish:latest|image: mirofish-ru:latest|' docker-compose.yml
 
             # Пересобрать без кеша
             docker build --no-cache -t mirofish-ru:latest .
