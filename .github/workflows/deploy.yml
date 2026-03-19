@@ -12,17 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Copy files to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: root
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "."
-          target: /root/MiroFish
-          overwrite: true
-
-      - name: Build and restart on server
+      - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -30,6 +20,13 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd /root/MiroFish
+            git fetch origin main
+            git reset --hard origin/main
+
+            # Восстановить локальные настройки
+            sed -i 's|image: ghcr.io/666ghj/mirofish:latest|image: mirofish-ru:latest|' docker-compose.yml
+
+            # Пересобрать и перезапустить
             docker build -t mirofish-ru:latest .
             docker compose down
             docker compose up -d
