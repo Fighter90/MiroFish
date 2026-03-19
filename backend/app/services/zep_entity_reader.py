@@ -3,10 +3,12 @@
 Чтение узлов из графа Zep, фильтрация узлов, соответствующих предопределённым типам сущностей
 """
 
+import json
 import time
 from typing import Dict, Any, List, Optional, Set, Callable, TypeVar
 from dataclasses import dataclass, field
 
+from openai import OpenAI
 from zep_cloud.client import Zep
 
 from ..config import Config
@@ -123,6 +125,83 @@ class ZepEntityReader:
                     logger.error(f"Zep {operation_name} не удалось после {max_retries} попыток: {str(e)}")
 
         raise last_exception
+
+    def _normalize_entity_names(self, entities: List['EntityNode']) -> None:
+        """
+        Нормализация имён сущностей — приведение к именительному падежу (кто? что?)
+        и заглавной букве. Изменяет entity.name in-place.
+        Использует один LLM-вызов для пакетной нормализации.
+        """
+        if not entities:
+            return
+
+        try:
+            client = OpenAI(
+                api_key=Config.LLM_API_KEY,
+                base_url=Config.LLM_BASE_URL
+            )
+        except Exception as e:
+            logger.warning(f"Не удалось создать LLM-клиент для нормализации: {e}")
+            return
+
+        names = [e.name for e in entities]
+        names_json = json.dumps(names, ensure_ascii=False)
+
+        prompt = f"""Приведи все имена сущностей к именительному падежу (кто? что?).
+Также исправь стилистику: имена должны звучать как названия аккаунтов в социальных сетях — с заглавной буквы, лаконично.
+
+Если имя — это страна или географический регион (например, «Исландия», «Великобритания»), верни его без изменений.
+Если имя уже в именительном падеже и корректно — верни без изменений.
+Если имя на английском — верни без изменений.
+
+Примеры:
+- «государственных служащих» → «Государственные служащие»
+- «производственными работниками» → «Производственные работники»
+- «депутатов Государственной Думы» → «Депутаты Государственной Думы»
+- «офисных сотрудников» → «Офисные сотрудники»
+- «Средний возраст» → «Работники среднего возраста»
+- «профсоюзы» → «Профсоюзы»
+- «IT-специалисты» → «IT-специалисты» (без изменений)
+- «Молодёжь» → «Молодёжь» (без изменений)
+
+Входные имена (JSON-массив):
+{names_json}
+
+Верни ТОЛЬКО JSON-массив с нормализованными именами в том же порядке и того же размера. Никакого другого текста."""
+
+        try:
+            response = client.chat.completions.create(
+                model=Config.LLM_MODEL_NAME,
+                messages=[
+                    {"role": "system", "content": "Ты — лингвистический ассистент. Отвечай только валидным JSON."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.0,
+                max_tokens=2000
+            )
+
+            content = response.choices[0].message.content.strip()
+            # Убираем маркеры кода если есть
+            if content.startswith("```"):
+                content = content.split("\n", 1)[1] if "\n" in content else content[3:]
+                if content.endswith("```"):
+                    content = content[:-3].strip()
+
+            normalized = json.loads(content)
+
+            if isinstance(normalized, list) and len(normalized) == len(entities):
+                changed = 0
+                for entity, new_name in zip(entities, normalized):
+                    if isinstance(new_name, str) and new_name.strip() and new_name != entity.name:
+                        logger.info(f"Нормализация имени: «{entity.name}» → «{new_name.strip()}»")
+                        entity.name = new_name.strip()
+                        changed += 1
+                logger.info(f"Нормализация имён завершена: {changed} из {len(entities)} изменено")
+            else:
+                logger.warning(f"LLM вернул массив неверного размера, пропуск нормализации")
+
+        except Exception as e:
+            logger.warning(f"Ошибка нормализации имён сущностей: {e}, продолжаем без нормализации")
 
     def get_all_nodes(self, graph_id: str) -> List[Dict[str, Any]]:
         """
@@ -322,6 +401,9 @@ class ZepEntityReader:
 
         logger.info(f"Фильтрация завершена: всего узлов {total_count}, соответствующих условиям {len(filtered_entities)}, "
                    f"типы сущностей: {entity_types_found}")
+
+        # Нормализация имён сущностей (именительный падеж, заглавная буква)
+        self._normalize_entity_names(filtered_entities)
 
         return FilteredEntities(
             entities=filtered_entities,

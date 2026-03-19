@@ -844,71 +844,6 @@ class OasisProfileGenerator:
                 "interested_topics": ["General", "Social Issues"],
             }
 
-    def _normalize_entity_names(self, entities: List[EntityNode]) -> None:
-        """
-        Нормализация имён сущностей — приведение к именительному падежу (кто? что?)
-        Изменяет entity.name in-place для каждой сущности.
-        Использует один вызов LLM для пакетной нормализации.
-        """
-        if not entities:
-            return
-
-        names = [e.name for e in entities]
-        names_json = json.dumps(names, ensure_ascii=False)
-
-        prompt = f"""Приведи все имена сущностей к именительному падежу (кто? что?).
-Также исправь стилистику: имена должны звучать как названия аккаунтов в социальных сетях — с заглавной буквы, лаконично.
-
-Если имя — это страна или географический регион (например, «Исландия», «Великобритания», «Япония»), верни его без изменений.
-Если имя уже в именительном падеже и корректно — верни без изменений.
-
-Примеры:
-- «государственных служащих» → «Государственные служащие»
-- «производственными работниками» → «Производственные работники»
-- «офисных сотрудников» → «Офисные сотрудники»
-- «Средний возраст» → «Работники среднего возраста»
-- «IT-специалисты» → «IT-специалисты» (без изменений)
-- «Молодёжь» → «Молодёжь» (без изменений)
-
-Входные имена (JSON-массив):
-{names_json}
-
-Верни ТОЛЬКО JSON-массив с нормализованными именами в том же порядке и того же размера. Никакого другого текста."""
-
-        try:
-            response = self.client.chat.completions.create(
-                model=self.model_name,
-                messages=[
-                    {"role": "system", "content": "Ты — лингвистический ассистент. Отвечай только валидным JSON."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.0,
-                max_tokens=2000
-            )
-
-            content = response.choices[0].message.content.strip()
-            # Убираем маркеры кода если есть
-            if content.startswith("```"):
-                content = content.split("\n", 1)[1] if "\n" in content else content[3:]
-                if content.endswith("```"):
-                    content = content[:-3].strip()
-
-            normalized = json.loads(content)
-
-            if isinstance(normalized, list) and len(normalized) == len(entities):
-                changed = 0
-                for entity, new_name in zip(entities, normalized):
-                    if isinstance(new_name, str) and new_name.strip() and new_name != entity.name:
-                        logger.info(f"Нормализация имени: «{entity.name}» → «{new_name.strip()}»")
-                        entity.name = new_name.strip()
-                        changed += 1
-                logger.info(f"Нормализация имён завершена: {changed} из {len(entities)} изменено")
-            else:
-                logger.warning(f"LLM вернул массив неверного размера ({len(normalized) if isinstance(normalized, list) else 'не массив'} вместо {len(entities)}), пропуск нормализации")
-
-        except Exception as e:
-            logger.warning(f"Ошибка нормализации имён сущностей: {e}, продолжаем без нормализации")
-
     def set_graph_id(self, graph_id: str):
         """Установка ID графа для поиска Zep"""
         self.graph_id = graph_id
@@ -944,9 +879,6 @@ class OasisProfileGenerator:
         # Установка graph_id для поиска Zep
         if graph_id:
             self.graph_id = graph_id
-
-        # Нормализация имён сущностей (именительный падеж)
-        self._normalize_entity_names(entities)
 
         total = len(entities)
         profiles = [None] * total  # Предварительное выделение списка для сохранения порядка
