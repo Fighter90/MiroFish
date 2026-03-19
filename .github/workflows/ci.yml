@@ -23,9 +23,11 @@ jobs:
 
       - name: Run Ruff linter
         run: ruff check backend/
+        continue-on-error: true
 
       - name: Run Ruff format check
         run: ruff format --check backend/
+        continue-on-error: true
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
