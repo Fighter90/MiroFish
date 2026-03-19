@@ -2,7 +2,7 @@
   <div class="home-container">
     <!-- Верхняя панель навигации -->
     <nav class="navbar">
-      <div class="nav-brand">MIROFISH</div>
+      <div class="nav-brand">АГЕНТНОЕ МОДЕЛИРОВАНИЕ</div>
       <div class="nav-links">
         <router-link to="/help" class="nav-link">Помощь</router-link>
         <a href="https://github.com/Fighter90/MiroFish" target="_blank" class="github-link">
