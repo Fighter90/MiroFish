@@ -309,10 +309,10 @@
                     <div class="llm-meta">
                       <span class="meta-tag">Iteration {{ log.details?.iteration }}</span>
                       <span class="meta-tag" :class="{ active: log.details?.has_tool_calls }">
-                        Tools: {{ log.details?.has_tool_calls ? 'Yes' : 'No' }}
+                        Инструменты: {{ log.details?.has_tool_calls ? 'Да' : 'Нет' }}
                       </span>
                       <span class="meta-tag" :class="{ active: log.details?.has_final_answer, 'final-answer': log.details?.has_final_answer }">
-                        Final: {{ log.details?.has_final_answer ? 'Yes' : 'No' }}
+                        Финал: {{ log.details?.has_final_answer ? 'Да' : 'Нет' }}
                       </span>
                     </div>
                     <!-- При финальном ответе показать специальную подсказку -->
@@ -320,7 +320,7 @@
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="20 6 9 17 4 12"></polyline>
                       </svg>
-                      <span>Section "{{ log.section_title }}" content generated</span>
+                      <span>Раздел «{{ log.section_title }}» сгенерирован</span>
                     </div>
                     <div v-if="expandedLogs.has(log.timestamp) && log.details?.response" class="llm-content">
                       <pre>{{ log.details.response }}</pre>
@@ -334,7 +334,7 @@
                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                         <polyline points="22 4 12 14.01 9 11.01"></polyline>
                       </svg>
-                      <span>Report Generation Complete</span>
+                      <span>Генерация отчёта завершена</span>
                     </div>
                   </template>
                 </div>
@@ -347,17 +347,17 @@
                   <div class="footer-actions">
                     <!-- Tool Call: Show/Hide Params -->
                     <button v-if="log.action === 'tool_call' && log.details?.parameters" class="action-btn" @click.stop="toggleLogExpand(log)">
-                      {{ expandedLogs.has(log.timestamp) ? 'Hide Params' : 'Show Params' }}
+                      {{ expandedLogs.has(log.timestamp) ? 'Скрыть параметры' : 'Показать параметры' }}
                     </button>
                     
                     <!-- Tool Result: Raw/Structured View -->
                     <button v-if="log.action === 'tool_result'" class="action-btn" @click.stop="toggleRawResult(log.timestamp, $event)">
-                      {{ showRawResult[log.timestamp] ? 'Structured View' : 'Raw Output' }}
+                      {{ showRawResult[log.timestamp] ? 'Структурированный вид' : 'Исходный вывод' }}
                     </button>
                     
                     <!-- LLM Response: Show/Hide Response -->
                     <button v-if="log.action === 'llm_response' && log.details?.response" class="action-btn" @click.stop="toggleLogExpand(log)">
-                      {{ expandedLogs.has(log.timestamp) ? 'Hide Response' : 'Show Response' }}
+                      {{ expandedLogs.has(log.timestamp) ? 'Скрыть ответ' : 'Показать ответ' }}
                     </button>
                   </div>
                 </div>
@@ -495,27 +495,27 @@ const isLogCollapsed = (log) => {
 // Tool configurations with display names and colors
 const toolConfig = {
   'insight_forge': {
-    name: 'Deep Insight',
+    name: 'Глубокий анализ',
     color: 'purple',
     icon: 'lightbulb' // Иконка лампочки - символ инсайта
   },
   'panorama_search': {
-    name: 'Panorama Search',
+    name: 'Полный поиск',
     color: 'blue',
     icon: 'globe' // Иконка глобуса - символ панорамного поиска
   },
   'interview_agents': {
-    name: 'Agent Interview',
+    name: 'Интервью агентов',
     color: 'green',
     icon: 'users' // Иконка пользователей - символ диалога
   },
   'quick_search': {
-    name: 'Quick Search',
+    name: 'Быстрый поиск',
     color: 'orange',
     icon: 'zap' // Иконка молнии - символ быстроты
   },
   'get_graph_statistics': {
-    name: 'Graph Stats',
+    name: 'Статистика графа',
     color: 'cyan',
     icon: 'chart' // Иконка графика - символ статистики
   },
@@ -974,7 +974,7 @@ const InsightDisplay = {
       if (length >= 1000) {
         return `${(length / 1000).toFixed(1)}k chars`
       }
-      return `${length} chars`
+      return `${length} симв.`
     }
     
     return () => h('div', { class: 'insight-display' }, [
@@ -1145,23 +1145,23 @@ const PanoramaDisplay = {
       if (length >= 1000) {
         return `${(length / 1000).toFixed(1)}k chars`
       }
-      return `${length} chars`
+      return `${length} симв.`
     }
     
     return () => h('div', { class: 'panorama-display' }, [
       // Header Section
       h('div', { class: 'panorama-header' }, [
         h('div', { class: 'header-main' }, [
-          h('div', { class: 'header-title' }, 'Panorama Search'),
+          h('div', { class: 'header-title' }, 'Полный поиск'),
           h('div', { class: 'header-stats' }, [
             h('span', { class: 'stat-item' }, [
               h('span', { class: 'stat-value' }, props.result.stats.nodes),
-              h('span', { class: 'stat-label' }, 'Nodes')
+              h('span', { class: 'stat-label' }, 'Узлы')
             ]),
             h('span', { class: 'stat-divider' }, '/'),
             h('span', { class: 'stat-item' }, [
               h('span', { class: 'stat-value' }, props.result.stats.edges),
-              h('span', { class: 'stat-label' }, 'Edges')
+              h('span', { class: 'stat-label' }, 'Связи')
             ]),
             props.resultLength && h('span', { class: 'stat-divider' }, '·'),
             props.resultLength && h('span', { class: 'stat-size' }, formatSize(props.resultLength))
@@ -1280,7 +1280,7 @@ const InterviewDisplay = {
       if (length >= 1000) {
         return `${(length / 1000).toFixed(1)}k chars`
       }
-      return `${length} chars`
+      return `${length} симв.`
     }
     
     // Clean quote text - remove leading list numbers to avoid double numbering
@@ -1475,7 +1475,7 @@ const InterviewDisplay = {
         h('div', { class: 'qa-thread' }, 
           (props.result.interviews[activeIndex.value]?.questions?.length > 0 
             ? props.result.interviews[activeIndex.value].questions 
-            : [props.result.interviews[activeIndex.value]?.question || 'No question available']
+            : [props.result.interviews[activeIndex.value]?.question || 'Вопрос отсутствует']
           ).map((question, qIdx) => {
             const interview = props.result.interviews[activeIndex.value]
             const currentPlatform = getPlatformTab(activeIndex.value, qIdx)
@@ -1537,7 +1537,7 @@ const InterviewDisplay = {
                   !isPlaceholder && answerText.length > 400 && h('button', {
                     class: 'expand-answer-btn',
                     onClick: () => toggleAnswer(expandKey)
-                  }, isExpanded ? 'Show Less' : 'Show More')
+                  }, isExpanded ? 'Свернуть' : 'Развернуть')
                 ])
               ])
             ])
@@ -1592,18 +1592,18 @@ const QuickSearchDisplay = {
       if (length >= 1000) {
         return `${(length / 1000).toFixed(1)}k chars`
       }
-      return `${length} chars`
+      return `${length} симв.`
     }
     
     return () => h('div', { class: 'quick-search-display' }, [
       // Header Section
       h('div', { class: 'quicksearch-header' }, [
         h('div', { class: 'header-main' }, [
-          h('div', { class: 'header-title' }, 'Quick Search'),
+          h('div', { class: 'header-title' }, 'Быстрый поиск'),
           h('div', { class: 'header-stats' }, [
             h('span', { class: 'stat-item' }, [
               h('span', { class: 'stat-value' }, props.result.count || props.result.facts.length),
-              h('span', { class: 'stat-label' }, 'Results')
+              h('span', { class: 'stat-label' }, 'Результаты')
             ]),
             props.resultLength && h('span', { class: 'stat-divider' }, '·'),
             props.resultLength && h('span', { class: 'stat-size' }, formatSize(props.resultLength))
@@ -1814,9 +1814,9 @@ const workflowSteps = computed(() => {
   steps.push({
     key: 'complete',
     noLabel: 'OK',
-    title: 'Complete',
+    title: 'Готово',
     status: completeStatus,
-    meta: completeStatus === 'active' ? 'FINALIZING' : ''
+    meta: completeStatus === 'active' ? 'ЗАВЕРШЕНИЕ' : ''
   })
 
   return steps
@@ -1856,7 +1856,7 @@ const formatParams = (params) => {
 
 const formatResultSize = (length) => {
   if (!length) return ''
-  if (length < 1000) return `${length} chars`
+  if (length < 1000) return `${length} симв.`
   return `${(length / 1000).toFixed(1)}k chars`
 }
 
@@ -1991,23 +1991,23 @@ const getConnectorClass = (log, idx, total) => {
 
 const getActionLabel = (action) => {
   const labels = {
-    'report_start': 'Report Started',
-    'planning_start': 'Planning',
-    'planning_complete': 'Plan Complete',
-    'section_start': 'Section Start',
-    'section_content': 'Content Ready',
-    'section_complete': 'Section Done',
-    'tool_call': 'Tool Call',
-    'tool_result': 'Tool Result',
-    'llm_response': 'LLM Response',
-    'report_complete': 'Complete'
+    'report_start': 'Отчёт запущен',
+    'planning_start': 'Планирование',
+    'planning_complete': 'План готов',
+    'section_start': 'Начало раздела',
+    'section_content': 'Контент готов',
+    'section_complete': 'Раздел завершён',
+    'tool_call': 'Вызов инструмента',
+    'tool_result': 'Результат инструмента',
+    'llm_response': 'Ответ модели',
+    'report_complete': 'Завершено'
   }
   return labels[action] || action
 }
 
 const getLogLevelClass = (log) => {
-  if (log.includes('ERROR') || log.includes('错误') || log.includes('ошибка')) return 'error'
-  if (log.includes('WARNING') || log.includes('警告') || log.includes('предупреждение')) return 'warning'
+  if (log.includes('ERROR') || log.includes('ошибка')) return 'error'
+  if (log.includes('WARNING') || log.includes('предупреждение')) return 'warning'
   // INFO использует цвет по умолчанию, не помечается как success
   return ''
 }

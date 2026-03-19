@@ -16,7 +16,7 @@
       <section class="hero-section">
         <div class="hero-left">
           <div class="tag-row">
-            <span class="orange-tag">Движок коллективного интеллекта</span>
+            <span class="orange-tag">Система моделирования общественного мнения</span>
             <span class="version-text">/ v0.1-превью</span>
           </div>
 
@@ -27,10 +27,10 @@
 
           <div class="hero-desc">
             <p>
-              Даже из одного фрагмента текста <span class="highlight-bold">MiroFish</span> способен извлечь зёрна реальности и автоматически построить параллельный мир, состоящий из <span class="highlight-orange">миллионов Agent-ов</span>. Управляя переменными с высоты птичьего полёта, находите <span class="highlight-code">"локальный оптимум"</span> в сложных групповых взаимодействиях в динамической среде.
+              На основе загруженных документов <span class="highlight-bold">MiroFish</span> автоматически создаёт виртуальный мир из <span class="highlight-orange">тысяч AI-агентов</span>, каждый со своей личностью и памятью. Система моделирует их реакции на заданный сценарий, позволяя <span class="highlight-code">прогнозировать общественное мнение</span> до наступления реальных событий.
             </p>
             <p class="slogan-text">
-              Пусть будущее репетируется среди Agent-ов, а решения побеждают после сотен битв<span class="blinking-cursor">_</span>
+              Моделируйте будущее до того, как оно наступит<span class="blinking-cursor">_</span>
             </p>
           </div>
 
@@ -125,7 +125,7 @@
             <!-- Область загрузки -->
             <div class="console-section">
               <div class="console-header">
-                <span class="console-label">01 / Зёрна реальности</span>
+                <span class="console-label">01 / Загрузка данных</span>
                 <span class="console-meta">Поддерживаемые форматы: PDF, MD, TXT</span>
               </div>
 
@@ -165,23 +165,23 @@
 
             <!-- Разделитель -->
             <div class="console-divider">
-              <span>Входные параметры</span>
+              <span>Параметры запуска</span>
             </div>
 
             <!-- Область ввода -->
             <div class="console-section">
               <div class="console-header">
-                <span class="console-label">>_ 02 / Промпт для моделирования</span>
+                <span class="console-label">>_ 02 / Сценарий симуляции</span>
               </div>
               <div class="input-wrapper">
                 <textarea
                   v-model="formData.simulationRequirement"
                   class="code-input"
-                  placeholder="// Опишите задачу симуляции (например: Как отреагирует общество, если университет отменит наказание студента?)"
+                  placeholder="Опишите сценарий, например: Как отреагирует общество, если Авито закроется?"
                   rows="6"
                   :disabled="loading"
                 ></textarea>
-                <div class="model-badge">Движок: MiroFish-V1.0</div>
+                <div class="model-badge">Модель: MiroFish-V1.0</div>
               </div>
             </div>
 
@@ -192,7 +192,7 @@
                 @click="startSimulation"
                 :disabled="!canSubmit || loading"
               >
-                <span v-if="!loading">Запустить движок</span>
+                <span v-if="!loading">Запустить симуляцию</span>
                 <span v-else>Инициализация...</span>
                 <span class="btn-arrow">→</span>
               </button>
@@ -356,16 +356,19 @@ const startSimulation = () => {
 }
 
 .nav-link {
-  color: rgba(255,255,255,0.7);
+  color: #FFFFFF;
   text-decoration: none;
   font-family: var(--font-mono);
   font-size: 0.9rem;
-  font-weight: 500;
-  transition: color 0.2s;
+  font-weight: 600;
+  padding: 4px 12px;
+  border: 1px solid rgba(255,255,255,0.3);
+  transition: all 0.2s;
 }
 
 .nav-link:hover {
-  color: var(--white);
+  border-color: var(--orange);
+  color: var(--orange);
 }
 
 .github-link {
