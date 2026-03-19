@@ -300,7 +300,7 @@
       <!-- Футер -->
       <div class="help-footer">
         <div class="footer-line"></div>
-        <p>MiroFish v1.0 — Мультиагентное моделирование общественного мнения</p>
+        <p>MiroFish v1.1.0 — Мультиагентное моделирование общественного мнения</p>
         <router-link to="/" class="back-home">← Вернуться на главную</router-link>
       </div>
     </div>

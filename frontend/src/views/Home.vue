@@ -17,7 +17,7 @@
         <div class="hero-left">
           <div class="tag-row">
             <span class="orange-tag">Мультиагентное моделирование общественного мнения</span>
-            <span class="version-text">/ v1.0</span>
+            <span class="version-text">/ v1.1.0</span>
           </div>
 
           <h1 class="main-title">
