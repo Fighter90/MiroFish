@@ -20,11 +20,12 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           command_timeout: 30m
           script: |
+            # Скачать свежий код тарболлом (обход проблем с git credentials)
+            cd /root
+            rm -rf MiroFish
+            curl -sL https://github.com/Fighter90/MiroFish/archive/refs/heads/main.tar.gz | tar xz
+            mv MiroFish-main MiroFish
             cd /root/MiroFish
-            git config --global --add safe.directory /root/MiroFish
-            git remote set-url origin https://github.com/Fighter90/MiroFish.git
-            git fetch origin main
-            git reset --hard origin/main
 
             # Восстановить локальные настройки
             sed -i 's|image: ghcr.io/666ghj/mirofish:latest|image: mirofish-ru:latest|' docker-compose.yml
