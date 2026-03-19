@@ -1,6 +1,6 @@
 {
   "name": "mirofish",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "MiroFish — простой и универсальный движок коллективного интеллекта для прогнозирования чего угодно",
   "scripts": {
     "setup": "npm install && cd frontend && npm install",
