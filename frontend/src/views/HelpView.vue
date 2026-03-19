@@ -5,7 +5,7 @@
       <div class="nav-links">
         <router-link to="/" class="nav-link">Главная</router-link>
         <router-link to="/help" class="nav-link active">Помощь</router-link>
-        <a href="https://github.com/Fighter90/MiroFish" target="_blank" class="github-link">
+        <a href="https://github.com/Fighter90/MirPrognoz" target="_blank" class="github-link">
           GitHub <span class="arrow">↗</span>
         </a>
       </div>
@@ -26,15 +26,15 @@
         </a>
       </div>
 
-      <!-- Что такое MiroFish -->
+      <!-- Что такое MirPrognoz -->
       <section id="about" class="help-section">
         <div class="section-header">
           <span class="section-num">01</span>
-          <h2>Что такое MiroFish?</h2>
+          <h2>Что такое MirPrognoz?</h2>
         </div>
         <div class="section-body">
           <p>
-            <strong>MiroFish</strong> — система мультиагентного моделирования общественного мнения. На основе загруженных документов строится граф знаний (GraphRAG), из которого генерируются автономные AI-агенты с индивидуальными когнитивными профилями, долговременной памятью (ZEP) и социальными связями. Агенты взаимодействуют в симулированной социальной среде, что позволяет прогнозировать реакцию аудитории на заданные сценарии.
+            <strong>MirPrognoz</strong> — система мультиагентного моделирования общественного мнения. На основе загруженных документов строится граф знаний (GraphRAG), из которого генерируются автономные AI-агенты с индивидуальными когнитивными профилями, долговременной памятью (ZEP) и социальными связями. Агенты взаимодействуют в симулированной социальной среде, что позволяет прогнозировать реакцию аудитории на заданные сценарии.
           </p>
           <div class="feature-grid">
             <div class="feature-card">
@@ -301,7 +301,7 @@
       <!-- Футер -->
       <div class="help-footer">
         <div class="footer-line"></div>
-        <p>MiroFish v1.1.0 — Мультиагентное моделирование общественного мнения</p>
+        <p>MirPrognoz v1.1.0 — Мультиагентное моделирование общественного мнения</p>
         <router-link to="/" class="back-home">← Вернуться на главную</router-link>
       </div>
     </div>

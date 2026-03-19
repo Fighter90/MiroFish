@@ -3,7 +3,7 @@
     <!-- Верхняя навигационная панель -->
     <nav class="navbar">
       <div class="nav-brand-group">
-        <div class="nav-brand" @click="goHome">MIROFISH</div>
+        <div class="nav-brand" @click="goHome">MIRPROGNOZ</div>
         <router-link to="/help" class="help-link">Помощь</router-link>
       </div>
 
