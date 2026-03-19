@@ -16,21 +16,24 @@
       <section class="hero-section">
         <div class="hero-left">
           <div class="tag-row">
-            <span class="orange-tag">Агентное моделирование социальных реакций</span>
-            <span class="version-text">/ v0.1-превью</span>
+            <span class="orange-tag">Мультиагентное моделирование общественного мнения</span>
+            <span class="version-text">/ v1.0</span>
           </div>
 
           <h1 class="main-title">
-            Загрузите документ<br>
-            <span class="gradient-text">и запустите симуляцию</span>
+            Прогнозирование<br>
+            <span class="gradient-text">социальных реакций</span>
           </h1>
 
           <div class="hero-desc">
             <p>
-              <span class="highlight-bold">MiroFish</span> извлекает из загруженных документов сущности и связи, строит граф знаний (GraphRAG) и на его основе генерирует <span class="highlight-orange">от десятков до тысяч AI-агентов</span> с уникальными профилями, памятью и социальными связями. Агенты взаимодействуют на виртуальных платформах Twitter и Reddit, воспроизводя динамику <span class="highlight-code">общественных дискуссий</span> по заданному сценарию.
+              <span class="highlight-bold">MiroFish</span> — система прогнозного моделирования, основанная на технологии GraphRAG и мультиагентной симуляции. Из загруженных документов система автоматически строит граф знаний: извлекает сущности, факты и причинно-следственные связи. На основе графа генерируются <span class="highlight-orange">от десятков до тысяч автономных AI-агентов</span>, каждый с индивидуальным профилем, когнитивной моделью и социальными связями.
+            </p>
+            <p>
+              Агенты действуют на виртуальных платформах Twitter и Reddit: публикуют посты, комментируют, голосуют и формируют кластеры мнений. Система фиксирует <span class="highlight-code">динамику распространения информации</span>, выявляет лидеров влияния и прогнозирует реакцию аудитории до наступления реального события.
             </p>
             <p class="slogan-text">
-              Прогнозирование реакций до наступления события<span class="blinking-cursor">_</span>
+              Моделируйте будущее до того, как оно наступит<span class="blinking-cursor">_</span>
             </p>
           </div>
 
@@ -40,7 +43,7 @@
         <div class="hero-right">
           <!-- Область логотипа -->
           <div class="logo-container">
-            <img src="../assets/logo/MiroFish_logo_left.jpeg" alt="MiroFish Logo" class="hero-logo" />
+            <img src="../assets/logo/dashboard-hero.svg" alt="MiroFish — аналитическая панель" class="hero-logo" />
           </div>
 
           <button class="scroll-down-btn" @click="scrollToBottom">
@@ -57,16 +60,16 @@
             <span class="status-dot">■</span> Состояние системы
           </div>
 
-          <h2 class="section-title">Система готова</h2>
+          <h2 class="section-title">Система готова к работе</h2>
           <p class="section-desc">
-            Все модули инициализированы. Загрузите документ и опишите сценарий для запуска симуляции.
+            Все компоненты инициализированы: GraphRAG-движок, генератор агентов, среда симуляции. Загрузите исходные документы и задайте сценарий моделирования.
           </p>
 
           <!-- Карточки метрик -->
           <div class="metrics-row">
             <div class="metric-card">
-              <div class="metric-value">~$5 / запуск</div>
-              <div class="metric-label">Средняя стоимость API-вызовов на одну симуляцию</div>
+              <div class="metric-value">~$5 / сессия</div>
+              <div class="metric-label">Средняя стоимость LLM API-вызовов на одну симуляцию</div>
             </div>
             <div class="metric-card">
               <div class="metric-value">2 платформы</div>
@@ -83,36 +86,36 @@
               <div class="workflow-item">
                 <span class="step-num">01</span>
                 <div class="step-info">
-                  <div class="step-title">Построение графа знаний</div>
-                  <div class="step-desc">Извлечение сущностей и связей из документов, формирование GraphRAG</div>
+                  <div class="step-title">Построение графа знаний (GraphRAG)</div>
+                  <div class="step-desc">NLP-анализ документов: извлечение именованных сущностей, фактов и причинно-следственных связей</div>
                 </div>
               </div>
               <div class="workflow-item">
                 <span class="step-num">02</span>
                 <div class="step-info">
-                  <div class="step-title">Генерация агентов</div>
-                  <div class="step-desc">Создание AI-агентов с профилями, памятью и социальными связями на основе графа</div>
+                  <div class="step-title">Генерация популяции агентов</div>
+                  <div class="step-desc">Автоматическое создание AI-агентов с когнитивными профилями, памятью (ZEP) и социальным графом</div>
                 </div>
               </div>
               <div class="workflow-item">
                 <span class="step-num">03</span>
                 <div class="step-info">
-                  <div class="step-title">Запуск симуляции</div>
-                  <div class="step-desc">Агенты публикуют посты, комментируют и голосуют на Twitter и Reddit одновременно</div>
+                  <div class="step-title">Мультиплатформенная симуляция</div>
+                  <div class="step-desc">Параллельное моделирование на Twitter и Reddit: публикации, комментарии, голосования, подписки</div>
                 </div>
               </div>
               <div class="workflow-item">
                 <span class="step-num">04</span>
                 <div class="step-info">
-                  <div class="step-title">Аналитический отчёт</div>
-                  <div class="step-desc">ReportAgent выявляет тренды, группы мнений и лидеров влияния по результатам симуляции</div>
+                  <div class="step-title">Аналитический отчёт (ReportAgent)</div>
+                  <div class="step-desc">Автоматическое выявление трендов, кластеров мнений, лидеров влияния и точек бифуркации</div>
                 </div>
               </div>
               <div class="workflow-item">
                 <span class="step-num">05</span>
                 <div class="step-info">
-                  <div class="step-title">Интервью и диалог</div>
-                  <div class="step-desc">Прямое общение с агентами: уточняющие вопросы, пакетные опросы, анализ мотивов</div>
+                  <div class="step-title">Глубинное интервью с агентами</div>
+                  <div class="step-desc">Диалог с участниками симуляции: верификация гипотез, пакетные опросы, анализ мотивации</div>
                 </div>
               </div>
             </div>
@@ -125,8 +128,8 @@
             <!-- Область загрузки -->
             <div class="console-section">
               <div class="console-header">
-                <span class="console-label">01 / Загрузка данных</span>
-                <span class="console-meta">Поддерживаемые форматы: PDF, MD, TXT</span>
+                <span class="console-label">01 / Исходные данные</span>
+                <span class="console-meta">Форматы: PDF, Markdown, TXT</span>
               </div>
 
               <div
@@ -356,19 +359,20 @@ const startSimulation = () => {
 }
 
 .nav-link {
-  color: #FFFFFF;
+  color: #000000;
+  background: #FFFFFF;
   text-decoration: none;
   font-family: var(--font-mono);
   font-size: 0.9rem;
   font-weight: 600;
   padding: 4px 12px;
-  border: 1px solid rgba(255,255,255,0.3);
+  border: none;
   transition: all 0.2s;
 }
 
 .nav-link:hover {
-  border-color: var(--orange);
-  color: var(--orange);
+  background: var(--orange);
+  color: #FFFFFF;
 }
 
 .github-link {
