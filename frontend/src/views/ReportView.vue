@@ -4,6 +4,7 @@
     <header class="app-header">
       <div class="header-left">
         <div class="brand" @click="router.push('/')">MIROFISH</div>
+        <router-link to="/help" class="help-link">Помощь</router-link>
       </div>
 
       <div class="header-center">
@@ -241,12 +242,31 @@ onMounted(() => {
   transform: translateX(-50%);
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
 .brand {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 800;
   font-size: 18px;
   letter-spacing: 1px;
   cursor: pointer;
+}
+
+.help-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: #999;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.help-link:hover {
+  color: #000;
 }
 
 .view-switcher {
