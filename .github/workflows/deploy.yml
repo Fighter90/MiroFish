@@ -26,8 +26,8 @@ jobs:
             # Восстановить локальные настройки
             sed -i 's|image: ghcr.io/666ghj/mirofish:latest|image: mirofish-ru:latest|' docker-compose.yml
 
-            # Пересобрать и перезапустить
-            docker build -t mirofish-ru:latest .
+            # Пересобрать без кеша и перезапустить
+            docker build --no-cache -t mirofish-ru:latest .
             docker compose down
             docker compose up -d
             echo "Deploy completed at $(date)"
