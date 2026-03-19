@@ -188,6 +188,13 @@
               </div>
             </div>
 
+            <!-- Ссылки на тестовые примеры -->
+            <div class="test-examples">
+              <span class="test-examples-label">Тестовые примеры:</span>
+              <a href="https://raw.githubusercontent.com/Fighter90/MiroFish/main/tests/test-document.md" download="test-document.md" class="test-example-link">📄 Документ</a>
+              <a href="https://raw.githubusercontent.com/Fighter90/MiroFish/main/tests/test-prompt.txt" download="test-prompt.txt" class="test-example-link">💬 Промпт</a>
+            </div>
+
             <!-- Кнопка запуска -->
             <div class="console-section btn-section">
               <button
@@ -780,6 +787,33 @@ const startSimulation = () => {
 
 .console-section.btn-section {
   padding-top: 0;
+}
+
+.test-examples {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.test-examples-label {
+  color: #888;
+}
+
+.test-example-link {
+  color: #E8590C;
+  text-decoration: none;
+  padding: 4px 10px;
+  border: 1px solid rgba(232, 89, 12, 0.3);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.test-example-link:hover {
+  background: rgba(232, 89, 12, 0.08);
+  border-color: #E8590C;
 }
 
 .console-header {
