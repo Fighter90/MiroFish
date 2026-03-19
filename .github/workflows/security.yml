@@ -1,0 +1,119 @@
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  secret-scanning:
+    name: "\U0001F511 Secret Scanning"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install TruffleHog
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Scan for secrets
+        run: trufflehog git file://. --only-verified --fail
+
+      - name: Check for common secret patterns
+        run: |
+          echo "Checking for hardcoded secrets..."
+          ! grep -rn "sk-or-v1\|sk-proj-\|AKIA[A-Z0-9]\|ghp_[a-zA-Z0-9]\|gho_[a-zA-Z0-9]" \
+            --include="*.py" --include="*.js" --include="*.vue" --include="*.yml" --include="*.yaml" \
+            --exclude-dir=node_modules --exclude-dir=.git \
+            . || { echo "ALERT: Possible secrets found!"; exit 1; }
+          echo "No hardcoded secrets found."
+
+  bandit-sast:
+    name: "\U0001F512 Bandit SAST"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Bandit
+        run: pip install bandit[toml]
+
+      - name: Run Bandit security scan
+        run: bandit -r backend/app/ -f json -o bandit-report.json --severity-level medium || true
+
+      - name: Display results
+        run: |
+          python3 -c "
+          import json
+          with open('bandit-report.json') as f:
+              data = json.load(f)
+          results = data.get('results', [])
+          if results:
+              print(f'Found {len(results)} issue(s):')
+              for r in results:
+                  print(f\"  [{r['issue_severity']}] {r['issue_text']} at {r['filename']}:{r['line_number']}\")
+          else:
+              print('No security issues found.')
+          metrics = data.get('metrics', {}).get('_totals', {})
+          print(f\"Scanned {metrics.get('loc', 'N/A')} lines of code.\")
+          "
+
+      - name: Upload Bandit report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bandit-report
+          path: bandit-report.json
+
+  dependency-audit:
+    name: "\U0001F4E6 Dependency Audit"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pip-audit
+        run: pip install pip-audit
+
+      - name: Audit Python dependencies
+        run: pip-audit -r backend/requirements.txt --desc || true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Audit npm dependencies
+        run: |
+          cd frontend
+          npm ci
+          npm audit --audit-level=high || true
+
+  container-scan:
+    name: "\U0001F433 Trivy Container Scan"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t mirofish:scan .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "mirofish:scan"
+          format: "table"
+          exit-code: "0"
+          severity: "CRITICAL,HIGH"
+          ignore-unfixed: true
