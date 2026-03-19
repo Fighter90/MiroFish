@@ -17,23 +17,35 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Generate changelog
-        id: changelog
+      - name: Extract changelog for this version
         run: |
-          # Получить предыдущий тег
-          PREV_TAG=$(git tag --sort=-creatordate | head -2 | tail -1)
-          if [ -z "$PREV_TAG" ] || [ "$PREV_TAG" = "${{ github.ref_name }}" ]; then
-            # Первый релиз — показать все коммиты
-            CHANGELOG=$(git log --pretty=format:"- %s (%h)" --no-merges HEAD~20..HEAD 2>/dev/null || git log --pretty=format:"- %s (%h)" --no-merges)
-          else
-            CHANGELOG=$(git log --pretty=format:"- %s (%h)" --no-merges ${PREV_TAG}..HEAD)
+          # Извлечь версию из тега (v1.2.0 → 1.2.0)
+          VERSION="${{ github.ref_name }}"
+          VERSION="${VERSION#v}"
+          # Извлечь секцию из CHANGELOG.md между текущей и следующей версией
+          awk -v ver="$VERSION" '
+            /^## \[/ {
+              if (found) exit
+              if ($0 ~ "\\[" ver "\\]") found=1
+              next
+            }
+            found { print }
+          ' CHANGELOG.md > /tmp/changelog.txt
+          # Если секция пустая — fallback на git log
+          if [ ! -s /tmp/changelog.txt ]; then
+            PREV_TAG=$(git tag --sort=-creatordate | head -2 | tail -1)
+            if [ -z "$PREV_TAG" ] || [ "$PREV_TAG" = "${{ github.ref_name }}" ]; then
+              git log --pretty=format:"- %s (%h)" --no-merges HEAD~20..HEAD > /tmp/changelog.txt 2>/dev/null || \
+              git log --pretty=format:"- %s (%h)" --no-merges > /tmp/changelog.txt
+            else
+              git log --pretty=format:"- %s (%h)" --no-merges ${PREV_TAG}..HEAD > /tmp/changelog.txt
+            fi
           fi
-          # Записать в файл для корректного форматирования
-          echo "$CHANGELOG" > /tmp/changelog.txt
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          name: "MirPrognoz ${{ github.ref_name }}"
           generate_release_notes: false
           body_path: /tmp/changelog.txt
           draft: false
