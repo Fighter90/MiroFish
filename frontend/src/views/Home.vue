@@ -16,21 +16,21 @@
       <section class="hero-section">
         <div class="hero-left">
           <div class="tag-row">
-            <span class="orange-tag">Система моделирования общественного мнения</span>
+            <span class="orange-tag">Агентное моделирование социальных реакций</span>
             <span class="version-text">/ v0.1-превью</span>
           </div>
 
           <h1 class="main-title">
-            Загрузите любой отчёт<br>
-            <span class="gradient-text">и смоделируйте будущее</span>
+            Загрузите документ<br>
+            <span class="gradient-text">и запустите симуляцию</span>
           </h1>
 
           <div class="hero-desc">
             <p>
-              На основе загруженных документов <span class="highlight-bold">MiroFish</span> автоматически создаёт виртуальный мир из <span class="highlight-orange">тысяч AI-агентов</span>, каждый со своей личностью и памятью. Система моделирует их реакции на заданный сценарий, позволяя <span class="highlight-code">прогнозировать общественное мнение</span> до наступления реальных событий.
+              <span class="highlight-bold">MiroFish</span> извлекает из загруженных документов сущности и связи, строит граф знаний (GraphRAG) и на его основе генерирует <span class="highlight-orange">от десятков до тысяч AI-агентов</span> с уникальными профилями, памятью и социальными связями. Агенты взаимодействуют на виртуальных платформах Twitter и Reddit, воспроизводя динамику <span class="highlight-code">общественных дискуссий</span> по заданному сценарию.
             </p>
             <p class="slogan-text">
-              Моделируйте будущее до того, как оно наступит<span class="blinking-cursor">_</span>
+              Прогнозирование реакций до наступления события<span class="blinking-cursor">_</span>
             </p>
           </div>
 
@@ -57,20 +57,20 @@
             <span class="status-dot">■</span> Состояние системы
           </div>
 
-          <h2 class="section-title">Готово к работе</h2>
+          <h2 class="section-title">Система готова</h2>
           <p class="section-desc">
-            Движок прогнозирования готов. Загрузите данные, чтобы начать симуляцию.
+            Все модули инициализированы. Загрузите документ и опишите сценарий для запуска симуляции.
           </p>
 
           <!-- Карточки метрик -->
           <div class="metrics-row">
             <div class="metric-card">
-              <div class="metric-value">Низкая стоимость</div>
-              <div class="metric-label">В среднем 5$/симуляцию</div>
+              <div class="metric-value">~$5 / запуск</div>
+              <div class="metric-label">Средняя стоимость API-вызовов на одну симуляцию</div>
             </div>
             <div class="metric-card">
-              <div class="metric-value">Высокая доступность</div>
-              <div class="metric-label">До миллиона Agent-ов</div>
+              <div class="metric-value">2 платформы</div>
+              <div class="metric-label">Параллельная симуляция на Twitter и Reddit</div>
             </div>
           </div>
 
@@ -83,36 +83,36 @@
               <div class="workflow-item">
                 <span class="step-num">01</span>
                 <div class="step-info">
-                  <div class="step-title">Построение графа</div>
-                  <div class="step-desc">Извлечение данных, построение памяти и GraphRAG</div>
+                  <div class="step-title">Построение графа знаний</div>
+                  <div class="step-desc">Извлечение сущностей и связей из документов, формирование GraphRAG</div>
                 </div>
               </div>
               <div class="workflow-item">
                 <span class="step-num">02</span>
                 <div class="step-info">
-                  <div class="step-title">Настройка среды</div>
-                  <div class="step-desc">Генерация Agent-ов, настройка параметров и алгоритмов</div>
+                  <div class="step-title">Генерация агентов</div>
+                  <div class="step-desc">Создание AI-агентов с профилями, памятью и социальными связями на основе графа</div>
                 </div>
               </div>
               <div class="workflow-item">
                 <span class="step-num">03</span>
                 <div class="step-info">
-                  <div class="step-title">Симуляция</div>
-                  <div class="step-desc">Параллельный запуск на двух платформах с динамическим обновлением памяти</div>
+                  <div class="step-title">Запуск симуляции</div>
+                  <div class="step-desc">Агенты публикуют посты, комментируют и голосуют на Twitter и Reddit одновременно</div>
                 </div>
               </div>
               <div class="workflow-item">
                 <span class="step-num">04</span>
                 <div class="step-info">
-                  <div class="step-title">Отчёт</div>
-                  <div class="step-desc">ReportAgent анализирует результаты с набором специализированных инструментов</div>
+                  <div class="step-title">Аналитический отчёт</div>
+                  <div class="step-desc">ReportAgent выявляет тренды, группы мнений и лидеров влияния по результатам симуляции</div>
                 </div>
               </div>
               <div class="workflow-item">
                 <span class="step-num">05</span>
                 <div class="step-info">
-                  <div class="step-title">Взаимодействие</div>
-                  <div class="step-desc">Диалог с участниками мира и ReportAgent</div>
+                  <div class="step-title">Интервью и диалог</div>
+                  <div class="step-desc">Прямое общение с агентами: уточняющие вопросы, пакетные опросы, анализ мотивов</div>
                 </div>
               </div>
             </div>

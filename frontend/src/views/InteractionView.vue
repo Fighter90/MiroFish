@@ -261,13 +261,13 @@ onMounted(() => {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   font-weight: 500;
-  color: #999;
+  color: #000;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .help-link:hover {
-  color: #000;
+  color: #FF4500;
 }
 
 .view-switcher {
