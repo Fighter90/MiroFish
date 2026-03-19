@@ -22,6 +22,7 @@ jobs:
           script: |
             cd /root/MiroFish
             git config --global --add safe.directory /root/MiroFish
+            git remote set-url origin https://github.com/Fighter90/MiroFish.git
             git fetch origin main
             git reset --hard origin/main
 
