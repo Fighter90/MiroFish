@@ -26,12 +26,12 @@ jobs:
             # Восстановить локальные настройки
             sed -i 's|image: ghcr.io/666ghj/mirofish:latest|image: mirofish-ru:latest|' docker-compose.yml
 
-            # Очистка Docker-кеша для освобождения места
+            # Остановить контейнеры, освободить место
+            docker compose down || true
             docker system prune -af --volumes 2>/dev/null || true
             docker builder prune -af 2>/dev/null || true
 
-            # Пересобрать без кеша и перезапустить
+            # Пересобрать без кеша и запустить
             docker build --no-cache -t mirofish-ru:latest .
-            docker compose down
             docker compose up -d
             echo "Deploy completed at $(date)"
