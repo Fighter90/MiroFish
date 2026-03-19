@@ -3,6 +3,7 @@
     <nav class="navbar">
       <router-link to="/" class="nav-brand">АГЕНТНОЕ МОДЕЛИРОВАНИЕ</router-link>
       <div class="nav-links">
+        <router-link to="/" class="nav-link">Главная</router-link>
         <router-link to="/help" class="nav-link active">Помощь</router-link>
         <a href="https://github.com/Fighter90/MiroFish" target="_blank" class="github-link">
           GitHub <span class="arrow">↗</span>
@@ -417,9 +418,15 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll))
   transition: all 0.2s;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-link:hover {
   background: var(--orange);
-  color: #FFFFFF;
+  color: #000000;
+}
+
+.nav-link.active,
+.nav-link.router-link-active {
+  background: var(--orange);
+  color: #000000;
 }
 
 .github-link {
