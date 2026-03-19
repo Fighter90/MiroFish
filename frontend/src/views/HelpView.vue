@@ -5,7 +5,7 @@
       <div class="nav-links">
         <router-link to="/" class="nav-link">Главная</router-link>
         <router-link to="/help" class="nav-link active">Помощь</router-link>
-        <a href="https://github.com/Fighter90/MirPrognoz" target="_blank" class="github-link">
+        <a href="https://github.com/Fighter90/MiroFish" target="_blank" class="github-link">
           GitHub <span class="arrow">↗</span>
         </a>
       </div>

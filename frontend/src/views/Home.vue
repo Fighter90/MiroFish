@@ -5,7 +5,7 @@
       <div class="nav-brand">АГЕНТНОЕ МОДЕЛИРОВАНИЕ</div>
       <div class="nav-links">
         <router-link to="/help" class="nav-link">Помощь</router-link>
-        <a href="https://github.com/Fighter90/MirPrognoz" target="_blank" class="github-link">
+        <a href="https://github.com/Fighter90/MiroFish" target="_blank" class="github-link">
           GitHub <span class="arrow">↗</span>
         </a>
       </div>
@@ -191,8 +191,8 @@
             <!-- Ссылки на тестовые примеры -->
             <div class="test-examples">
               <span class="test-examples-label">Тестовые примеры:</span>
-              <a href="https://raw.githubusercontent.com/Fighter90/MirPrognoz/main/tests/test-document.md" download="test-document.md" class="test-example-link">📄 Документ</a>
-              <a href="https://raw.githubusercontent.com/Fighter90/MirPrognoz/main/tests/test-prompt.txt" download="test-prompt.txt" class="test-example-link">💬 Промпт</a>
+              <a href="https://raw.githubusercontent.com/Fighter90/MiroFish/main/tests/test-document.md" download="test-document.md" class="test-example-link">📄 Документ</a>
+              <a href="https://raw.githubusercontent.com/Fighter90/MiroFish/main/tests/test-prompt.txt" download="test-prompt.txt" class="test-example-link">💬 Промпт</a>
             </div>
 
             <!-- Кнопка запуска -->
