@@ -132,13 +132,3 @@ docker compose up -d
 ## Благодарности
 
 Движок симуляции работает на базе **[OASIS (Open Agent Social Interaction Simulations)](https://github.com/camel-ai/oasis)**. Благодарим команду CAMEL-AI за вклад в открытый код.
-
-## Статистика
-
-<a href="https://www.star-history.com/#Fighter90/MiroFish&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Fighter90/MiroFish&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Fighter90/MiroFish&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Fighter90/MiroFish&type=date&legend=top-left" />
- </picture>
-</a>
