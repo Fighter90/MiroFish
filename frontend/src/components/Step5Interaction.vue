@@ -155,7 +155,7 @@
               <div class="tools-card-avatar">R</div>
               <div class="tools-card-info">
                 <div class="tools-card-name">Агент отчёта — Чат</div>
-                <div class="tools-card-subtitle">Диалоговый агент с доступом к 4 инструментам и полной памятью MiroFish</div>
+                <div class="tools-card-subtitle">Диалоговый агент с доступом к 4 инструментам и полной памятью MirPrognoz</div>
               </div>
               <button class="tools-card-toggle" @click="showToolsDetail = !showToolsDetail">
                 <svg :class="{ 'is-expanded': showToolsDetail }" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">

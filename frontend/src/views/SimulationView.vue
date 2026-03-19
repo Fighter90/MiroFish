@@ -3,7 +3,7 @@
     <!-- Header -->
     <header class="app-header">
       <div class="header-left">
-        <div class="brand" @click="router.push('/')">MIROFISH</div>
+        <div class="brand" @click="router.push('/')">MIRPROGNOZ</div>
         <router-link to="/help" class="help-link">Помощь</router-link>
       </div>
 

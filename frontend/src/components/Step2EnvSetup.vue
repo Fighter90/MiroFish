@@ -440,7 +440,7 @@
             <div class="rounds-header">
               <div class="header-left">
                 <span class="section-title">Количество раундов</span>
-                <span class="section-desc">MiroFish планирует симуляцию на <span class="desc-highlight">{{ simulationConfig?.time_config?.total_simulation_hours || '-' }}</span> ч, один раунд = <span class="desc-highlight">{{ simulationConfig?.time_config?.minutes_per_round || '-' }}</span> мин реального времени</span>
+                <span class="section-desc">MirPrognoz планирует симуляцию на <span class="desc-highlight">{{ simulationConfig?.time_config?.total_simulation_hours || '-' }}</span> ч, один раунд = <span class="desc-highlight">{{ simulationConfig?.time_config?.minutes_per_round || '-' }}</span> мин реального времени</span>
               </div>
               <label class="switch-control">
                 <input type="checkbox" v-model="useCustomRounds">
