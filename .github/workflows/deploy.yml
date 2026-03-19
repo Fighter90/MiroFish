@@ -21,6 +21,7 @@ jobs:
           command_timeout: 30m
           script: |
             cd /root/MiroFish
+            git config --global --add safe.directory /root/MiroFish
             git fetch origin main
             git reset --hard origin/main
 
