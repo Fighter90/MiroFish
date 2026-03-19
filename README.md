@@ -2,49 +2,50 @@
 
 <img src="./static/image/MiroFish_logo_compressed.jpeg" alt="Логотип MiroFish" width="75%"/>
 
-<a href="https://trendshift.io/repositories/16144" target="_blank"><img src="https://trendshift.io/api/badge/repositories/16144" alt="666ghj%2FMiroFish | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-
-Простой и универсальный движок коллективного интеллекта для прогнозирования чего угодно
+Система мультиагентного моделирования общественного мнения
 </br>
-<em>A Simple and Universal Swarm Intelligence Engine, Predicting Anything</em>
+<em>Multi-Agent Social Opinion Simulation System</em>
 
-<a href="https://www.shanda.com/" target="_blank"><img src="./static/image/shanda_logo.png" alt="666ghj%2MiroFish | Shanda" height="40"/></a>
-
-[![GitHub Stars](https://img.shields.io/github/stars/666ghj/MiroFish?style=flat-square&color=DAA520)](https://github.com/666ghj/MiroFish/stargazers)
-[![GitHub Watchers](https://img.shields.io/github/watchers/666ghj/MiroFish?style=flat-square)](https://github.com/666ghj/MiroFish/watchers)
-[![GitHub Forks](https://img.shields.io/github/forks/666ghj/MiroFish?style=flat-square)](https://github.com/666ghj/MiroFish/network)
+[![GitHub Stars](https://img.shields.io/github/stars/Fighter90/MiroFish?style=flat-square&color=DAA520)](https://github.com/Fighter90/MiroFish/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/Fighter90/MiroFish?style=flat-square)](https://github.com/Fighter90/MiroFish/network)
 [![Docker](https://img.shields.io/badge/Docker-Build-2496ED?style=flat-square&logo=docker&logoColor=white)](https://hub.docker.com/)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/666ghj/MiroFish)
-
-[![Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.com/channels/1469200078932545606/1469201282077163739)
-[![X](https://img.shields.io/badge/X-Follow-000000?style=flat-square&logo=x&logoColor=white)](https://x.com/mirofish_ai)
-[![Instagram](https://img.shields.io/badge/Instagram-Follow-E4405F?style=flat-square&logo=instagram&logoColor=white)](https://www.instagram.com/mirofish_ai/)
 
 [English](./README-EN.md) | [Русский](./README.md)
 
 </div>
 
-## ⚡ Обзор проекта
+## Обзор
 
-**MiroFish** — это предиктивный AI-движок нового поколения, основанный на технологии мультиагентных систем. Извлекая исходную информацию из реального мира (экстренные новости, проекты законов, финансовые сигналы), он автоматически выстраивает высокоточный параллельный цифровой мир. В этом пространстве тысячи интеллектуальных агентов с уникальной личностью, долгосрочной памятью и поведенческой логикой свободно взаимодействуют и проходят через социальную эволюцию. Вы можете динамически вводить переменные с «позиции Бога», точно прогнозируя будущие траектории — **репетируйте будущее в цифровой песочнице, побеждайте в решениях после бесчисленных симуляций**.
+**MiroFish** — система прогнозного моделирования, основанная на технологиях GraphRAG и мультиагентной симуляции. Из исходных документов (аналитические отчёты, новостные материалы, описания ситуаций) система автоматически строит граф знаний, извлекая сущности, факты и причинно-следственные связи. На основе графа генерируется популяция автономных AI-агентов с индивидуальными когнитивными профилями, долговременной памятью (ZEP) и социальными связями.
 
-> Вам нужно лишь: загрузить исходные материалы (аналитические отчёты или интересные истории) и описать задачу прогнозирования на естественном языке</br>
-> MiroFish вернёт: подробный прогнозный отчёт и интерактивный высокоточный цифровой мир
+Агенты взаимодействуют на двух симулированных платформах — Twitter и Reddit — публикуя посты, комментируя, голосуя и формируя кластеры мнений. Система фиксирует динамику распространения информации, выявляет лидеров влияния и прогнозирует реакцию аудитории до наступления реального события.
 
-### Наше видение
+> **Вход:** загрузите документы и опишите сценарий моделирования на естественном языке.
+> **Выход:** структурированный аналитический отчёт и интерактивная среда для верификации результатов.
 
-MiroFish стремится создать зеркало коллективного интеллекта, отражающее реальность. Улавливая эмерджентные явления, возникающие при взаимодействии индивидов, мы преодолеваем ограничения традиционного прогнозирования:
+## Архитектура
 
-- **На макроуровне**: мы — лаборатория репетиций для лиц, принимающих решения, где политика и PR тестируются без рисков
-- **На микроуровне**: мы — творческая песочница для индивидуальных пользователей — будь то прогноз финала романа или исследование смелых идей, всё это увлекательно и доступно
+### Рабочий процесс
 
-От серьёзного прогнозирования до развлекательного моделирования — мы позволяем увидеть результат каждого «а что если», делая прогнозирование чего угодно возможным.
+1. **Построение графа знаний (GraphRAG)** — NLP-анализ документов: извлечение именованных сущностей, фактов и причинно-следственных связей
+2. **Генерация популяции агентов** — создание AI-агентов с когнитивными профилями, памятью (ZEP) и социальным графом
+3. **Мультиплатформенная симуляция** — параллельное моделирование на Twitter и Reddit: публикации, комментарии, голосования, подписки
+4. **Аналитический отчёт (ReportAgent)** — автоматическое выявление трендов, кластеров мнений, лидеров влияния и точек бифуркации
+5. **Верификация результатов** — интервью с агентами, пакетные опросы, анализ мотивации
 
-## 🌐 Онлайн-демо
+### Технологический стек
 
-Добро пожаловать в онлайн-демо, где вы можете опробовать симуляцию прогнозирования трендовых событий общественного мнения: [mirofish-live-demo](https://666ghj.github.io/mirofish-demo/)
+| Компонент | Технология |
+|-----------|------------|
+| Фронтенд | Vue.js 3 (Composition API), Vite |
+| Бэкенд | Python 3.11+, Flask |
+| Граф знаний | GraphRAG |
+| Память агентов | ZEP Cloud |
+| Симуляция | OASIS (Open Agent Social Interaction Simulations) |
+| LLM | Любой OpenAI-совместимый API (Qwen, GPT-4, Claude, Mistral) |
+| Контейнеризация | Docker, Docker Compose |
 
-## 📸 Скриншоты системы
+## Скриншоты
 
 <div align="center">
 <table>
@@ -56,148 +57,84 @@ MiroFish стремится создать зеркало коллективно
 <td><img src="./static/image/Screenshot/screenshot_3.png" alt="Скриншот 3" width="100%"/></td>
 <td><img src="./static/image/Screenshot/screenshot_4.png" alt="Скриншот 4" width="100%"/></td>
 </tr>
-<tr>
-<td><img src="./static/image/Screenshot/screenshot_5.png" alt="Скриншот 5" width="100%"/></td>
-<td><img src="./static/image/Screenshot/screenshot_6.png" alt="Скриншот 6" width="100%"/></td>
-</tr>
 </table>
 </div>
 
-## 🎬 Демонстрационные видео
+## Быстрый старт
 
-### 1. Симуляция прогноза общественного мнения Уханьского университета + Презентация проекта MiroFish
-
-<div align="center">
-<a href="https://www.bilibili.com/video/BV1VYBsBHEMY/" target="_blank"><img src="./static/image/wuhan_demo_cover.png" alt="Демо-видео MiroFish" width="75%"/></a>
-
-Нажмите на изображение, чтобы посмотреть полное демо-видео прогнозирования на основе отчёта об общественном мнении Уханьского университета, сгенерированного BettaFish
-</div>
-
-### 2. Прогноз утраченного финала «Сна в красном тереме»
-
-<div align="center">
-<a href="https://www.bilibili.com/video/BV1cPk3BBExq" target="_blank"><img src="./static/image/dream_red_chamber_cover.jpg" alt="Демо-видео MiroFish" width="75%"/></a>
-
-Нажмите на изображение, чтобы посмотреть глубокий прогноз MiroFish утраченного финала на основе сотен тысяч иероглифов из первых 80 глав «Сна в красном тереме»
-</div>
-
-> **Прогнозирование финансовых событий**, **Прогнозирование политических новостей** и другие примеры скоро появятся...
-
-## 🔄 Рабочий процесс
-
-1. **Построение графа**: Извлечение исходных данных и внедрение индивидуальной/коллективной памяти и построение GraphRAG
-2. **Настройка среды**: Извлечение связей сущностей и генерация персон и внедрение параметров агента конфигурации среды
-3. **Симуляция**: Параллельная симуляция на двух платформах и автоматический разбор требований прогноза и динамическое обновление темпоральной памяти
-4. **Генерация отчёта**: ReportAgent с богатым набором инструментов для глубокого взаимодействия с пост-симуляционной средой
-5. **Глубокое взаимодействие**: Общение с любым агентом моделируемого мира и взаимодействие с ReportAgent
-
-## 🚀 Быстрый старт
-
-### Вариант 1: Развёртывание из исходного кода (рекомендуется)
+### Вариант 1: Из исходного кода (рекомендуется)
 
 #### Предварительные требования
 
-| Инструмент | Версия | Описание | Проверка установки |
-|------------|--------|----------|--------------------|
-| **Node.js** | 18+ | Среда выполнения фронтенда, включает npm | `node -v` |
-| **Python** | ≥3.11, ≤3.12 | Среда выполнения бэкенда | `python --version` |
-| **uv** | Последняя | Менеджер пакетов Python | `uv --version` |
+| Инструмент | Версия | Проверка |
+|------------|--------|----------|
+| **Node.js** | 18+ | `node -v` |
+| **Python** | 3.11–3.12 | `python --version` |
+| **uv** | Последняя | `uv --version` |
 
 #### 1. Настройка переменных окружения
 
 ```bash
-# Скопировать файл примера конфигурации
 cp .env.example .env
-
-# Отредактировать файл .env, заполнив необходимые API-ключи
 ```
 
-**Обязательные переменные окружения:**
+**Обязательные переменные:**
 
 ```env
-# Конфигурация LLM API (поддерживает любой LLM API в формате OpenAI SDK)
-# Рекомендуется: модель Alibaba Qwen-plus через платформу Bailian: https://bailian.console.aliyun.com/
-# Высокое потребление — сначала попробуйте симуляции менее 40 раундов
+# LLM API (OpenAI-совместимый формат)
 LLM_API_KEY=your_api_key
 LLM_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
 LLM_MODEL_NAME=qwen-plus
 
-# Конфигурация Zep Cloud
-# Бесплатной ежемесячной квоты достаточно для базового использования: https://app.getzep.com/
+# ZEP Cloud — сервис памяти агентов
+# Бесплатный тариф: https://app.getzep.com/
 ZEP_API_KEY=your_zep_api_key
 ```
 
 #### 2. Установка зависимостей
 
 ```bash
-# Установка всех зависимостей одной командой (корень + фронтенд + бэкенд)
+# Все зависимости одной командой
 npm run setup:all
 ```
 
-Или пошаговая установка:
+Или пошагово:
 
 ```bash
-# Установка Node-зависимостей (корень + фронтенд)
-npm run setup
-
-# Установка Python-зависимостей (бэкенд, автоматически создаёт виртуальное окружение)
-npm run setup:backend
+npm run setup           # Node-зависимости (корень + фронтенд)
+npm run setup:backend   # Python-зависимости (бэкенд)
 ```
 
-#### 3. Запуск сервисов
+#### 3. Запуск
 
 ```bash
-# Запуск фронтенда и бэкенда одновременно (выполнять из корня проекта)
 npm run dev
 ```
 
-**Адреса сервисов:**
 - Фронтенд: `http://localhost:3000`
 - API бэкенда: `http://localhost:5001`
 
-**Запуск по отдельности:**
+### Вариант 2: Docker
 
 ```bash
-npm run backend   # Только бэкенд
-npm run frontend  # Только фронтенд
-```
-
-### Вариант 2: Развёртывание через Docker
-
-```bash
-# 1. Настройка переменных окружения (аналогично развёртыванию из исходников)
 cp .env.example .env
-
-# 2. Скачать образ и запустить
 docker compose up -d
 ```
 
-По умолчанию считывает `.env` из корневой директории и пробрасывает порты `3000 (фронтенд) / 5001 (бэкенд)`
+## Стоимость
 
-> В `docker-compose.yml` в комментариях указан адрес зеркала для ускоренного скачивания — при необходимости замените
+Средняя стоимость одной симуляции — около $5 на API-вызовах. Для начала рекомендуется ограничить количество раундов до 20–40.
 
-## 📬 Обратная связь
+## Благодарности
 
-<div align="center">
-<img src="./static/image/qq_group.png" alt="QQ-группа" width="60%"/>
-</div>
+Движок симуляции работает на базе **[OASIS (Open Agent Social Interaction Simulations)](https://github.com/camel-ai/oasis)**. Благодарим команду CAMEL-AI за вклад в открытый код.
 
-&nbsp;
+## Статистика
 
-Команда MiroFish набирает сотрудников (полная занятость / стажировка). Если вас интересуют мультиагентные симуляции и LLM-приложения, отправляйте резюме на: **mirofish@shanda.com**
-
-## 📄 Благодарности
-
-**MiroFish получил стратегическую поддержку и инкубацию от Shanda Group!**
-
-Движок симуляции MiroFish работает на базе **[OASIS (Open Agent Social Interaction Simulations)](https://github.com/camel-ai/oasis)**. Мы искренне благодарим команду CAMEL-AI за их вклад в открытый код!
-
-## 📈 Статистика проекта
-
-<a href="https://www.star-history.com/#666ghj/MiroFish&type=date&legend=top-left">
+<a href="https://www.star-history.com/#Fighter90/MiroFish&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=666ghj/MiroFish&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=666ghj/MiroFish&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=666ghj/MiroFish&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Fighter90/MiroFish&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Fighter90/MiroFish&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Fighter90/MiroFish&type=date&legend=top-left" />
  </picture>
 </a>
