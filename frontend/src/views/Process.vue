@@ -2,7 +2,10 @@
   <div class="process-page">
     <!-- Верхняя навигационная панель -->
     <nav class="navbar">
-      <div class="nav-brand" @click="goHome">MIROFISH</div>
+      <div class="nav-brand-group">
+        <div class="nav-brand" @click="goHome">MIROFISH</div>
+        <router-link to="/help" class="help-link">Помощь</router-link>
+      </div>
 
       <!-- Индикатор шагов по центру -->
       <div class="nav-center">
@@ -1121,6 +1124,12 @@ onUnmounted(() => {
   position: relative;
 }
 
+.nav-brand-group {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
 .nav-brand {
   font-size: 1rem;
   font-weight: 700;
@@ -1131,6 +1140,19 @@ onUnmounted(() => {
 
 .nav-brand:hover {
   opacity: 0.8;
+}
+
+.help-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.help-link:hover {
+  color: #fff;
 }
 
 .nav-center {
