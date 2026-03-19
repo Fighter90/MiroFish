@@ -343,6 +343,7 @@ const startSimulation = () => {
   justify-content: space-between;
   align-items: center;
   padding: 0 40px;
+  animation: fadeInUp 0.5s ease-out;
 }
 
 .nav-brand {
@@ -372,7 +373,7 @@ const startSimulation = () => {
 
 .nav-link:hover {
   background: var(--orange);
-  color: #FFFFFF;
+  color: #000000;
 }
 
 .github-link {
@@ -402,6 +403,22 @@ const startSimulation = () => {
   padding: 60px 40px;
 }
 
+/* Анимации появления */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 /* Hero-секция */
 .hero-section {
   display: flex;
@@ -413,6 +430,7 @@ const startSimulation = () => {
 .hero-left {
   flex: 1;
   padding-right: 60px;
+  animation: fadeInUp 0.8s ease-out;
 }
 
 .tag-row {
@@ -422,6 +440,7 @@ const startSimulation = () => {
   margin-bottom: 25px;
   font-family: var(--font-mono);
   font-size: 0.8rem;
+  animation: fadeInUp 0.6s ease-out 0.1s both;
 }
 
 .orange-tag {
@@ -431,6 +450,24 @@ const startSimulation = () => {
   font-weight: 700;
   letter-spacing: 1px;
   font-size: 0.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.orange-tag::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: tagShine 3s ease-in-out infinite;
+}
+
+@keyframes tagShine {
+  0%, 100% { left: -100%; }
+  50% { left: 100%; }
 }
 
 .version-text {
@@ -446,13 +483,21 @@ const startSimulation = () => {
   margin: 0 0 40px 0;
   letter-spacing: -2px;
   color: var(--black);
+  animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
 .gradient-text {
-  background: linear-gradient(90deg, #000000 0%, #444444 100%);
+  background: linear-gradient(90deg, #000000 0%, #FF4500 50%, #000000 100%);
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
+  animation: gradientShift 4s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 100% center; }
 }
 
 .hero-desc {
@@ -463,6 +508,7 @@ const startSimulation = () => {
   margin-bottom: 50px;
   font-weight: 400;
   text-align: justify;
+  animation: fadeInUp 0.8s ease-out 0.4s both;
 }
 
 .hero-desc p {
@@ -521,20 +567,29 @@ const startSimulation = () => {
   flex: 0.8;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: flex-end;
 }
 
 .logo-container {
   width: 100%;
   display: flex;
-  justify-content: flex-end;
-  padding-right: 40px;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px 20px;
+  animation: fadeInRight 1s ease-out 0.3s both;
 }
 
 .hero-logo {
-  max-width: 500px; /* Размер логотипа */
+  max-width: 480px;
   width: 100%;
+  filter: drop-shadow(0 8px 32px rgba(0, 0, 0, 0.08));
+  animation: heroFloat 6s ease-in-out infinite;
+}
+
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
 }
 
 .scroll-down-btn {
@@ -612,6 +667,13 @@ const startSimulation = () => {
   border: 1px solid var(--border);
   padding: 20px 30px;
   min-width: 150px;
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.metric-card:hover {
+  border-color: var(--orange);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(255, 69, 0, 0.08);
 }
 
 .metric-value {
@@ -631,6 +693,11 @@ const startSimulation = () => {
   border: 1px solid var(--border);
   padding: 30px;
   position: relative;
+  transition: border-color 0.3s;
+}
+
+.steps-container:hover {
+  border-color: #999;
 }
 
 .steps-header {
@@ -658,6 +725,15 @@ const startSimulation = () => {
   display: flex;
   align-items: flex-start;
   gap: 20px;
+  transition: transform 0.2s ease, background 0.2s ease;
+  padding: 12px;
+  margin: -12px;
+  border-radius: 4px;
+}
+
+.workflow-item:hover {
+  transform: translateX(8px);
+  background: rgba(0, 0, 0, 0.02);
 }
 
 .step-num {
@@ -688,8 +764,14 @@ const startSimulation = () => {
 }
 
 .console-box {
-  border: 1px solid #CCC; /* Внешняя сплошная рамка */
-  padding: 8px; /* Внутренний отступ для эффекта двойной рамки */
+  border: 1px solid #CCC;
+  padding: 8px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.console-box:hover {
+  border-color: #999;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 }
 
 .console-section {
