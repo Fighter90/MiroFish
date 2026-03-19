@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // Создание экземпляра axios
 const service = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001',
+  baseURL: import.meta.env.VITE_API_BASE_URL || '',
   timeout: 300000, // таймаут 5 минут (генерация онтологии может занять длительное время)
   headers: {
     'Content-Type': 'application/json'
