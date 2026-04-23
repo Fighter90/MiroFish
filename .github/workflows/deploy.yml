@@ -17,12 +17,13 @@ jobs:
         env:
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
           ZEP_API_KEY: ${{ secrets.ZEP_API_KEY }}
+          FLASK_SECRET_KEY: ${{ secrets.FLASK_SECRET_KEY }}
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: root
           key: ${{ secrets.SERVER_SSH_KEY }}
           command_timeout: 30m
-          envs: LLM_API_KEY,ZEP_API_KEY
+          envs: LLM_API_KEY,ZEP_API_KEY,FLASK_SECRET_KEY
           script: |
             cd /root
 
@@ -42,6 +43,8 @@ jobs:
 
             # Создать .env из секретов
             cat > .env <<-ENVEOF
+            FLASK_DEBUG=false
+            SECRET_KEY=${FLASK_SECRET_KEY}
             LLM_API_KEY=${LLM_API_KEY}
             LLM_BASE_URL=https://openrouter.ai/api/v1
             LLM_MODEL_NAME=qwen/qwen3.5-122b-a10b
@@ -50,6 +53,7 @@ jobs:
             LLM_BOOST_BASE_URL=https://openrouter.ai/api/v1
             LLM_BOOST_MODEL_NAME=qwen/qwen3.5-27b
             ENVEOF
+            chmod 600 .env
 
             # Локальные настройки docker-compose
             sed -i 's|image: ghcr.io/666ghj/mirofish:latest|image: mirofish-ru:latest|' docker-compose.yml
