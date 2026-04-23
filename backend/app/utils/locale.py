@@ -26,10 +26,12 @@ def set_locale(locale: str):
 
 
 def get_locale() -> str:
+    # Форк русскоязычный — дефолт 'ru'. Валидируем по реестру языков,
+    # а не по наличию translation-файла (ru.json нет, но llmInstruction есть).
     if has_request_context():
-        raw = request.headers.get('Accept-Language', 'zh')
-        return raw if raw in _translations else 'zh'
-    return getattr(_thread_local, 'locale', 'zh')
+        raw = request.headers.get('Accept-Language', 'ru')
+        return raw if raw in _languages else 'ru'
+    return getattr(_thread_local, 'locale', 'ru')
 
 
 def t(key: str, **kwargs) -> str:
@@ -65,5 +67,5 @@ def t(key: str, **kwargs) -> str:
 
 def get_language_instruction() -> str:
     locale = get_locale()
-    lang_config = _languages.get(locale, _languages.get('zh', {}))
-    return lang_config.get('llmInstruction', '请使用中文回答。')
+    lang_config = _languages.get(locale, _languages.get('ru', {}))
+    return lang_config.get('llmInstruction', 'Пожалуйста, отвечайте на русском языке.')

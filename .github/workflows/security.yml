@@ -106,6 +106,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Освобождаем ~30 GB на runner'e перед сборкой образа и сканом.
+      # Без этого Trivy падает с "no space left on device" на тяжёлых образах.
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: false
+
       - name: Build Docker image
         run: docker build -t mirofish:scan .
 
@@ -113,6 +125,9 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: "mirofish:scan"
+          # Секреты уже ищет TruffleHog в соседней джобе — отключаем здесь,
+          # иначе Trivy раздувает /tmp и падает по диску.
+          scanners: "vuln"
           format: "table"
           exit-code: "0"
           severity: "CRITICAL,HIGH"

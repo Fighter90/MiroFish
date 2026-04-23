@@ -251,7 +251,6 @@ def generate_ontology():
         return jsonify({
             "success": False,
             "error": str(e),
-            "traceback": traceback.format_exc()
         }), 500
 
 
@@ -370,6 +369,10 @@ def build_graph():
         project.status = ProjectStatus.GRAPH_BUILDING
         project.graph_build_task_id = task_id
         ProjectManager.save_project(project)
+
+        # Захватываем локаль пока ещё в request-context, чтобы фоновый поток
+        # использовал язык пользователя, а не дефолт (в upstream было без захвата — крашилось).
+        current_locale = get_locale()
 
         # Запуск фоновой задачи
         def build_task():
@@ -522,7 +525,6 @@ def build_graph():
         return jsonify({
             "success": False,
             "error": str(e),
-            "traceback": traceback.format_exc()
         }), 500
 
 
@@ -587,7 +589,6 @@ def get_graph_data(graph_id: str):
         return jsonify({
             "success": False,
             "error": str(e),
-            "traceback": traceback.format_exc()
         }), 500
 
 
@@ -615,5 +616,4 @@ def delete_graph(graph_id: str):
         return jsonify({
             "success": False,
             "error": str(e),
-            "traceback": traceback.format_exc()
         }), 500
