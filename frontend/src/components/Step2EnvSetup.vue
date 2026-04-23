@@ -633,6 +633,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
 import {
   prepareSimulation,
   getPrepareStatus,
