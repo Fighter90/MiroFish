@@ -87,6 +87,10 @@ class GraphBuilderService:
             }
         )
 
+        # Захват локали из request-context перед стартом фонового потока
+        # (определение потерялось в -X ours merge upstream i18n-рефакторинга).
+        current_locale = get_locale()
+
         # Выполнение построения в фоновом потоке
         thread = threading.Thread(
             target=self._build_graph_worker,
@@ -106,9 +110,10 @@ class GraphBuilderService:
         chunk_size: int,
         chunk_overlap: int,
         batch_size: int,
-        locale: str = 'zh'
+        locale: str = 'ru'
     ):
         """Рабочий поток построения графа"""
+        set_locale(locale)
         try:
             self.task_manager.update_task(
                 task_id,

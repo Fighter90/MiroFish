@@ -456,6 +456,10 @@ class SimulationRunner:
             cls._processes[simulation_id] = process
             cls._save_run_state(state)
 
+            # Захват локали из request-context перед стартом фонового потока.
+            # Определение потерялось в -X ours merge upstream i18n-рефакторинга.
+            current_locale = get_locale()
+
             # Запуск потока мониторинга
             monitor_thread = threading.Thread(
                 target=cls._monitor_simulation,
@@ -476,8 +480,9 @@ class SimulationRunner:
         return state
 
     @classmethod
-    def _monitor_simulation(cls, simulation_id: str):
+    def _monitor_simulation(cls, simulation_id: str, locale: str = 'ru'):
         """Мониторинг процесса симуляции, разбор журнала действий"""
+        set_locale(locale)
         sim_dir = os.path.join(cls.RUN_STATE_DIR, simulation_id)
 
         # Новая структура журналов: журналы действий по платформам

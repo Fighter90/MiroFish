@@ -218,6 +218,18 @@ class OntologyGenerator:
             additional_context
         )
 
+        # system_prompt собираем из базового шаблона + языковой инструкции + требований
+        # Zep API к кодировке имён. Определение было в upstream; `-X ours` merge его потерял.
+        lang_instruction = get_language_instruction()
+        system_prompt = (
+            f"{ONTOLOGY_SYSTEM_PROMPT}\n\n{lang_instruction}\n"
+            "IMPORTANT: Entity type names MUST be in English PascalCase "
+            "(e.g., 'PersonEntity', 'MediaOrganization'). Relationship type names MUST be "
+            "in English UPPER_SNAKE_CASE (e.g., 'WORKS_FOR'). Attribute names MUST be in "
+            "English snake_case. Only description fields and analysis_summary should use "
+            "the specified language above."
+        )
+
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message}
@@ -296,6 +308,10 @@ class OntologyGenerator:
             result["edge_types"] = []
         if "analysis_summary" not in result:
             result["analysis_summary"] = ""
+
+        # Карта оригинальных имён → нормализованных PascalCase, чтобы потом
+        # согласовать source/target в edge_types (определение потерялось в -X ours merge).
+        entity_name_map: Dict[str, str] = {}
 
         # Валидация типов сущностей
         for entity in result["entity_types"]:

@@ -280,6 +280,9 @@ class ZepGraphMemoryUpdater:
             return
 
         self._running = True
+        # Захват локали из текущего контекста перед стартом потока
+        # (определение потерялось в -X ours merge upstream i18n-рефакторинга).
+        current_locale = get_locale()
         self._worker_thread = threading.Thread(
             target=self._worker_loop,
             args=(current_locale,),
@@ -360,8 +363,9 @@ class ZepGraphMemoryUpdater:
 
         self.add_activity(activity)
 
-    def _worker_loop(self):
+    def _worker_loop(self, locale: str = 'ru'):
         """Фоновый рабочий цикл - пакетная отправка активностей в Zep по платформам"""
+        set_locale(locale)
         while self._running or not self._activity_queue.empty():
             try:
                 # Попытка получить активность из очереди (таймаут 1 секунда)
