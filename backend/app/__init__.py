@@ -39,8 +39,11 @@ def create_app(config_class=Config):
         logger.info("MiroFish Backend запускается...")
         logger.info("=" * 50)
 
-    # Включение CORS
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    # Включение CORS — только для разрешённых origin'ов.
+    # В проде за reverse-proxy API ходит с того же origin (same-origin), CORS не нужен;
+    # "*" был бы дырой в случае кеша Basic Auth в браузере пользователя.
+    cors_origins = os.environ.get('CORS_ORIGINS', 'https://mirprognoz.ru,http://localhost:3000').split(',')
+    CORS(app, resources={r"/api/*": {"origins": [o.strip() for o in cors_origins if o.strip()]}})
 
     # Регистрация функции очистки процессов симуляции (завершение всех процессов при остановке сервера)
     from .services.simulation_runner import SimulationRunner

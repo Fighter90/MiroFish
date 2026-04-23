@@ -21,8 +21,10 @@ class Config:
     """Класс конфигурации Flask"""
 
     # Конфигурация Flask
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'mirofish-secret-key')
-    DEBUG = os.environ.get('FLASK_DEBUG', 'True').lower() == 'true'
+    # SECRET_KEY обязателен: отсутствие поймает validate() и завалит запуск,
+    # чтобы прод никогда не подписывал сессии дефолтным значением.
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    DEBUG = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
 
     # Конфигурация JSON — отключение ASCII-экранирования для корректного отображения Unicode
     JSON_AS_ASCII = False
@@ -67,6 +69,8 @@ class Config:
     def validate(cls):
         """Проверка обязательных параметров конфигурации"""
         errors = []
+        if not cls.SECRET_KEY:
+            errors.append("SECRET_KEY не настроен")
         if not cls.LLM_API_KEY:
             errors.append("LLM_API_KEY не настроен")
         if not cls.ZEP_API_KEY:
