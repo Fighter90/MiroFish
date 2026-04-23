@@ -15,6 +15,7 @@ from ..services.graph_builder import GraphBuilderService
 from ..services.text_processor import TextProcessor
 from ..utils.file_parser import FileParser
 from ..utils.logger import get_logger
+from ..utils.locale import t, get_locale, set_locale
 from ..models.task import TaskManager, TaskStatus
 from ..models.project import ProjectManager, ProjectStatus
 
@@ -372,6 +373,7 @@ def build_graph():
 
         # Запуск фоновой задачи
         def build_task():
+            set_locale(current_locale)
             build_logger = get_logger('mirofish.build')
             try:
                 build_logger.info(f"[{task_id}] Начало построения графа...")

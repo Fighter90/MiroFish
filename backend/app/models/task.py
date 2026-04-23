@@ -10,6 +10,8 @@ from enum import Enum
 from typing import Dict, Any, Optional
 from dataclasses import dataclass, field
 
+from ..utils.locale import t
+
 
 class TaskStatus(str, Enum):
     """Перечисление статусов задачи"""

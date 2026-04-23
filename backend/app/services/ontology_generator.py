@@ -4,8 +4,26 @@
 """
 
 import json
+import logging
+import re
 from typing import Dict, Any, List, Optional
 from ..utils.llm_client import LLMClient
+from ..utils.locale import get_language_instruction
+
+logger = logging.getLogger(__name__)
+
+
+def _to_pascal_case(name: str) -> str:
+    """将任意格式的名称转换为 PascalCase（如 'works_for' -> 'WorksFor', 'person' -> 'Person'）"""
+    # 按非字母数字字符分割
+    parts = re.split(r'[^a-zA-Z0-9]+', name)
+    # 再按 camelCase 边界分割（如 'camelCase' -> ['camel', 'Case']）
+    words = []
+    for part in parts:
+        words.extend(re.sub(r'([a-z])([A-Z])', r'\1_\2', part).split('_'))
+    # 每个词首字母大写，过滤空串
+    result = ''.join(word.capitalize() for word in words if word)
+    return result if result else 'Unknown'
 
 
 # Системный промпт для генерации онтологии
@@ -201,7 +219,7 @@ class OntologyGenerator:
         )
 
         messages = [
-            {"role": "system", "content": ONTOLOGY_SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message}
         ]
 
@@ -281,6 +299,13 @@ class OntologyGenerator:
 
         # Валидация типов сущностей
         for entity in result["entity_types"]:
+            # 强制将 entity name 转为 PascalCase（Zep API 要求）
+            if "name" in entity:
+                original_name = entity["name"]
+                entity["name"] = _to_pascal_case(original_name)
+                if entity["name"] != original_name:
+                    logger.warning(f"Entity type name '{original_name}' auto-converted to '{entity['name']}'")
+                entity_name_map[original_name] = entity["name"]
             if "attributes" not in entity:
                 entity["attributes"] = []
             if "examples" not in entity:
@@ -291,6 +316,18 @@ class OntologyGenerator:
 
         # Валидация типов связей
         for edge in result["edge_types"]:
+            # 强制将 edge name 转为 SCREAMING_SNAKE_CASE（Zep API 要求）
+            if "name" in edge:
+                original_name = edge["name"]
+                edge["name"] = original_name.upper()
+                if edge["name"] != original_name:
+                    logger.warning(f"Edge type name '{original_name}' auto-converted to '{edge['name']}'")
+            # 修正 source_targets 中的实体名称引用，与转换后的 PascalCase 保持一致
+            for st in edge.get("source_targets", []):
+                if st.get("source") in entity_name_map:
+                    st["source"] = entity_name_map[st["source"]]
+                if st.get("target") in entity_name_map:
+                    st["target"] = entity_name_map[st["target"]]
             if "source_targets" not in edge:
                 edge["source_targets"] = []
             if "attributes" not in edge:

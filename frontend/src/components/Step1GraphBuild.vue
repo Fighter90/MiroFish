@@ -189,9 +189,11 @@
 <script setup>
 import { computed, ref, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { createSimulation } from '../api/simulation'
 
 const router = useRouter()
+const { t } = useI18n()
 
 const props = defineProps({
   currentPhase: { type: Number, default: 0 },

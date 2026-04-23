@@ -193,10 +193,12 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, onActivated, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { getSimulationHistory } from '../api/simulation'
 
 const router = useRouter()
 const route = useRoute()
+const { t } = useI18n()
 
 // Состояние
 const projects = ref([])

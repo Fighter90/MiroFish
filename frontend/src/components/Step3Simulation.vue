@@ -296,6 +296,8 @@ import {
 } from '../api/simulation'
 import { generateReport } from '../api/report'
 
+const { t } = useI18n()
+
 const props = defineProps({
   simulationId: String,
   maxRounds: Number, // Максимальное количество раундов, переданное из Step2

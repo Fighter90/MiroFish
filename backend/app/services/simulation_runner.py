@@ -20,6 +20,7 @@ from queue import Queue
 
 from ..config import Config
 from ..utils.logger import get_logger
+from ..utils.locale import get_locale, set_locale
 from .zep_graph_memory_updater import ZepGraphMemoryManager
 from .simulation_ipc import SimulationIPCClient, CommandType, IPCResponse
 
@@ -458,7 +459,7 @@ class SimulationRunner:
             # Запуск потока мониторинга
             monitor_thread = threading.Thread(
                 target=cls._monitor_simulation,
-                args=(simulation_id,),
+                args=(simulation_id, current_locale),
                 daemon=True
             )
             monitor_thread.start()

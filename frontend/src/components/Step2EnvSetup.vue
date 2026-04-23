@@ -641,6 +641,8 @@ import {
   getSimulationConfigRealtime
 } from '../api/simulation'
 
+const { t } = useI18n()
+
 const props = defineProps({
   simulationId: String,  // Передаётся из родительского компонента
   projectData: Object,

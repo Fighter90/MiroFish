@@ -15,6 +15,7 @@ from ..services.simulation_manager import SimulationManager
 from ..models.project import ProjectManager
 from ..models.task import TaskManager, TaskStatus
 from ..utils.logger import get_logger
+from ..utils.locale import t, get_locale, set_locale
 
 logger = get_logger('mirofish.api.report')
 
@@ -122,6 +123,7 @@ def generate_report():
 
         # Определение фоновой задачи
         def run_generate():
+            set_locale(current_locale)
             try:
                 task_manager.update_task(
                     task_id,

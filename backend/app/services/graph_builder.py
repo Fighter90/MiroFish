@@ -18,6 +18,7 @@ from ..models.task import TaskManager, TaskStatus
 from ..utils.logger import get_logger
 from ..utils.zep_paging import fetch_all_nodes, fetch_all_edges
 from .text_processor import TextProcessor
+from ..utils.locale import t, get_locale, set_locale
 
 logger = get_logger('mirofish.graph_builder')
 
@@ -89,7 +90,7 @@ class GraphBuilderService:
         # Выполнение построения в фоновом потоке
         thread = threading.Thread(
             target=self._build_graph_worker,
-            args=(task_id, text, ontology, graph_name, chunk_size, chunk_overlap, batch_size)
+            args=(task_id, text, ontology, graph_name, chunk_size, chunk_overlap, batch_size, current_locale)
         )
         thread.daemon = True
         thread.start()
@@ -104,7 +105,8 @@ class GraphBuilderService:
         graph_name: str,
         chunk_size: int,
         chunk_overlap: int,
-        batch_size: int
+        batch_size: int,
+        locale: str = 'zh'
     ):
         """Рабочий поток построения графа"""
         try:

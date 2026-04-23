@@ -132,7 +132,7 @@
               </div>
             </div>
             <div class="tab-divider"></div>
-            <button 
+            <button
               class="tab-pill survey-pill"
               :class="{ active: activeTab === 'survey' }"
               @click="selectSurveyTab"
@@ -412,8 +412,11 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { chatWithReport, getReport, getAgentLog } from '../api/report'
 import { interviewAgents, getSimulationProfilesRealtime } from '../api/simulation'
+
+const { t } = useI18n()
 
 const props = defineProps({
   reportId: String,
@@ -2570,5 +2573,12 @@ watch(() => props.simulationId, (newId) => {
   border: none;
   border-top: 1px solid #E5E7EB;
   margin: 24px 0;
+}
+</style>
+
+<style>
+/* English locale: smaller report title */
+html[lang="en"] .report-header-block .main-title {
+  font-size: 28px;
 }
 </style>

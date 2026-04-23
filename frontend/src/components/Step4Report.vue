@@ -392,9 +392,11 @@
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted, nextTick, h, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { getAgentLog, getConsoleLog } from '../api/report'
 
 const router = useRouter()
+const { t } = useI18n()
 
 const props = defineProps({
   reportId: String,
@@ -962,6 +964,7 @@ const parseQuickSearch = (text) => {
 const InsightDisplay = {
   props: ['result', 'resultLength'],
   setup(props) {
+    const { t } = useI18n()
     const activeTab = ref('facts') // 'facts', 'entities', 'relations', 'subqueries'
     const expandedFacts = ref(false)
     const expandedEntities = ref(false)
@@ -1057,7 +1060,7 @@ const InsightDisplay = {
             onClick: () => { expandedFacts.value = !expandedFacts.value }
           }, expandedFacts.value ? `Свернуть ▲` : `Показать все ${props.result.facts.length} зап. ▼`)
         ]),
-        
+
         // Entities Tab
         activeTab.value === 'entities' && props.result.entities.length > 0 && h('div', { class: 'entities-panel' }, [
           h('div', { class: 'panel-header' }, [
@@ -1078,7 +1081,7 @@ const InsightDisplay = {
             onClick: () => { expandedEntities.value = !expandedEntities.value }
           }, expandedEntities.value ? `Свернуть ▲` : `Показать все ${props.result.entities.length} шт. ▼`)
         ]),
-        
+
         // Relations Tab
         activeTab.value === 'relations' && props.result.relations.length > 0 && h('div', { class: 'relations-panel' }, [
           h('div', { class: 'panel-header' }, [
@@ -1103,7 +1106,7 @@ const InsightDisplay = {
             onClick: () => { expandedRelations.value = !expandedRelations.value }
           }, expandedRelations.value ? `Свернуть ▲` : `Показать все ${props.result.relations.length} зап. ▼`)
         ]),
-        
+
         // Sub-queries Tab
         activeTab.value === 'subqueries' && props.result.subQueries.length > 0 && h('div', { class: 'subqueries-panel' }, [
           h('div', { class: 'panel-header' }, [
@@ -1133,6 +1136,7 @@ const InsightDisplay = {
 const PanoramaDisplay = {
   props: ['result', 'resultLength'],
   setup(props) {
+    const { t } = useI18n()
     const activeTab = ref('active') // 'active', 'historical', 'entities'
     const expandedActive = ref(false)
     const expandedHistorical = ref(false)
@@ -1577,6 +1581,7 @@ const InterviewDisplay = {
 const QuickSearchDisplay = {
   props: ['result', 'resultLength'],
   setup(props) {
+    const { t } = useI18n()
     const activeTab = ref('facts') // 'facts', 'edges', 'nodes'
     const expandedFacts = ref(false)
     const INITIAL_SHOW_COUNT = 5
@@ -5147,4 +5152,11 @@ watch(() => props.reportId, (newId) => {
 .log-msg.error { color: #EF5350; }
 .log-msg.warning { color: #FFA726; }
 .log-msg.success { color: #66BB6A; }
+</style>
+
+<style>
+/* English locale: smaller report title */
+html[lang="en"] .report-header-block .main-title {
+  font-size: 28px;
+}
 </style>

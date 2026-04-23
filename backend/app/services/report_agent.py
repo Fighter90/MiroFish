@@ -21,6 +21,7 @@ from enum import Enum
 from ..config import Config
 from ..utils.llm_client import LLMClient
 from ..utils.logger import get_logger
+from ..utils.locale import get_language_instruction, t
 from .zep_tools import (
     ZepToolsService,
     SearchResult,
@@ -1259,6 +1260,7 @@ class ReportAgent:
             section_title=section.title,
             tools_description=self._get_tools_description(),
         )
+        system_prompt = f"{system_prompt}\n\n{get_language_instruction()}"
 
         # Построение пользовательского промпта - каждый завершённый раздел передаётся с ограничением до 4000 символов
         if previous_sections:
@@ -1806,6 +1808,7 @@ class ReportAgent:
             report_content=report_content if report_content else "(отчёт пока не создан)",
             tools_description=self._get_tools_description(),
         )
+        system_prompt = f"{system_prompt}\n\n{get_language_instruction()}"
 
         # Построение сообщений
         messages = [{"role": "system", "content": system_prompt}]

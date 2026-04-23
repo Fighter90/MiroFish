@@ -16,6 +16,7 @@ from zep_cloud.client import Zep
 
 from ..config import Config
 from ..utils.logger import get_logger
+from ..utils.locale import get_locale, set_locale
 
 logger = get_logger('mirofish.zep_graph_memory_updater')
 
@@ -281,6 +282,7 @@ class ZepGraphMemoryUpdater:
         self._running = True
         self._worker_thread = threading.Thread(
             target=self._worker_loop,
+            args=(current_locale,),
             daemon=True,
             name=f"ZepMemoryUpdater-{self.graph_id[:8]}"
         )

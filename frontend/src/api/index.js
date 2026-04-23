@@ -1,4 +1,5 @@
 import axios from 'axios'
+import i18n from '../i18n'
 
 // Создание экземпляра axios
 const service = axios.create({
@@ -12,6 +13,7 @@ const service = axios.create({
 // Перехватчик запросов
 service.interceptors.request.use(
   config => {
+    config.headers['Accept-Language'] = i18n.global.locale.value
     return config
   },
   error => {
