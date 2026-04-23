@@ -2,6 +2,29 @@
 
 Все значимые изменения проекта документируются в этом файле.
 
+## [1.3.0] — 2026-04-24
+
+### Безопасность
+- **Порты Docker забинжены на 127.0.0.1** — Vite (`3000`) и Flask (`5001`) больше не слушают на `0.0.0.0`. Доступ только через nginx-reverse-proxy. Закрывает CVE-2025-30208 / 31125 / 31486 / 32395 (Vite dev-server) и CVE-2024-23331 (Vite `server.fs.deny` bypass).
+- **`SECRET_KEY` и `FLASK_DEBUG=false` через GitHub Secrets** — деплой-скрипт теперь требует секрет `FLASK_SECRET_KEY` и пишет его в `.env` на сервере. Ранее Flask использовал дефолтный `mirofish-secret-key` из `backend/app/config.py` (подписи сессий поддавались подделке) и оставался с `DEBUG=true` (потенциальный werkzeug-debugger RCE).
+- **`chmod 600 .env`** после генерации на сервере.
+- Обновление фронтенд-зависимостей из upstream: `axios 1.14.0`, `rollup`, `picomatch` — закрывает 3 high-severity npm-уязвимости.
+
+### Инфраструктура (на сервере, не в репозитории)
+- nginx Basic Auth перед всем сайтом, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy.
+- UFW: allow 22/80/443, deny 3000/5001/10050.
+- SSH: `PasswordAuthentication no`, `PermitRootLogin prohibit-password`.
+- Zabbix-agent выключен.
+
+### Синхронизация с upstream `666ghj/MiroFish`
+- `vue-i18n` обновлён с v9 до v11.
+- Добавлена i18n-инфраструктура: `backend/app/utils/locale.py` (thread-local, Accept-Language), `frontend/src/i18n/index.js`, `locales/{en,zh,languages}.json`, `LanguageSwitcher.vue`.
+- Граф: принудительный PascalCase для имён сущностей и SCREAMING_SNAKE_CASE для рёбер на уровне валидации онтологии.
+- Конфликты резолвлены стратегией `ours`: русский UI форка сохранён, инфраструктура i18n подтянута как follow-up-ready инструментарий.
+
+### Документация
+- Удалены `README-EN.md` и `README-ZH.md` — проект поддерживается только на русском.
+
 ## [1.2.0] — 2026-03-19
 
 ### Улучшения моделей и NLP

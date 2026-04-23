@@ -163,6 +163,11 @@ cp .env.example .env
 **Обязательные переменные:**
 
 ```env
+# Flask
+FLASK_DEBUG=false
+# Сгенерировать: python3 -c "import secrets; print(secrets.token_hex(32))"
+SECRET_KEY=replace_with_64_hex_chars
+
 # LLM API (OpenAI-совместимый формат)
 # Можно использовать OpenRouter, DashScope, OpenAI или любой совместимый провайдер
 LLM_API_KEY=your_api_key
@@ -178,6 +183,8 @@ LLM_BOOST_MODEL_NAME=qwen/qwen3.5-27b
 # Бесплатный тариф: https://app.getzep.com/
 ZEP_API_KEY=your_zep_api_key
 ```
+
+> **В продакшне** помимо переменных окружения поднимите перед Docker-сервисом nginx с HTTPS и Basic Auth (или OAuth-proxy). В `docker-compose.yml` порты `3000`/`5001` уже забинжены на `127.0.0.1` — приложение доступно только через reverse-proxy, прямой доступ из интернета закрыт.
 
 #### 2. Установка зависимостей
 
