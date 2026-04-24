@@ -58,6 +58,11 @@ jobs:
             # Локальные настройки docker-compose
             sed -i 's|image: ghcr.io/666ghj/mirofish:latest|image: mirofish-ru:latest|' docker-compose.yml
 
+            # Uploads-каталог вне репо — переживает `rm -rf MiroFish` на следующих деплоях.
+            mkdir -p /var/lib/mirofish/uploads
+            chmod 700 /var/lib/mirofish/uploads
+            export UPLOADS_VOLUME=/var/lib/mirofish/uploads
+
             # Пересобрать без кеша
             docker build --no-cache -t mirofish-ru:latest .
 

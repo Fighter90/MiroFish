@@ -11,4 +11,7 @@ services:
       - "127.0.0.1:5001:5001"
     restart: unless-stopped
     volumes:
-      - ./backend/uploads:/app/backend/uploads
+      # На проде указываем абсолютный путь через env: UPLOADS_VOLUME=/var/lib/mirofish/uploads.
+      # deploy.yml делает `rm -rf MiroFish` при каждом пуше — если держать volume внутри
+      # репо, данные симуляций (state.json, профили, логи) будут стираться.
+      - ${UPLOADS_VOLUME:-./backend/uploads}:/app/backend/uploads
