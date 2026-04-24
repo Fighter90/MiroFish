@@ -2,6 +2,24 @@
 
 Все значимые изменения проекта документируются в этом файле.
 
+## [1.3.2] — 2026-04-24
+
+### Исправления
+
+- **Белый экран на `/simulation/:id`**: компоненты `Step2EnvSetup.vue` и `Step3Simulation.vue` вызывали `useI18n()` без импорта `useI18n from 'vue-i18n'` (`-X ours` merge потерял импорт). Добавлен в оба файла.
+- **`/api/graph/ontology/generate` падал с `NameError: name 'system_prompt' is not defined`**. `-X ours` merge оставил вызов без инициализации `system_prompt` (upstream собирал его из `ONTOLOGY_SYSTEM_PROMPT` + `get_language_instruction()`). Собираю явно.
+- **`ontology_generator._validate_and_process`**: добавлен отсутствующий `entity_name_map: Dict[str, str] = {}` — без него валидация edge_types падала.
+- **3 фоновых потока без захвата локали**: `simulation_runner._monitor_simulation`, `graph_builder._build_graph_worker`, `zep_graph_memory_updater._worker_loop` — добавлен захват `get_locale()` перед `threading.Thread(...)` + параметр в сигнатуре + `set_locale(locale)` внутри метода.
+
+### Надёжность
+
+- **Volume `uploads/` вынесен вне репо.** На проде `deploy.yml` делал `rm -rf MiroFish` при каждом пуше, а volume docker-compose монтировал из `./backend/uploads` — каждая симуляция с state.json, профилями и логами стиралась на следующем деплое. Теперь `docker-compose.yml` использует `${UPLOADS_VOLUME:-./backend/uploads}`, а `deploy.yml` экспортирует `UPLOADS_VOLUME=/var/lib/mirofish/uploads`.
+
+### Безопасность
+
+- `backend/app/config.py`: убран fallback `SECRET_KEY='mirofish-secret-key'`; `Config.validate()` теперь жёстко требует `SECRET_KEY`. Дефолт `FLASK_DEBUG` изменён с `True` на `False`.
+- `backend/app/__init__.py`: `CORS(origins="*")` сужен до списка из env `CORS_ORIGINS` (дефолт `https://mirprognoz.ru,http://localhost:3000`).
+
 ## [1.3.1] — 2026-04-24
 
 ### Исправления

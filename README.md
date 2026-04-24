@@ -4,7 +4,7 @@
 
 ### Multi-Agent Social Opinion Simulation System
 
-**v1.2.0**
+**v1.3.2**
 
 [![GitHub Stars](https://img.shields.io/github/stars/Fighter90/MiroFish?style=flat-square&color=DAA520)](https://github.com/Fighter90/MiroFish/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/Fighter90/MiroFish?style=flat-square)](https://github.com/Fighter90/MiroFish/network)
