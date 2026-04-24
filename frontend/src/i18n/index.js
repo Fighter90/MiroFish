@@ -14,12 +14,17 @@ for (const path in localeFiles) {
   }
 }
 
-const savedLocale = localStorage.getItem('locale') || 'zh'
+// Форк русскоязычный. Дефолт 'ru'; старое значение localStorage ('zh'
+// после upstream-версии) принудительно перезаписываем, чтобы у вернувшихся
+// пользователей не оставался китайский UI.
+const saved = localStorage.getItem('locale')
+const savedLocale = (saved && saved !== 'zh') ? saved : 'ru'
+if (saved === 'zh') localStorage.setItem('locale', 'ru')
 
 const i18n = createI18n({
   legacy: false,
   locale: savedLocale,
-  fallbackLocale: 'zh',
+  fallbackLocale: 'ru',
   messages
 })
 

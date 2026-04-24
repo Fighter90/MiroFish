@@ -1,0 +1,107 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6] [cursor=pointer]: MIRPROGNOZ
+      - link "Помощь" [ref=e7] [cursor=pointer]:
+        - /url: /help
+    - generic [ref=e9]:
+      - button "Граф" [ref=e10] [cursor=pointer]
+      - button "Две колонки" [ref=e11] [cursor=pointer]
+      - button "Рабочая область" [ref=e12] [cursor=pointer]
+    - generic [ref=e13]:
+      - button "中文 ▼" [ref=e15] [cursor=pointer]:
+        - text: 中文
+        - generic [ref=e16]: ▼
+      - generic [ref=e18]:
+        - generic [ref=e19]: Step 2/5
+        - generic [ref=e20]: Настройка среды
+      - generic [ref=e22]: Preparing
+  - main [ref=e24]:
+    - generic [ref=e26]:
+      - generic:
+        - generic [ref=e27]: Визуализация графа связей
+        - generic [ref=e28]:
+          - button "↻ Обновить" [ref=e29] [cursor=pointer]:
+            - generic [ref=e30]: ↻
+            - generic [ref=e31]: Обновить
+          - button "⛶" [ref=e32] [cursor=pointer]:
+            - generic [ref=e33]: ⛶
+      - generic [ref=e35]:
+        - generic [ref=e36]: ❖
+        - paragraph [ref=e37]: Ожидание генерации онтологии...
+    - generic [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - generic [ref=e43]:
+              - generic [ref=e44]: "01"
+              - generic [ref=e45]: Инициализация симуляции
+            - generic [ref=e46]: Готово
+          - generic [ref=e47]:
+            - paragraph [ref=e48]: POST /api/simulation/create
+            - paragraph [ref=e49]: Создание экземпляра симуляции, загрузка шаблона параметров мира
+            - generic [ref=e50]:
+              - generic [ref=e52]: Project ID
+              - generic [ref=e54]: Graph ID
+              - generic [ref=e55]:
+                - generic [ref=e56]: Simulation ID
+                - generic [ref=e57]: sim_28339751a90f
+              - generic [ref=e58]:
+                - generic [ref=e59]: Task ID
+                - generic [ref=e60]: Задача выполнена
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - generic [ref=e63]:
+              - generic [ref=e64]: "02"
+              - generic [ref=e65]: Генерация Agent-ов
+            - generic [ref=e66]: 0%
+          - generic [ref=e67]:
+            - paragraph [ref=e68]: POST /api/simulation/prepare
+            - paragraph [ref=e69]: Автоматический анализ сущностей и связей из графа знаний, создание участников симуляции с уникальным поведением и памятью
+        - generic [ref=e70]:
+          - generic [ref=e71]:
+            - generic [ref=e72]:
+              - generic [ref=e73]: "03"
+              - generic [ref=e74]: Конфигурация двух платформ
+            - generic [ref=e75]: Ожидает
+          - generic [ref=e76]:
+            - paragraph [ref=e77]: POST /api/simulation/prepare
+            - paragraph [ref=e78]: LLM настраивает скорость времени, алгоритмы рекомендаций, периоды активности участников, частоту публикаций и триггеры событий
+        - generic [ref=e79]:
+          - generic [ref=e80]:
+            - generic [ref=e81]:
+              - generic [ref=e82]: "04"
+              - generic [ref=e83]: Начальная активация
+            - generic [ref=e84]: Ожидает
+          - generic [ref=e85]:
+            - paragraph [ref=e86]: POST /api/simulation/prepare
+            - paragraph [ref=e87]: Генерация начальных событий и горячих тем, формирующих начальное состояние мира
+        - generic [ref=e88]:
+          - generic [ref=e89]:
+            - generic [ref=e90]:
+              - generic [ref=e91]: "05"
+              - generic [ref=e92]: Готово к запуску
+            - generic [ref=e93]: Ожидает
+          - generic [ref=e94]:
+            - paragraph [ref=e95]: POST /api/simulation/start
+            - paragraph [ref=e96]: Среда готова. Можно запускать симуляцию
+            - generic [ref=e97]:
+              - button "← Назад" [ref=e98] [cursor=pointer]
+              - button "Запустить симуляцию ➝" [disabled] [ref=e99]
+      - generic [ref=e100]:
+        - generic [ref=e101]:
+          - generic [ref=e102]: ПАНЕЛЬ УПРАВЛЕНИЯ
+          - generic [ref=e103]: sim_28339751a90f
+        - generic [ref=e104]:
+          - generic [ref=e105]:
+            - generic [ref=e106]: 03:03:16.028
+            - generic [ref=e107]: Step2 Инициализация настройки среды
+          - generic [ref=e108]:
+            - generic [ref=e109]: 03:03:16.029
+            - generic [ref=e110]: "Экземпляр симуляции создан: sim_28339751a90f"
+          - generic [ref=e111]:
+            - generic [ref=e112]: 03:03:16.029
+            - generic [ref=e113]: Подготовка среды симуляции...
+          - generic [ref=e114]:
+            - generic [ref=e115]: 03:03:16.030
+            - generic [ref=e116]: Инициализация SimulationView

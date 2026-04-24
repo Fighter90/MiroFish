@@ -221,8 +221,6 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import HistoryDatabase from '../components/HistoryDatabase.vue'
-import LanguageSwitcher from '../components/LanguageSwitcher.vue'
-
 const router = useRouter()
 
 // Данные формы
